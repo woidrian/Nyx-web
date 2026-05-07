@@ -1,0 +1,509 @@
+# nyx-web — Nyx Agency
+
+## Project Overview
+Web corporativa de **Nyx**, agencia de automatización con IA de Adrian Davila.
+Proyecto independiente. No relacionado con ARES Fighters ni Paperclip.
+
+Desde 2026-05 el proyecto es **híbrido**: estática (HTML/CSS/JS) + backend FastAPI
+en la misma raíz. El backend sirve la web y además expone los endpoints del
+voice agent (AdrIAn) para Gemini Live.
+
+## Estructura de archivos
+```
+nyx-web/
+├── index.html            # Página principal (con voice FAB + modal embebido)
+├── nosotros.html         # Página Quiénes Somos
+├── server.py             # FastAPI: sirve la web + APIs del voice agent
+├── Dockerfile            # Build para Easypanel
+├── requirements.txt      # Deps Python
+├── .env.example          # GEMINI_API_KEY, N8N_WEBHOOK_URL, ALLOWED_ORIGINS
+├── .dockerignore
+├── CLAUDE.md
+├── images/               # Assets de imagen + Video1.mp4
+└── voice/
+    └── frontend/
+        ├── agent.js      # VoiceAgent (state machine, mic + WS Gemini)
+        ├── audio.js      # MicStream (PCM 16k) + PCMPlayer (24k)
+        ├── geminilive.js # Cliente WebSocket Gemini Live
+        └── greeting.wav  # Saludo inicial pregrabado (voz Orus)
+```
+
+## Tech Stack
+- **Frontend**: HTML puro + CSS + JS vanilla. Three.js r128 (CDN), GSAP 3.12.2 (CDN). Sin build.
+- **Backend voice**: FastAPI + uvicorn. Cliente `google-genai` (Gemini Live, modelo `gemini-3.1-flash-live-preview`, voz Orus).
+- **Lead capture**: tool call `guardar_lead` → forward a webhook n8n.
+
+## Páginas
+
+### index.html
+Página principal con secciones:
+1. Hero — badge, h1, métricas x4, CTA Cal.com
+2. Servicios (s2) — 3 cards stack v2 (Auditoría de IA / Desarrollo de Sistemas / Capacitación)
+3. Proceso (s3) — 4 pasos
+4. Casos (s4) — galería
+5. Casos de uso (s5) — 3 cards
+6. Precios (s6) — Starter 499€ / Growth 1.299€ / Scale 1.998€ + toggle mensual/anual (-15%)
+7. FAQ (s7) — 5 preguntas acordeón
+8. CTA final (s8) — Cal.com
+9. Footer — copyright + Política de Privacidad (modal)
+
+**Servicios v2 (sección 002)** — Editorial Brutalism integrado con paleta navy:
+- Stack vertical de 3 filas. Cada fila = 1 card sobre `#070d1c`, separadas por hairlines de 1px
+- Tags: borde + texto `var(--muted)` con `var(--bmd)` (mismo estilo que `hero-badge`)
+- Número grande: `#1a2030` en reposo → `var(--text)` (blanco) en hover (con flecha→)
+- CTA pill (SCAN/BUILD/ADOPT): bg `var(--text)` blanco, texto `var(--bg)` navy. Hover: `opacity: .88` (igual que `.btn-fill`).
+- CSS scopeado bajo `.svc-v2`. Tokens locales: `--nyx-deep:#070d1c`, `--nyx-accent:#f1f5f9`, `--nyx-line:rgba(241,245,249,.09)`
+
+Funcionalidades añadidas:
+- **Voice FAB "Habla con AdrIAn"** — píldora flotante abajo-derecha (`#voice-fab`) con punto pulsante lime. Abre el modal `#voice-overlay` que carga `voice/agent.js` la primera vez (lazy import dinámico). Cierra con X, click fuera o Escape. El mic + WebSocket se cortan al cerrar (`agent.stop()`) pero la instancia se reutiliza si vuelves a abrir.
+- **Selector de idioma** — 12 idiomas (es/en/pt/fr/de/it/nl/ru/zh/ja/ko/ar), RTL para árabe, persiste en localStorage
+- **Scroll-to-top** — botón circular abajo-derecha (offset right: 2rem; el voice FAB queda a 5rem)
+- **Modal Política de Privacidad** — cierra con X, clic fuera, o Escape
+- **Toggle precios mensual/anual** — muestra precios con -15% descuento
+
+### nosotros.html
+Página Quiénes Somos. Mismo i18n + scroll-to-top + modal privacidad. **Sin** voice FAB (de momento).
+
+## Voice Agent (AdrIAn)
+
+### Endpoints
+- `GET  /api/token`       → token efímero Gemini Live (system prompt + tool **lock dentro del token** por seguridad)
+- `POST /api/lead`        → reenvía lead al webhook n8n
+- `POST /twiml/asistente` → TwiML para integración telefónica Twilio (opcional)
+- `WS   /media-stream`    → bridge Twilio Media Stream ↔ Gemini Live (opcional)
+- `GET  /voice/*`         → assets estáticos del frontend de voz
+- `GET  /`                → resto del site (`index.html`, `nosotros.html`, `images/`)
+
+### Frontend (modal embebido en index.html)
+- `voice/frontend/agent.js` exporta `VoiceAgent`. Se importa con `import('/voice/agent.js?v=...')` la primera vez que el usuario abre el modal.
+- Estados: `idle | connecting | listening | speaking | ended | error` aplicados al `data-state` del `.voice-modal` (CSS scopeado, no afecta resto del site).
+- Saludo inicial: `voice/frontend/greeting.wav` (voz Orus, mismo modelo que Live → continuidad sonora). Mientras suena, el mic queda mute (`_micGateOpen=false`) hasta que el WS termine de conectar.
+- Lead capture: cuando AdrIAn llama `guardar_lead`, el frontend hace `POST /api/lead` y marca `_leadSaved=true`. Cuando termina la despedida, cierra automáticamente.
+
+## Despliegue (Easypanel)
+
+### Opción A — Backend + web en un único servicio (default actual)
+1. Push a Git, conectar Easypanel a la rama `main`.
+2. Build con `Dockerfile` de la raíz. Easypanel detecta el `EXPOSE 8000`.
+3. Variables de entorno en Easypanel:
+   - `GEMINI_API_KEY` (obligatoria)
+   - `N8N_WEBHOOK_URL` (opcional, hay default)
+   - `ALLOWED_ORIGINS=*` (opcional, default `*`)
+4. Dominio: `nyx-agency.es` apuntando al servicio. La web carga directamente `/api/token` y `/voice/agent.js` desde el mismo origen — no hace falta CORS ni configuración extra.
+
+### Opción B — Voice backend como servicio separado
+Si en algún momento quieres servir la web estáticamente (Vercel/Netlify) y dejar solo el voice backend en Easypanel:
+1. Subir solo `server.py`, `voice/`, `Dockerfile`, `requirements.txt` a un repo aparte (o usar este mismo).
+2. Desplegar en Easypanel con dominio `voice.nyx-agency.es`. Set `ALLOWED_ORIGINS=https://nyx-agency.es,https://www.nyx-agency.es`.
+3. En `index.html`, cambiar las URLs en el script del modal y en `agent.js`:
+   - `import('/voice/agent.js')` → `import('https://voice.nyx-agency.es/voice/agent.js')`
+   - `fetch('/api/token')` → `fetch('https://voice.nyx-agency.es/api/token')`
+   - `fetch('/api/lead', ...)` → idem
+   - `new Audio('/voice/greeting.wav?...')` → `new Audio('https://voice.nyx-agency.es/voice/greeting.wav?...')`
+4. La web en Vercel/Netlify queda 100% estática.
+
+## Commands
+```bash
+# Modo solo-estático (sin voice agent funcionando)
+cmd.exe /c "start C:\Dev\nyx-web\index.html"
+
+# Modo completo local (web + voice agent funcionando)
+cd /c/Dev/nyx-web
+cp .env.example .env   # añadir GEMINI_API_KEY real
+pip install -r requirements.txt
+uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+# → http://localhost:8001
+# (puerto 8001 en local para evitar conflictos con procesos legacy en 8000)
+
+# Diagnóstico — confirma que el server respondiendo es el de nyx-web
+curl http://localhost:8001/healthz
+# → {"ok":true,"project":"nyx-web","root":"C:\\Dev\\nyx-web",...}
+
+# Docker local
+docker build -t nyx-web .
+docker run -p 8000:8000 --env-file .env nyx-web
+```
+
+## Contacto
+- Email: **growth@nyx-agency.es**
+- Reservas: **https://cal.com/woidrian/nyx-agency** (todos los CTAs apuntan aquí)
+- WhatsApp: retirado de la web (los iconos SVG `.btn-wa` siguen presentes pero los `href` ya van a Cal.com — pendiente cambiarlos por icono de calendario si se quiere coherencia visual)
+
+## Key Conventions
+- Español en UI, inglés en código
+- i18n DOM-based: getElementById + querySelectorAll por índice
+- Sin cookies, sin tracking, sin analytics
+- Precios: siempre actualizar HTML + JS (objeto LANGS) en paralelo
+- **Voice modal IDs reservados** (no reutilizar en el resto del DOM): `mic-btn`, `status`, `transcript`, `viz`, `end-btn`, `restart-btn`. Todos viven dentro de `.voice-modal` y son referenciados por `agent.js` mediante `root.querySelector(...)`.
+
+## Brand / Identidad
+- Agencia: Nyx
+- Foco: Automatización con IA
+- Paleta site: `--bg:#030712` (dark navy), `--bg2:#070d1c`, `--text:#f1f5f9`, `--muted:#64748b`
+- Paleta servicios v2 (sección 002): `--nyx-deep:#070d1c` + `--nyx-accent:#f1f5f9` (alineada con el site)
+- **Paleta voice agent (modal + FAB)**: fondo `#0a0a0a`/`#111111`, accent `#c8ff00` (lime). Antes era exclusiva del voice agent — desde 2026-05-05 también se usa en el icono de calendario del nav (puntos pulsantes + glow). Ninguna otra sección la usa.
+- Tipografía: Space Grotesk 600/700 (h2/títulos generales), Inter 300/400/500 (body), **Syne 400/500/600/700/800** (servicios v2 + voice modal), **JetBrains Mono 300/400** (status pills + footer del voice modal)
+- Convenciones de color:
+  - Lime `#c8ff00` SOLO en voice agent (FAB + modal) y en los iconos 3D del nav/CTAs (calendario, chevron-back). Ninguna otra sección lo usa.
+  - Texto blanco puro `#ffffff` reservado a títulos hero-like; resto usa `--text` (#f1f5f9)
+  - Descripciones siempre `var(--muted)` para coherencia inter-secciones
+
+---
+
+## Changelog 2026-05-05 — Sesión de UI cleanup + iconos 3D
+
+### Nav: "Hablemos →" → icono calendario 3D animado
+- `<a class="nav-cta" id="nav-cta">` ahora contiene un **SVG inline** del calendario "appointment-schedule" (estilo Lordicon `wired/outline 973`, recreado en SVG inline para no depender de hashes externos).
+- **3D**: `perspective(160px) rotateX(10deg) rotateY(-10deg)`, hover endereza + scale 1.12.
+- **Animaciones constantes**:
+  - `calGlow` (2.8s) — pulsa el `drop-shadow` lime alrededor del icono.
+  - `calDot` (2.4s, escalonada por `.d1`–`.d6`) — los 6 dots del grid pulsan en cascada.
+  - `calPlus` (1.8s) + `calPing` (2s) — el badge "+" lime escala y emite un ping radar.
+- Click → `https://cal.com/woidrian/nyx-agency` (target `_blank`).
+- i18n: el `aria-label` se traduce con `t.nav.cta` en los 12 idiomas (en lugar de `textContent`, ya que ahora el `<a>` no tiene texto).
+- Aplicado en **index.html** y **nosotros.html**.
+
+### Nosotros · Hero "← Volver al inicio" → icono chevron-3D animado
+- `<a class="hero-back-3d" id="hero-cta" href="index.html">` con **SVG inline** de 3 chevrons left con jerarquía visual (blanco puro stroke 2.6 → gris claro stroke 2.4 → gris medio stroke 2.2).
+- **3D**: `perspective(220px) rotateX(14deg) rotateY(18deg)` + dual `drop-shadow` (sombra negra para profundidad + glow lime).
+- Animación `chevPoint` (1.6s, delays escalonados 0/0.12/0.24s) — los 3 chevrons hacen slide-left de 5px en cascada (efecto "pointing" de Lordicon en bucle).
+- Hover: endereza la perspectiva, scale 1.08, translateX -4px, animación a 1s, glow lime intensificado.
+- Respeta `prefers-reduced-motion`.
+
+### Nosotros · CTA "¿Trabajamos juntos?"
+- **Eliminado** el botón `← Volver a la web` (anchor `#cta-back` borrado del HTML + del JS de i18n).
+- Calendario dentro de `.btn-wa` actualizado al estilo **bolder Lordicon 28-calendar** (calendario con un "1" dibujado dentro, strokes 2.4-2.6).
+- Icono con perspectiva 3D `rotateX(14deg) rotateY(-14deg)` + dual `drop-shadow`. Hover endereza y escala 1.08. Sin background propio (transparente sobre el botón blanco). El texto "Agenda tu cita" sigue activo y traducido (`#cta-wa-btn` → `t.cta.wa`).
+
+### Hero index — borrado del badge "001 · Automatización con IA"
+- Eliminado `<span class="hero-badge" id="hb">` del HTML + de la timeline GSAP (`#hh` ahora abre la entrada secuencial) + de `setLanguage`.
+
+### Eyebrows/badges de sección — ocultos globalmente
+- Añadido a ambas páginas: `.eyebrow, .hero-badge { display: none !important; }`.
+- Cubre:
+  - **index.html**: 002 Servicios, 003 Agentes, 004 Proceso, 005 Stack tecnológico, 006 Casos de éxito, 006A Beneficios, 006B Diferenciación, 007 Precios, 009 Contacto.
+  - **nosotros.html**: hero badge "Quiénes somos · Nyx Agency", 01 Nuestra historia, 02 Valores, 03 El equipo.
+- **Decisión deliberada**: `display: none` en CSS en lugar de borrar el HTML para que `getElementById('s2-eyebrow')` etc. en `setLanguage` sigan funcionando (no rompe i18n, solo oculta visualmente). El HTML se puede eliminar después si se quiere limpieza definitiva.
+
+### Footer (ambas páginas, 12 idiomas)
+- Borrado: span `#footer-copy2` "Hecho con IA. Operado por humanos." + su línea en `setLanguage`. Las claves `c2` siguen en el LANGS object como código muerto inofensivo.
+- Cambiado `c1` (12 idiomas): "© 2026 Nyx. Automatización con IA." → "© 2026 Nyx. Todos los derechos reservados.":
+  - es: Todos los derechos reservados / en: All rights reserved / pt: Todos os direitos reservados / fr: Tous droits réservés / de: Alle Rechte vorbehalten / it: Tutti i diritti riservati / nl: Alle rechten voorbehouden / ru: Все права защищены / zh: 版权所有 / ja: 全著作権所有 / ko: 모든 권리 보유 / ar: جميع الحقوق محفوظة.
+
+### Modales legales — Privacy + T&C
+- **Botones del footer mantenidos** (`#privacy-btn` y `#tc-btn`) — siguen abriendo los modales.
+- **Vaciado el contenido** de `<div class="pm-body">` y `<div class="tcm-body">` en ambas páginas (sólo el cuerpo, header con título y X de cerrar permanecen).
+- Pendiente: rellenar el contenido cuando se quiera.
+
+### i18n — Auditoría pendiente para mañana
+**Identificadas secciones con texto hardcodeado en español que NO se traduce al cambiar de idioma**:
+- `.footer-nav` (5 links): Servicios/Proceso/Casos/Precios/Nosotros (index) y Servicios/Casos/Precios/Inicio (nosotros).
+- **#servicios** — los `.svc-tag` (Discovery, ROI, Plan 90 días, Agentes IA, Automations, A medida, Knowledge transfer, Sin dependencia, Criterio propio).
+- **#agentes** — todo el contenido: heading, 6 dep-cards × 5 items + 4 dep-stats (~40 strings).
+- **#proceso** — los 4 `.step-h`/`.step-p` (los datos están en `LANGS.s3.steps` pero no están wired al DOM).
+- **#casos** — 3 caso-cards (sector + heading + paragraph + 3 metrics).
+- **#beneficios** — `.bnf-idle-text` + 5 etiquetas de nodo + datos del panel activo.
+- **#diferenciacion** — 6 celdas comparativas (label "Otros"/"Nyx" + h + p).
+- **#precios** — toggle "Mensual"/"Anual", 3 plan tiers, todas las features list, notas, CTAs.
+- En **nosotros.html**: footer-nav + posibles textos no marcados con id.
+
+**Plan propuesto** (por discutir mañana):
+- Patrón `data-i18n="seccion.clave"` con un walker genérico añadido a `setLanguage`:
+  ```js
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    const val = key.split('.').reduce((o,k) => o?.[k], LANGS[code]?.t || {});
+    if (val != null) el.innerHTML = val;
+  });
+  ```
+- Añadir un objeto `t: { ... }` flat per-language en `LANGS` con todas las traducciones nuevas.
+- Anotar el HTML con `data-i18n=...`.
+- Estimación: ~80 strings nuevos × 12 idiomas ≈ 1000 traducciones. Hacer en fases (Agentes + Precios + Proceso + Footer-nav primero, resto después).
+
+### Estado actual i18n (pre-fix)
+Sí están traducidos: nav (services/process/cases/pricing/about/cta), hero h1/sub/metrics, s2 cards (h+p), s3 título+párrafo (no los pasos), s4 título+párrafo, s5 título+párrafo + cases array, s6 título+párrafo+toggle text+plans array, s8 (h+p+cta), footer-copy1, hero-cta aria-label en nosotros.
+
+---
+
+## Changelog 2026-05-06 — i18n masivo + nav compact pill + voice agent en nosotros + sección equipo robot 3D
+
+### Server fix
+- **Bug Unicode cp1252 (Windows)**: `server.py` reventaba al imprimir `→`. Reemplazado por `->` ASCII en los `print(...)` de arranque (líneas ~434, 440, 447). Ahora `uvicorn server:app --port 8001 --reload` arranca limpio.
+
+### i18n masivo — walker genérico `data-i18n`
+- Implementado en **ambas páginas** el walker que se discutió ayer:
+  ```js
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    const val = key.split('.').reduce((o,k) => o?.[k], LANGS[code]?.t || {});
+    if (val != null) el.innerHTML = val;
+  });
+  ```
+- Añadido objeto `t: { ... }` per-language en `LANGS` con las nuevas claves: `agentes`, `bnf`, `s2.tags`, `footerNav`, `footerLegal`, `equipo`, etc.
+- HTML anotado con `data-i18n="..."` en ~60 elementos: `.svc-tag`, `#agentes` completo (heading + 6 dep-cards + 4 dep-stats), `.footer-nav`, `.bnf-*`, etc.
+- **Total**: ~720 traducciones nuevas wired (~60 strings × 12 idiomas).
+- **Pendiente todavía**: casos metrics labels (3×3), voice modal, diferenciación, pricing notes/features detail.
+
+### Nav compact pill mode (scroll)
+- En ambas páginas, al scrollear el nav pasa de `width:100%` a una **pill centrada** flotando en el medio:
+  ```css
+  #nav { position:fixed; top:0; left:0; right:0; margin:0 auto; max-width:100%;
+         transition: top .5s, max-width .5s, padding .4s, background .35s, ...; }
+  #nav.compact {
+    top: 1rem;
+    max-width: min(900px, calc(100% - 2rem));
+    background: rgba(3,7,18,.78);
+    backdrop-filter: blur(18px) saturate(140%);
+    border-radius: 999px;
+  }
+  ```
+- **Decisión clave**: animar `max-width` (no `left/right/transform`) porque los valores `auto` no se interpolan y producían un salto visual brusco.
+- Toggle vía un segundo `ScrollTrigger` con `start:'top -70vh'` que hace `nav.classList.toggle('compact', self.isActive)`.
+
+### nosotros.html · Nav: añadidos "Inicio" y "Proceso"
+- Antes solo tenía Servicios/Casos/Precios. Ahora tiene **Inicio** (primer link, `href="index.html"`) + **Proceso** (apunta a `index.html#proceso`).
+- Recuperado el icono chevron-3D animado en el hero para volver al inicio (que se había perdido en una iteración intermedia).
+- Añadidas claves `nav.home` y `nav.process` a los 12 idiomas + wired vía `data-i18n`.
+
+### nosotros.html · Voice agent (AdrIAn) portado
+- Antes el voice FAB + modal solo existía en `index.html`. Ahora también está en `nosotros.html`.
+- Copiados: CSS scopeado bajo `.voice-modal` y `#voice-fab`, HTML del modal (`#voice-overlay`), wiring del lazy import dinámico (`import('/voice/agent.js?v=...')`), gestión de cierre (X / Escape / click fuera) que invoca `agent.stop()`.
+- Añadidas las fonts **Syne** y **JetBrains Mono** al `<link>` de Google Fonts (eran exclusivas de index hasta ahora).
+
+### Sección "El equipo" — evolución larga hasta robot Three.js
+Iteraciones (en orden):
+1. **Video** original → reemplazado por imagen `YOPANIME.jpg` (con `mix-blend-mode: multiply` para quitar fondo blanco).
+2. Imagen actualizada a `YOPANIME.png` (transparente). Quitado `mix-blend-mode`, añadido `drop-shadow` para profundidad 3D.
+3. Añadida **lámpara dibujada en SVG** encima del personaje, con animación de luz cálida.
+4. Reemplazado todo el bloque por **Spline 3D** (robot importado desde `spline-viewer`).
+5. Quitado Spline (incluyendo el watermark "Built with Spline"). Sustituido por **vanilla Three.js** que recrea el mismo robot manualmente.
+
+**Estado final actual** — Three.js robot custom:
+- Importmap: `"three": "https://unpkg.com/three@0.160.0/build/three.module.js"`.
+- Cuerpo: `ExtrudeGeometry` con shape redondeada (bw 1.85, bh 1.18, br 0.22) + bevels suaves.
+- Pantalla con `CanvasTexture` (gradiente radial púrpura→magenta).
+- Ojos: `SphereGeometry` con `MeshPhysicalMaterial` (clearcoat 1.0).
+- Cuello: cilindro con forma de embudo + cilindro fino.
+- **Plataforma** debajo del cuerpo: `BoxGeometry(1.55, 0.72, 1.0)` en `position.y = -1.45`. Con plano de glow púrpura por debajo (`additive blending`).
+- **Sub-grupo `head`**: el cuerpo + pantalla + ojos viven en un `THREE.Group()` separado de la plataforma. La plataforma queda fija; solo la cabeza rota con el ratón.
+- **Mouse tracking** (corregido tras varias iteraciones):
+  ```js
+  // Usar bounds del wrap, NO window.innerWidth/Height
+  const r = wrap.getBoundingClientRect();
+  const dx = (clientX - centerX) / (r.width / 2);
+  targetRY = clampedDx * 0.7;   // ±40° yaw
+  targetRX = -clampedDy * 0.4;  // ±23° pitch
+  // Aplicado solo a head, no al robot completo:
+  head.rotation.y += (targetRY - head.rotation.y) * 0.09;
+  head.rotation.x += (targetRX - head.rotation.x) * 0.09;
+  ```
+- Cámara alejada para que el robot se vea pequeño: `position.set(0, 0.4, 11.5)`, FOV 26°, `robot.scale.setScalar(0.78)`.
+
+### Sección "El equipo" — capa de texto morphing
+- Componente vanilla portado de **21st.dev liquid-text** sobre la pantalla del robot.
+- Textos en rotación: `['Construyo','Automatizo','Diseño','Optimizo','Resuelvo','Entrego']`.
+- Dos `<span>` apilados (`.morph-1` y `.morph-2`) con `filter: url(#morph-threshold) blur(.6px)` — efecto de fundido líquido.
+- SVG `<feColorMatrix>` con threshold como filtro de morph, `morphTime=1.5s`, `cooldownTime=0.5s`. Cada span recibe blur+opacity dinámicos.
+- El texto va **detrás** del robot (z-index) pero visible.
+
+### Sección "El equipo" — fade visual a sección siguiente
+- `.equipo-robot-wrap` con CSS mask:
+  ```css
+  mask-image: linear-gradient(to bottom, black 0%, black 78%, transparent 100%);
+  ```
+- La plataforma del robot se difumina hacia la sección de abajo en lugar de cortar bruscamente.
+
+### Sección "El equipo" — limpieza visual
+- **Borrado** el `<h2>` "La persona detrás de Nyx." del HTML (último cambio del día). La eyebrow "03 · El equipo" se mantiene (oculta globalmente vía `display:none` del cambio del 2026-05-05, pero el span sigue en el DOM para no romper i18n).
+- Resultado: la sección equipo es ahora **solo** el robot 3D + el morph text. Limpio y minimalista.
+
+### Bugs fix durante la sesión
+- **`founder-role` getElementById null**: `setLanguage` abortaba completo al hacer `.textContent` sobre un elemento que ya no existía (era class, no id, después de un redesign). Añadidos `if (el)` defensivos en todos los accesos por id de la sección equipo (`founder-role`, `bio-h`, `bio-p1/2/3`).
+- **Cache aggressive**: varias veces el usuario tuvo que hacer Ctrl+F5 / hard refresh porque los cambios CSS no aparecían — recordatorio para el futuro.
+
+### Estado i18n actualizado (post-2026-05-06)
+**Wired** (todo se traduce):
+- nav completo (incluido `nav.home` y `nav.process` en nosotros), hero h1/sub/metrics, s2 cards (h+p) + tags, s3 (título + párrafo + 4 pasos), s4 (título+párrafo), s5 (título+párrafo + cases), s6 (título+párrafo+toggle+plans), s8 (h+p+cta), footer (copy1 + footer-nav + footerLegal), hero-cta aria-label, agentes completo (~40 strings), beneficios (`.bnf-*`), equipo (eyebrow).
+
+**Pendiente** (todavía hardcodeado en español):
+- Casos metrics labels (3 cards × 3 metrics = 9 labels)
+- Voice modal (estados + textos del UI)
+- Diferenciación (6 celdas: label "Otros"/"Nyx" + h + p)
+- Pricing notes y features detail (más allá de los 3 plan names)
+
+---
+
+## Changelog 2026-05-07 — Sesión maratón: SEO, deletes, casos v2, mobile responsive overhaul
+
+### 1. SEO & assets — preparar la web para producción
+**Archivos nuevos en raíz**:
+- `favicon.svg` (304B vectorial) — N estilizada con punto lime accent sobre cuadrado navy. Escala perfecto a cualquier DPI.
+- `og-image.png` (39KB, 1200×630) — generado con PIL: navy + glow sutil + "Nyx" titular grande + accent lime line + "Automatización con IA · para PYMEs" + URL footer. Para preview de WhatsApp/LinkedIn/Twitter.
+- `robots.txt` — `Allow: /`, `Disallow: /api/, /twiml/, /twilio/, /media-stream`, `Sitemap: https://nyx-agency.es/sitemap.xml`
+- `sitemap.xml` — `/` (priority 1.0, weekly) + `/nosotros.html` (0.8, monthly)
+
+**HTML — meta tags añadidos en ambas páginas**:
+- `<link rel="canonical">` apuntando a la URL absoluta
+- `<link rel="icon" type="image/svg+xml" href="/favicon.svg">` + apple-touch-icon
+- 8 meta `og:*` (title, description, type, url, image, image:width/height, locale, site_name)
+- 4 meta `twitter:*` (card=summary_large_image, title, description, image)
+- En `index.html`: bloque `<script type="application/ld+json">` con schema `ProfessionalService` (founder Adrian Davila, areaServed España, email growth@nyx-agency.es, serviceType array, sameAs Cal.com)
+
+**`server.py` — 5 rutas nuevas** para servir los assets en raíz: `/favicon.svg`, `/favicon.ico` (alias→svg), `/og-image.png`, `/robots.txt`, `/sitemap.xml`. Todas con FileResponse + media_type correcto.
+
+### 2. Decisión de despliegue: Easypanel sí, Vercel NO (por ahora)
+**Bloqueador técnico**: el voice telefónico Twilio usa WebSocket (`/media-stream`) y Vercel Serverless **no soporta WebSockets**. El voice del FAB en la web sí podría funcionar en Vercel (usa token efímero + Gemini Live directo desde browser), pero el split entre web estática + voice backend complica la arquitectura.
+
+**Recomendación documentada**: Easypanel + dominio `nyx-agency.es`. La web ya está dockerizada y probada. Compra dominio + apuntar A record + Let's Encrypt automático. Tiempo total ~30 min.
+
+### 3. Secciones eliminadas (focus + simplificación)
+
+#### Sección de Precios (007 PRECIOS) — borrada completa
+- Sección HTML completa (toggle mensual/anual + 3 cards Starter/Growth/Scale)
+- CSS bloque "006 PRECIOS" + 3 reglas responsive + bloque media query 600px específico (~250 líneas CSS total)
+- Link Precios en nav principal + footer-nav (en index + nosotros)
+- IIFE completo del Electric Border canvas animation (114 líneas — solo se usaba aquí, ahora código muerto)
+- IIFE del toggle pricing
+- Bloque `// Section 6` del JS i18n (8 referencias DOM a `s6.*` + plans loop)
+- Línea `getElementById("nav-pricing")` en `setLanguage` (en ambas páginas)
+
+**Quedó como código muerto inocuo**: claves `s6` y `nav.pricing`/`footerNav.pricing` en `LANGS` de los 12 idiomas. El walker `data-i18n` ignora claves cuyos elementos no existen.
+
+#### Sección Agentes "27 especialistas. Una sola factura." — borrada
+- Bloque CSS completo "003 AGENTES / DEPARTAMENTOS" (`.dep-grid`, `.dep-card`, `.dep-head`, `.dep-name`, `.dep-badge`, `.dep-list`, `.dep-stat` + 3 media queries)
+- Sección HTML completa: heading "27 especialistas" + 6 dep-cards (Ventas, Marketing, Atención, Admin, RRHH, Dirección) con 27 items + 4 dep-stats finales
+- `<hr class="sec-divider">` que la precedía
+
+**Quedaron como código muerto inocuo**: claves `agentes.*` en `LANGS` (12 idiomas).
+
+### 4. Sección "Casos" rediseñada — Empresas que ya operan diferente
+
+**Antes**: 3 caso-cards con métricas individuales tipo (Fitness +240% / Salud −80% / Comercio −60%).
+
+**Ahora — replica adaptada del modelo 21st.dev "Resultados reales"**:
+- **Header centrado**: eyebrow `RESULTADOS REALES` púrpura `#a78bfa` (letter-spacing .24em) + h2 "Empresas que ya **operan diferente.**" (segunda línea en accent púrpura)
+- **3 stats agregados** (`.casos-v2-stats` grid 3 cols): `+40%` eficiencia operativa / `−60%` tareas repetitivas / `3×` capacidad atención. Caja con borde púrpura sutil + glow radial. Cada stat con dot pulsante púrpura arriba a la izquierda.
+- **Stack de 3 testimonials en abanico** (`.casos-v2-stack`): card frente sin rotar + back1 rotada `+5°` con blur leve + back2 rotada `−7°` con blur mayor. Avatares circulares blancos con halo púrpura.
+
+**Marcas inventadas (logos SVG inline)** — testimonios ficticios con copy genérico:
+- **PULSEFIT** (front): pulso cardíaco horizontal estilizado. Testimonio: Carlos Méndez — Director Comercial en Pulsefit
+- **LUMEA Clinic** (back1): luna creciente. Testimonio: Laura Bermejo — Coordinadora en Lumea Clinic
+- **NORDIKA** (back2): silueta de montañas + sol. Testimonio: Daniel Ortega — Founder de Nordika
+
+⚠️ **Disclaimer pendiente**: las 3 marcas son completamente ficticias. Antes de producción **validar** que no chocan con marcas reales registradas en España.
+
+**Cards más estrechas**: `max-width: 580px` → `420px` (formato tarjeta vertical), padding interno `3rem 2rem`, quote font `1rem` con max-width 320px.
+
+**i18n cleanup**: borrado el bloque `// Section 5` del JS porque el nuevo h2 con `<br>` y `<span class="accent">` no encajaba con `t.s5.h2`. La sección queda hardcoded en español por ahora.
+
+### 5. Cards arrastrables (swipe-deck manual con Pointer Events)
+
+**Implementación**:
+- Drag con `pointerdown` + `setPointerCapture` para no perder el evento si el cursor sale de la card
+- `pointermove` actualiza `transform: translate(dx, dy*0.4) rotate(dx*0.06deg)` + opacity fade según distancia
+- `pointerup`/`pointercancel`: si `|dx| > 110px` → fly-out (450ms hacia el lado del swipe + 28° rotación) y reorder al fondo del stack. Si no, snap-back (320ms).
+- Bloqueo `animating` durante anim para no encadenar drags rotos
+- `touch-action: none` en `.csv2-card-front` impide scroll vertical accidental
+- `pointer-events: none` en hijos (avatar/quote/author) → click siempre captura la card padre
+
+**Bug "drag pegado" — root cause + fix iterativo**:
+- **V1 bug**: en snap-back, el `setTimeout` chequeaba `if (dragCard)` pero `dragCard` ya había sido seteado a `null` justo después → la clase `csv2-flying` (con transition activa) NO se quitaba nunca → siguiente drag se animaba en vez de seguir el cursor.
+- **V2 fix**: capturar `const card = dragCard` en variable local antes del setTimeout. Bloqueo `animating = true` también en snap-back. Limpieza de transform/opacity inline al final.
+- **V3 (final) — rewrite robusto**:
+  - Tracking de `pointerId` en módulo: `onMove`/`onUp` filtran por id (multi-touch safe)
+  - `clearGlobalListeners()` quita los 3 listeners (`pointermove`, `pointerup`, `pointercancel`) **siempre**, sin depender del `{ once: true }` que dejaba zombies
+  - `onDown` llama a `clearGlobalListeners()` antes de registrar nuevos → mata zombies de drags abortados
+  - `releasePointerCapture` explícito en up
+  - Guard `animating || dragging` en onDown
+  - Reset completo en early-return de onUp
+
+**Hint UX visible y persistente**:
+- Pill con borde púrpura sólido (`rgba(167,139,250,.45)`), fondo `rgba(11,8,24,.92)`, texto en accent
+- 2 flechas blancas a los lados (← Arrastra para ver más →) con animación slide-out de 1.6s en bucle
+- Halo pulsante box-shadow púrpura (2.6s)
+- Posicionado a `bottom: -3.25rem` del stack
+- **Persiste siempre** — no se oculta tras swipe (UX explícita por petición del user)
+
+### 6. Tecnologías mobile — Slider de logos con progressive blur
+
+**Solo en mobile** (`@media max-width: 720px`): los 2 carruseles desktop de chips se ocultan. En su lugar aparece un slider compacto:
+- Container 90px alto, **sin background ni border** (totalmente integrado en la sección)
+- 10 logos en bucle infinito (Claude AI, n8n, Supabase, OpenAI, WhatsApp, Stripe, Make, Notion, HubSpot, Twilio) — animación 18s linear infinite
+- Cada logo: dot gris muted + nombre en `.92rem` Inter Medium
+- **Progressive blur en bordes laterales** (4 layers apilados estilo `motion-primitives/progressive-blur`):
+  - Layer 1: blur `0.5px`, mask 0→50%
+  - Layer 2: blur `1.5px`, mask 0→35%
+  - Layer 3: blur `3px`, mask 0→22%
+  - Layer 4: blur `5px`, mask 0→12%
+
+  Cero JS extra, solo CSS `backdrop-filter` + `mask-image`.
+
+**Iteración descartada**: primera versión tenía sparkles canvas + horizonte púrpura curvo + glow radial púrpura (estilo modelo 21st.dev "clients"). El usuario pidió simplificar → quitar background, dejar solo logos + blur edges.
+
+### 7. Responsive overhaul masivo — layouts horizontales mantenidos en mobile
+
+**Filosofía aplicada por petición del usuario**: las secciones que en desktop están "lado a lado" deben mantener ese layout en mobile (no colapsar a 1 columna). Solo compactar tamaños/padding.
+
+**Forzados a multi-columna SIEMPRE en mobile** (antes colapsaban a 1 col):
+
+| Sección | Antes mobile | Ahora mobile |
+|---|---|---|
+| Hero metrics (4 stats) | 4→2→1 col | **4 cols siempre** + clamp font-size + padding compactado |
+| Casos · 3 stats agregados | 1 col | **3 cols siempre** (font 1.75→1.4rem, dot 4-5px) |
+| Proceso (4 pasos) | 1 col | **2×2 grid encuadrado** (con bordes hairline + radius) |
+| Diferenciación (Otros vs Nyx) | 1 col | **2 cols siempre** (padding compactado) |
+| Historia (nosotros) | 2→1 col en 800px | desktop 2 cols, **mobile apila correctamente** (texto arriba, stats 2×2 abajo) |
+| Valores 3 cards (nosotros) | 2+1 layout (2 arriba, 1 sola abajo) | **3 cols SIEMPRE** (en línea) |
+| Servicios sticky scroll | 1 col en 880px | **rail+panel 2 cols siempre** con sticky activo (rail 84-64px en mobile, IntersectionObserver sincroniza el item activo) |
+
+**Anti-cortes globales**: aplicado en `body` de ambas páginas: `hyphens: none`, `-webkit-hyphens: none`, `overflow-wrap: break-word`, `word-break: normal`. Palabras siempre enteras, sin guiones automáticos extraños. Re-aplicado a nivel de elemento en `.cmp-cell`, `.step`, `.valor-card`, `.stat-item`, `.historia-text`.
+
+**Breakpoints añadidos donde faltaban**:
+- Casos v2: 720px refinado, **480px nuevo**, **360px nuevo**
+- Stack testimonials: 720px (height 360, max-width 88%) → 480px (height 340, padding compactado, hint reposicionado) → 360px (rotaciones traseras mínimas ±3°)
+- Beneficios orbital: 880px (orbital 340px / r=110), 480px (290px / r=92), 360px (260px / r=82)
+
+### 8. Nav mejoras
+- **Mobile nav fix**: la regla `@media (max-width: 700px) { .nav-links li:not(:last-child):not(.lang-li) { display: none; } }` ocultaba TODOS los links del nav en mobile excepto CTA + lang. Ahora se muestran todos compactos:
+  - ≤700px: font `.76rem`, gap `1rem`
+  - ≤540px: font `.7rem`, gap `.75rem` (nav.compact baja a `.68rem`)
+  - ≤420px: font `.65rem`, gap `.55rem`, lang-button `.65rem`
+  - `white-space: nowrap` en cada link → nunca desbordan
+- **Nav compact pill (al hacer scroll) — separación logo↔links**:
+  - `max-width` 900 → **960px**
+  - `padding` `.55rem 1.5rem` → `.55rem 1.75rem .55rem 1.5rem`
+  - `gap: 2rem` flex en nav.compact (separa los 3 grupos: logo / links / CTA+lang)
+  - **Separador visual**: el logo `NYX` en compact tiene `border-right: 1px var(--border)` + padding/margin → divisor sutil que separa visualmente del primer link "Servicios"
+
+### 9. Beneficios "Lo que ganas al automatizar con Nyx" — orbital reducido en mobile
+
+**Antes**: `.bnf-stage` con `width: min(520px, 100%)` y `--r: 200px` (radio órbita) → en mobile pequeño ocupaba prácticamente todo el viewport, dejando poco espacio para el panel de texto del nodo activo.
+
+**Ahora — escala progresiva**:
+
+| Breakpoint | Width | Radio | Core | Nodos |
+|---|---|---|---|---|
+| Desktop | min(520px, 100%) | 200px | 64px | 60px |
+| ≤880px | **min(340px, 78%)** | **110px** | 46px | 48px |
+| ≤480px | **min(290px, 72%)** | **92px** | 36px | 40px |
+| ≤360px | **min(260px, 78%)** | **82px** | 30px | 36px |
+
+El orbital ocupa ~1/3 del viewport mobile, el panel de texto (número grande + título + párrafo) queda como elemento principal y bien legible al hacer click en cualquier nodo.
+
+### 10. Server LAN access para testing móvil/tablet
+- Server uvicorn ya escucha en `0.0.0.0:8001` (ningún cambio necesario)
+- IP local detectada: **192.168.1.132** (Wi-Fi) — URL para móvil/tablet en misma red: `http://192.168.1.132:8001`
+- Si Windows Firewall bloquea, regla manual con admin:
+  ```powershell
+  New-NetFirewallRule -DisplayName "Nyx Web Dev (8001)" -Direction Inbound -LocalPort 8001 -Protocol TCP -Action Allow
+  ```
+
+### Estado del proyecto post 2026-05-07
+- **Líneas index.html**: 3865 (inicio sesión) → ~3500 (fin sesión) tras eliminar Precios + Agentes y reorganizar
+- **Líneas nosotros.html**: ~2300 (sin cambios estructurales grandes, solo CSS responsive overrides)
+- **Server**: estable, hot-reload funcionando, healthcheck `/healthz` OK, LAN OK
+- **SEO ready**: favicon + og-image + canonical + robots + sitemap + JSON-LD desplegados
+- **Bloqueadores legales pendientes**: modal Privacidad y modal T&C siguen vacíos (críticos para RGPD antes de producción con voice agent capturando emails/teléfonos)
+- **Pendiente decisión**: dominio (nyx-agency.es) + producción (Easypanel)
+- **Marcas testimonios**: validar Pulsefit / Lumea / Nordika contra registros reales antes de deploy
+

@@ -1,0 +1,48 @@
+# Secrets — NUNCA subir
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Vercel
+.vercel/
+
+# Build / cache
+node_modules/
+dist/
+.cache/
+
+# Local dev assets
+images/compose.py
+images/founder_*.jpg
+images/founder_result.jpg
+
+# Claude / dev memory (no necesita ir al repo público)
+.claude/

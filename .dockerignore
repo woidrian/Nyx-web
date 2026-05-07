@@ -1,0 +1,13 @@
+.env
+.env.local
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+.claude
+.vscode
+node_modules
+images/compose.py
+images/founder_*.jpg
+images/founder_result.jpg

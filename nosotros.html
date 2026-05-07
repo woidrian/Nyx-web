@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiénes Somos — Nyx</title>
+  <meta name="description" content="Nyx es una agencia de automatización con IA fundada por Adrian Davila. Diseñamos sistemas que eliminan el trabajo repetitivo en PYMEs españolas.">
+  <link rel="canonical" href="https://nyx-agency.es/nosotros.html">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/favicon.svg">
+  <meta name="theme-color" content="#030712">
+
+  <meta property="og:title" content="Quiénes Somos — Nyx">
+  <meta property="og:description" content="Nyx es una agencia de automatización con IA fundada por Adrian Davila. Sistemas que eliminan el trabajo repetitivo.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nyx-agency.es/nosotros.html">
+  <meta property="og:image" content="https://nyx-agency.es/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="Nyx Agency">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Quiénes Somos — Nyx">
+  <meta name="twitter:description" content="Agencia de automatización con IA fundada por Adrian Davila.">
+  <meta name="twitter:image" content="https://nyx-agency.es/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&family=Space+Grotesk:wght@600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+  <!-- Three.js (módulo) — para el robot 3D de la sección Equipo (recreado vanilla) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #030712;
+    --bg2:    #070d1c;
+    --text:   #f1f5f9;
+    --muted:  #64748b;
+    --border: rgba(241,245,249,0.07);
+    --bmd:    rgba(241,245,249,0.13);
+    --fh:     'Space Grotesk', system-ui, sans-serif;
+    --fb:     'Inter', system-ui, sans-serif;
+    --w:      1200px;
+    --px:     clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  html { scroll-behavior: smooth; background: var(--bg); }
+
+  /* Body transparente para que el canvas WebGL global (#bg-webgl) se vea
+     como fondo del site. <html> mantiene el color de fallback. */
+  body {
+    background: transparent;
+    color: var(--text);
+    font-family: var(--fb);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    /* Anti-cortes raros: palabras enteras, sin guiones automáticos */
+    hyphens: none;
+    -webkit-hyphens: none;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  /* Canvas WebGL fijo, detrás de todo el contenido */
+  #bg-webgl {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    display: block;
+    touch-action: none;
+    filter: contrast(1.1) brightness(0.9);
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* NAV */
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+    margin: 0 auto;
+    max-width: 100%;
+    padding: 1.25rem var(--px);
+    display: flex; align-items: center; justify-content: space-between;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 0;
+    transition:
+      top .5s cubic-bezier(.4,0,.2,1),
+      max-width .5s cubic-bezier(.4,0,.2,1),
+      padding .4s cubic-bezier(.4,0,.2,1),
+      background .35s ease,
+      border-color .35s ease,
+      border-radius .4s cubic-bezier(.4,0,.2,1),
+      box-shadow .35s ease;
+    will-change: max-width, top, padding;
+  }
+  /* Nav compacto al pasar la primera sección — pill flotante centrada (max-width animada, posición constante) */
+  #nav.compact {
+    top: 1rem;
+    max-width: min(960px, calc(100% - 2rem));
+    padding: .55rem 1.75rem .55rem 1.5rem;
+    gap: 2rem;
+    background: rgba(3,7,18,.78);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(18px) saturate(140%);
+    border-color: var(--border);
+    border-radius: 999px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.35);
+  }
+  #nav.compact .nav-logo { font-size: 1rem; padding-right: 1rem; border-right: 1px solid var(--border); margin-right: .5rem; }
+  #nav.compact .nav-links { gap: 1.5rem; }
+  #nav.compact .nav-links a { font-size: .8125rem; }
+  #nav.compact .nav-cta { transform: perspective(160px) rotateX(10deg) rotateY(-10deg) scale(.78); }
+  #nav.compact .lang-btn { transform: scale(.88); transform-origin: right center; }
+  .nav-logo { transition: font-size .35s ease; }
+  .nav-links { transition: gap .35s ease; }
+  .nav-links a { transition: color .2s, font-size .35s ease; }
+  .lang-btn { transition: transform .35s ease; }
+  .nav-logo { font-family: var(--fh); font-size: 1.1875rem; font-weight: 700; letter-spacing: -.03em; }
+  .nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
+  .nav-links a { font-size: .875rem; color: var(--muted); transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    color: var(--text) !important;
+    background: transparent !important;
+    padding: 0 !important; border-radius: 0 !important;
+    transform: perspective(160px) rotateX(10deg) rotateY(-10deg);
+    transition: transform .3s cubic-bezier(.4,0,.2,1) !important;
+    animation: calGlow 2.8s ease-in-out infinite;
+  }
+  .nav-cta:hover {
+    opacity: 1 !important;
+    transform: perspective(160px) rotateX(0) rotateY(0) scale(1.12);
+  }
+  .nav-cta .cal-icon { width: 34px; height: 34px; overflow: visible; }
+  .nav-cta .cal-icon .cal-body { stroke: #ffffff; }
+  .nav-cta .cal-icon .cal-dot {
+    fill: #ffffff;
+    transform-box: fill-box; transform-origin: center;
+    animation: calDot 2.4s ease-in-out infinite;
+  }
+  .nav-cta .cal-icon .d1 { animation-delay: 0s; }
+  .nav-cta .cal-icon .d2 { animation-delay: .15s; }
+  .nav-cta .cal-icon .d3 { animation-delay: .30s; }
+  .nav-cta .cal-icon .d4 { animation-delay: .45s; }
+  .nav-cta .cal-icon .d5 { animation-delay: .60s; }
+  .nav-cta .cal-icon .d6 { animation-delay: .75s; }
+  .nav-cta .cal-icon .cal-plus-bg { fill: #0a0a0a; stroke: #c8ff00; }
+  .nav-cta .cal-icon .cal-plus-h,
+  .nav-cta .cal-icon .cal-plus-v { stroke: #c8ff00; }
+  .nav-cta .cal-icon .cal-plus-grp {
+    transform-box: fill-box; transform-origin: center;
+    animation: calPlus 1.8s ease-in-out infinite;
+  }
+  .nav-cta .cal-icon .cal-ping {
+    fill: none; stroke: #c8ff00;
+    transform-box: fill-box; transform-origin: center;
+    animation: calPing 2s ease-out infinite;
+  }
+  @keyframes calGlow {
+    0%, 100% { filter: drop-shadow(0 2px 4px rgba(0,0,0,.45)) drop-shadow(0 0 5px rgba(200,255,0,.20)); }
+    50%      { filter: drop-shadow(0 2px 4px rgba(0,0,0,.45)) drop-shadow(0 0 16px rgba(200,255,0,.70)); }
+  }
+  @keyframes calDot {
+    0%, 100% { opacity: 1;   transform: scale(1); }
+    50%      { opacity: .25; transform: scale(.65); }
+  }
+  @keyframes calPlus {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.15); }
+  }
+  @keyframes calPing {
+    0%   { transform: scale(1);   opacity: .7; stroke-width: 1.8; }
+    100% { transform: scale(2.2); opacity: 0;   stroke-width: .4; }
+  }
+  /* Mobile nav: todos los links visibles, compactos */
+  @media (max-width: 700px) {
+    .nav-links { gap: 1rem; }
+    .nav-links a { font-size: .76rem; white-space: nowrap; }
+    #nav { padding: .9rem 1rem; }
+  }
+  @media (max-width: 540px) {
+    .nav-links { gap: .75rem; }
+    .nav-links a { font-size: .7rem; }
+    #nav { padding: .8rem .8rem; }
+    #nav.compact .nav-links { gap: .7rem; }
+    #nav.compact .nav-links a { font-size: .68rem; }
+  }
+  @media (max-width: 420px) {
+    .nav-links { gap: .55rem; }
+    .nav-links a { font-size: .65rem; }
+    .lang-btn { font-size: .65rem; padding: .35rem .55rem; }
+  }
+
+  /* Language dropdown */
+  .lang-li { position: relative; list-style: none; }
+  .lang-btn {
+    display: flex; align-items: center; gap: .375rem;
+    background: none; border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer;
+    padding: .35rem .625rem; border-radius: 6px;
+    font-size: .78rem; font-family: var(--fb);
+    transition: border-color .2s, color .2s; white-space: nowrap;
+  }
+  .lang-btn:hover { border-color: var(--bmd); color: var(--text); }
+  .lang-btn .lb-chev { transition: transform .2s; flex-shrink: 0; }
+  .lang-btn.open .lb-chev { transform: rotate(180deg); }
+  .lang-drop {
+    position: absolute; top: calc(100% + .5rem); right: 0;
+    background: #090e1c; border: 1px solid var(--bmd);
+    border-radius: 8px; padding: .375rem; list-style: none;
+    min-width: 152px; display: none; z-index: 500;
+    box-shadow: 0 16px 40px rgba(0,0,0,.65);
+    max-height: 290px; overflow-y: auto;
+  }
+  .lang-drop.open { display: block; }
+  .lang-drop li button {
+    display: flex; align-items: center; gap: .5rem;
+    width: 100%; background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    padding: .45rem .625rem; border-radius: 5px;
+    font-size: .8rem; font-family: var(--fb); text-align: left;
+    transition: background .15s, color .15s;
+  }
+  .lang-drop li button:hover { background: rgba(241,245,249,.06); color: var(--text); }
+  .lang-drop li button.active { color: var(--text); font-weight: 500; }
+
+  /* SHARED */
+  .sec { max-width: var(--w); margin: 0 auto; padding: 7rem var(--px); }
+  .sec-divider { border: none; border-top: 1px solid var(--border); }
+  .rv { opacity: 0; transform: translateY(28px); will-change: opacity, transform; }
+  .rv-left  { opacity: 0; transform: translateX(-56px); will-change: opacity, transform; }
+  .rv-right { opacity: 0; transform: translateX( 56px); will-change: opacity, transform; }
+
+  /* Eyebrow con número — ocultos a petición */
+  .eyebrow, .hero-badge { display: none !important; }
+
+  /* ─── Hero back: 3D chevron-steps-left animado ─── */
+  .hero-back-3d {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 88px; height: 56px;
+    padding: 0; background: transparent; border: 0;
+    transform: perspective(220px) rotateX(14deg) rotateY(18deg);
+    transform-style: preserve-3d;
+    transition: transform .35s cubic-bezier(.4,0,.2,1), filter .35s ease;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,.55))
+            drop-shadow(0 0 8px rgba(200,255,0,.18));
+    cursor: pointer;
+  }
+  .hero-back-3d:hover {
+    transform: perspective(220px) rotateX(0) rotateY(0) scale(1.08) translateX(-4px);
+    filter: drop-shadow(0 8px 14px rgba(0,0,0,.6))
+            drop-shadow(0 0 16px rgba(200,255,0,.55));
+  }
+  .hero-back-3d .chev-icon { width: 100%; height: 100%; overflow: visible; }
+  .hero-back-3d .chev {
+    fill: none;
+    transform-box: fill-box; transform-origin: center;
+    animation: chevPoint 1.6s cubic-bezier(.45,.05,.25,1) infinite;
+  }
+  .hero-back-3d .c1 { animation-delay: 0s;    opacity: 1; }
+  .hero-back-3d .c2 { animation-delay: .12s;  opacity: .85; }
+  .hero-back-3d .c3 { animation-delay: .24s;  opacity: .65; }
+  .hero-back-3d:hover .chev { animation-duration: 1s; }
+  @keyframes chevPoint {
+    0%, 100% { transform: translateX(0); }
+    35%      { transform: translateX(-5px); }
+    65%      { transform: translateX(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-back-3d, .hero-back-3d .chev { animation: none !important; }
+  }
+  .eyebrow {
+    align-items: center; gap: .75rem;
+    font-size: .7rem; font-weight: 500; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 1.25rem;
+  }
+  .eyebrow-n {
+    font-variant-numeric: tabular-nums; padding-right: .75rem;
+    border-right: 1px solid var(--bmd); font-size: .65rem;
+  }
+
+  .s-h2 {
+    font-family: var(--fh);
+    font-size: clamp(2.125rem, 4.5vw, 3.375rem);
+    font-weight: 700; letter-spacing: -.038em; line-height: 1.08;
+    margin-bottom: 1.5rem;
+  }
+  .s-p { font-size: 1.0625rem; color: var(--muted); line-height: 1.78; font-weight: 300; }
+
+  /* HERO */
+  #hero {
+    position: relative;
+    min-height: 80svh;
+    display: flex; align-items: center;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .hero-body { position: relative; z-index: 2; max-width: var(--w); margin: 0 auto; padding: 9rem var(--px) 5rem; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: .5rem;
+    border: 1px solid var(--bmd); padding: .35rem .9rem;
+    border-radius: 999px; font-size: .7rem; font-weight: 500;
+    letter-spacing: .07em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 2rem;
+  }
+  .hero-badge::before {
+    content: ''; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--muted); flex-shrink: 0;
+  }
+  .hero-h1 {
+    font-family: var(--fh);
+    font-size: clamp(3rem, 7.5vw, 6rem);
+    font-weight: 700; line-height: 1.0; letter-spacing: -.045em;
+    margin-bottom: 1.75rem; max-width: 14ch;
+  }
+  .hero-sub {
+    font-size: clamp(1rem, 1.8vw, 1.1875rem); color: var(--muted);
+    max-width: 520px; line-height: 1.78; font-weight: 300;
+    margin-bottom: 3rem;
+  }
+  .btn-fill {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--text); color: var(--bg);
+    padding: .875rem 1.625rem; border-radius: 8px;
+    font-size: .9375rem; font-weight: 600; letter-spacing: -.01em;
+    transition: opacity .2s, transform .2s;
+  }
+  .btn-fill:hover { opacity: .88; transform: translateY(-1px); }
+
+  /* HISTORIA — desktop 2 cols (texto + stats), mobile/tablet 1 col apilado */
+  .historia-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6rem; align-items: center;
+  }
+  @media (max-width: 900px) {
+    .historia-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+  @media (max-width: 480px) {
+    .historia-grid { gap: 2rem; }
+  }
+  .historia-text {
+    hyphens: none; -webkit-hyphens: none;
+    overflow-wrap: break-word; word-break: normal;
+  }
+  .historia-text h2 { margin-bottom: 2rem; }
+  .historia-text p { margin-bottom: 1.25rem; }
+  .historia-text p:last-child { margin-bottom: 0; }
+  @media (max-width: 720px) {
+    .historia-text p { font-size: .85rem; line-height: 1.55; margin-bottom: .9rem; }
+  }
+  @media (max-width: 420px) {
+    .historia-text p { font-size: .78rem; }
+  }
+
+  .stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  }
+  .stat-item {
+    background: var(--bg2); padding: 2rem;
+    hyphens: none; -webkit-hyphens: none;
+    overflow-wrap: break-word; word-break: normal;
+  }
+  @media (max-width: 720px) {
+    .stat-item { padding: 1.1rem .85rem; }
+    .stat-lbl { font-size: .68rem; line-height: 1.3; }
+  }
+  .stat-val {
+    font-family: var(--fh); font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700; letter-spacing: -.05em; line-height: 1;
+    display: block; margin-bottom: .375rem;
+  }
+  .stat-lbl { font-size: .85rem; color: var(--muted); font-weight: 300; line-height: 1.5; }
+
+  /* VALORES */
+  #valores { background: transparent; }
+  .valores-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    margin-top: 4rem;
+  }
+  /* Valores: 3 cols SIEMPRE — 3 cards en línea, sin colapso */
+  .valor-card {
+    background: var(--bg2); padding: 2.5rem;
+    hyphens: none; -webkit-hyphens: none;
+    overflow-wrap: break-word; word-break: normal;
+  }
+  .valor-n { font-size: .65rem; font-weight: 600; letter-spacing: .1em; color: var(--muted); margin-bottom: 1.5rem; }
+  .valor-icon { font-size: 1.5rem; margin-bottom: 1rem; opacity: .7; }
+  .valor-h { font-family: var(--fh); font-size: 1.125rem; font-weight: 600; letter-spacing: -.02em; margin-bottom: .625rem; }
+  .valor-p { font-size: .9375rem; color: var(--muted); line-height: 1.72; font-weight: 300; }
+  @media (max-width: 720px) {
+    .valor-card { padding: 1.5rem 1.1rem; }
+    .valor-n { margin-bottom: .9rem; font-size: .58rem; }
+    .valor-icon { font-size: 1.2rem; margin-bottom: .65rem; }
+    .valor-h { font-size: .92rem; margin-bottom: .4rem; line-height: 1.25; }
+    .valor-p { font-size: .78rem; line-height: 1.5; }
+  }
+  @media (max-width: 420px) {
+    .valor-card { padding: 1.1rem .75rem; }
+    .valor-h { font-size: .82rem; }
+    .valor-p { font-size: .72rem; }
+  }
+
+  /* EQUIPO — Stage con morph text arriba (layered) + robot 3D Three.js en el centro */
+  .equipo-stage {
+    position: relative;
+    width: 100%;
+    height: clamp(620px, 90vh, 880px);
+    margin-top: 4rem;
+    overflow: hidden;
+  }
+
+  /* CAPA DE TEXTO — absoluta, detrás del robot, fade-in al entrar en viewport */
+  .equipo-text-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(30px);
+    transition:
+      opacity 1.2s cubic-bezier(.25,.46,.45,.94),
+      transform 1.2s cubic-bezier(.25,.46,.45,.94);
+  }
+  .equipo-stage.in-view .equipo-text-layer {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* MORPHING TEXT — pinned arriba */
+  .morph-text {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 900px;
+    height: clamp(80px, 10vw, 140px);
+    filter: url(#morph-threshold) blur(.6px);
+  }
+  .morph-text span {
+    position: absolute;
+    inset: 0;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    font-family: var(--fh);
+    font-size: clamp(2.6rem, 7vw, 6rem);
+    font-weight: 800;
+    letter-spacing: -.045em;
+    line-height: 1;
+    color: #ffffff;
+    will-change: filter, opacity;
+  }
+
+  /* WRAP del robot 3D — fill el stage, foreground, fundido al fondo (la plataforma se diluye en la sección siguiente) */
+  .equipo-robot-wrap {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 78%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 0%, black 78%, transparent 100%);
+  }
+  .equipo-robot-wrap canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+  }
+
+  @media (max-width: 700px) {
+    .equipo-stage { height: clamp(540px, 80vh, 720px); }
+  }
+
+  /* CTA */
+  #cta { text-align: center; padding: 9rem var(--px); border-top: 1px solid var(--border); }
+  .cta-inner { max-width: 700px; margin: 0 auto; }
+  .cta-h {
+    font-family: var(--fh); font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700; letter-spacing: -.048em; line-height: 1.04;
+    margin-bottom: 1.5rem;
+  }
+  .cta-p { font-size: 1.0625rem; color: var(--muted); line-height: 1.78; margin-bottom: 2.5rem; font-weight: 300; }
+  .btn-back {
+    display: inline-flex; align-items: center; gap: .5rem;
+    border: 1px solid var(--bmd); padding: .875rem 1.625rem;
+    border-radius: 8px; font-size: .9375rem; font-weight: 500;
+    color: var(--muted); transition: color .2s, border-color .2s;
+    margin-left: 1rem;
+  }
+  .btn-back:hover { color: var(--text); border-color: rgba(241,245,249,.35); }
+  .cta-btns { display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .btn-wa {
+    display: inline-flex; align-items: center; gap: .75rem;
+    background: var(--text); color: var(--bg);
+    padding: 1rem 2rem; border-radius: 10px;
+    font-size: 1rem; font-weight: 600; letter-spacing: -.01em;
+    transition: opacity .2s, transform .2s;
+  }
+  .btn-wa:hover { opacity: .9; transform: translateY(-2px); }
+  .btn-wa svg { width: 22px; height: 22px; flex-shrink: 0; }
+  /* Icono calendario 3D (CTA "Agenda tu cita") */
+  .btn-wa .cal-3d {
+    width: 26px; height: 26px;
+    background: transparent;
+    transform: perspective(140px) rotateX(14deg) rotateY(-14deg);
+    transition: transform .35s cubic-bezier(.4,0,.2,1);
+    filter: drop-shadow(1px 1.5px 0 rgba(0,0,0,.35))
+            drop-shadow(0 2px 4px rgba(0,0,0,.15));
+    overflow: visible;
+  }
+  .btn-wa:hover .cal-3d {
+    transform: perspective(140px) rotateX(0) rotateY(0) scale(1.08);
+  }
+
+  /* FOOTER */
+  #footer { border-top: 1px solid var(--border); overflow: hidden; position: relative; }
+  .footer-top {
+    max-width: var(--w); margin: 0 auto;
+    padding: 3.5rem var(--px) 0;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 2rem; flex-wrap: wrap;
+  }
+  .footer-logo { font-family: var(--fh); font-size: 1.0625rem; font-weight: 700; letter-spacing: -.03em; }
+  .footer-nav { display: flex; gap: 2rem; list-style: none; flex-wrap: wrap; }
+  .footer-nav a { font-size: .875rem; color: var(--muted); transition: color .2s; }
+  .footer-nav a:hover { color: var(--text); }
+  .footer-wordmark {
+    display: block; font-family: var(--fh);
+    font-size: clamp(8rem, 22vw, 22rem);
+    font-weight: 700; letter-spacing: -.06em; line-height: .82;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(241,245,249,0.1);
+    user-select: none; pointer-events: none; padding: 0 var(--px);
+  }
+  .footer-bottom {
+    max-width: var(--w); margin: 0 auto;
+    padding: 1.5rem var(--px) 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap; border-top: 1px solid var(--border);
+  }
+  .footer-copy { font-size: .8rem; color: var(--muted); }
+  .footer-legal { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+  .footer-legal button { font-size: .8rem; color: var(--muted); background: none; border: none; cursor: pointer; padding: 0; transition: color .2s; }
+  .footer-legal button:hover { color: var(--text); }
+  @media (max-width: 700px) {
+    .footer-top { flex-direction: column; align-items: flex-start; }
+    .footer-bottom { flex-direction: column; }
+  }
+
+  /* SCROLL TO TOP */
+  #scroll-top {
+    position: fixed; bottom: 2rem; right: 2rem;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(15,20,30,.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    color: rgba(241,245,249,.75); border: 1px solid rgba(241,245,249,.12);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    z-index: 200; opacity: 0; transform: translateY(16px) scale(.85); pointer-events: none;
+    transition: opacity .3s, transform .3s, color .2s, border-color .2s;
+  }
+  #scroll-top.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  #scroll-top:hover { color: #f1f5f9; border-color: rgba(241,245,249,.3); transform: translateY(-3px) scale(1.05); }
+  #scroll-top:active { transform: translateY(0) scale(.96); }
+  #scroll-top svg { width: 18px; height: 18px; }
+
+  /* MODAL PRIVACIDAD — mismo estilo que el modal de T&C */
+  #privacy-overlay {
+    position: fixed; inset: 0; z-index: 900;
+    background: rgba(0,0,0,.7); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+    opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  #privacy-overlay.open { opacity: 1; pointer-events: auto; }
+  #privacy-modal {
+    background: #111; border: 1px solid rgba(255,255,255,.08); border-radius: 16px;
+    width: 100%; max-width: 720px; max-height: 85vh;
+    display: flex; flex-direction: column;
+    transform: translateY(24px) scale(.97); transition: transform .3s; overflow: hidden;
+  }
+  #privacy-overlay.open #privacy-modal { transform: translateY(0) scale(1); }
+  .pm-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 2rem 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    flex-shrink: 0;
+  }
+  .pm-header h2 {
+    font-family: var(--fh); font-size: 1.125rem; font-weight: 600;
+    color: var(--text); margin: 0;
+  }
+  .pm-close {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: transparent; border: 1px solid rgba(200,255,0,.4);
+    color: #c8ff00; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, border-color .2s, transform .2s;
+    flex-shrink: 0;
+  }
+  .pm-close:hover { background: rgba(200,255,0,.1); border-color: #c8ff00; transform: rotate(90deg); }
+  .pm-close svg { width: 14px; height: 14px; }
+  .pm-body {
+    overflow-y: auto; padding: 2rem;
+    font-size: .9rem; line-height: 1.75; color: rgba(241,245,249,.7);
+    scrollbar-width: thin; scrollbar-color: rgba(200,255,0,.25) transparent;
+  }
+  .pm-body::-webkit-scrollbar { width: 6px; }
+  .pm-body::-webkit-scrollbar-thumb { background: rgba(200,255,0,.25); border-radius: 6px; }
+  .pm-body h3 {
+    font-family: var(--fh); font-size: .95rem; font-weight: 600;
+    color: var(--text); margin: 2rem 0 .65rem; letter-spacing: -.01em;
+  }
+  .pm-body h3:first-child { margin-top: 0; }
+  .pm-body h3 .pm-num { color: #c8ff00; font-weight: 700; margin-right: .5rem; letter-spacing: 0; }
+  .pm-body p { margin: 0 0 .85rem; }
+  .pm-body strong { color: var(--text); font-weight: 500; }
+  .pm-body ul { padding-left: 1.25rem; margin: 0 0 .85rem; }
+  .pm-body ul li { margin-bottom: .4rem; }
+  .pm-body a { color: #c8ff00; text-decoration: underline; text-underline-offset: 2px; }
+  .pm-foot {
+    margin-top: 2rem; padding-top: 1.25rem;
+    border-top: 1px solid rgba(255,255,255,.06);
+    font-style: italic; font-size: .85rem; color: rgba(241,245,249,.5);
+  }
+  @media (max-width: 700px) {
+    .pm-header { padding: 1.25rem 1.5rem 1rem; }
+    .pm-body { padding: 1.5rem; }
+  }
+
+  /* MODAL TÉRMINOS Y CONDICIONES — bg #111, bordes blancos sutiles, close #c8ff00 */
+  #tc-overlay {
+    position: fixed; inset: 0; z-index: 900;
+    background: rgba(0,0,0,.7);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s;
+  }
+  #tc-overlay.open { opacity: 1; pointer-events: auto; }
+  #tc-modal {
+    background: #111;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    width: 100%; max-width: 720px; max-height: 85vh;
+    display: flex; flex-direction: column;
+    transform: translateY(24px) scale(.97);
+    transition: transform .3s;
+    overflow: hidden;
+  }
+  #tc-overlay.open #tc-modal { transform: translateY(0) scale(1); }
+  .tcm-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 2rem 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    flex-shrink: 0;
+  }
+  .tcm-header h2 { font-family: var(--fh); font-size: 1.125rem; font-weight: 600; color: var(--text); margin: 0; }
+  .tcm-header .tcm-meta {
+    font-family: var(--fb); font-size: .68rem; font-weight: 400;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: rgba(241,245,249,.45); margin-top: .35rem;
+  }
+  .tcm-close {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: transparent; border: 1px solid rgba(200,255,0,.4);
+    color: #c8ff00; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, border-color .2s, transform .2s;
+    flex-shrink: 0;
+  }
+  .tcm-close:hover { background: rgba(200,255,0,.1); border-color: #c8ff00; transform: rotate(90deg); }
+  .tcm-close svg { width: 14px; height: 14px; }
+  .tcm-body {
+    overflow-y: auto; padding: 2rem;
+    font-size: .9rem; line-height: 1.75; color: rgba(241,245,249,.7);
+    scrollbar-width: thin; scrollbar-color: rgba(200,255,0,.25) transparent;
+  }
+  .tcm-body::-webkit-scrollbar { width: 6px; }
+  .tcm-body::-webkit-scrollbar-thumb { background: rgba(200,255,0,.25); border-radius: 6px; }
+  .tcm-body h3 {
+    font-family: var(--fh); font-size: .95rem; font-weight: 600;
+    color: var(--text); margin: 2rem 0 .65rem; letter-spacing: -.01em;
+  }
+  .tcm-body h3:first-child { margin-top: 0; }
+  .tcm-body h3 .tcm-num { color: #c8ff00; font-weight: 700; margin-right: .5rem; letter-spacing: 0; }
+  .tcm-body p { margin: 0 0 .85rem; }
+  .tcm-body strong { color: var(--text); font-weight: 500; }
+  .tcm-body ul { padding-left: 1.25rem; margin: 0 0 .85rem; }
+  .tcm-body ul li { margin-bottom: .4rem; }
+  .tcm-body a { color: #c8ff00; text-decoration: underline; text-underline-offset: 2px; }
+  .tcm-foot {
+    margin-top: 2rem; padding-top: 1.25rem;
+    border-top: 1px solid rgba(255,255,255,.06);
+    font-style: italic; font-size: .85rem; color: rgba(241,245,249,.5);
+  }
+  @media (max-width: 700px) {
+    .tcm-header { padding: 1.25rem 1.5rem 1rem; }
+    .tcm-body { padding: 1.5rem; }
+  }
+
+  /* ─── RESPONSIVE ──────────────────────────────────────────── */
+
+  /* Tablet (≤1024px) */
+  @media (max-width: 1024px) {
+    .historia-grid { gap: 4rem; }
+    .equipo-grid   { gap: 4rem; }
+  }
+
+  /* Tablet pequeña / landscape móvil (≤768px) */
+  @media (max-width: 768px) {
+    .sec { padding: 5rem var(--px); }
+    #cta { padding: 6rem var(--px); }
+    .hero-body { padding: 7.5rem var(--px) 4rem; }
+
+    .stat-item  { padding: 1.5rem; }
+    .valor-card { padding: 2rem 1.75rem; }
+    .founder-info { padding: 1.25rem 1.5rem; }
+
+    .equipo-bio h3 { font-size: 1.2rem; }
+
+    .footer-top { gap: 1.25rem; }
+    .footer-nav { gap: 1.25rem; }
+  }
+
+  /* Móvil (≤480px) */
+  @media (max-width: 480px) {
+    .sec { padding: 4rem var(--px); }
+    #cta { padding: 5rem var(--px); }
+    .hero-body { padding: 7rem var(--px) 3.5rem; }
+
+    /* Reducir h1 hero en pantallas muy pequeñas */
+    .hero-h1 { font-size: clamp(2.5rem, 11vw, 3.5rem); }
+    .hero-sub { font-size: .9375rem; margin-bottom: 2.25rem; }
+
+    /* Stats más compactos */
+    .stat-item  { padding: 1.25rem 1rem; }
+    .stat-val   { font-size: clamp(1.875rem, 9vw, 2.5rem); }
+    .stat-lbl   { font-size: .8rem; }
+
+    /* Valor cards */
+    .valor-card { padding: 1.75rem 1.25rem; }
+
+    /* Equipo bio */
+    .equipo-bio h3  { font-size: 1.0625rem; margin-bottom: 1.25rem; }
+    .founder-info   { padding: 1rem 1.25rem; }
+    .founder-name   { font-size: 1.125rem; }
+
+    /* CTA: botones apilados a ancho completo */
+    .cta-btns { flex-direction: column; align-items: stretch; gap: .75rem; }
+    .btn-wa   { justify-content: center; padding: .9rem 1.5rem; font-size: .9375rem; }
+    .btn-back { margin-left: 0; justify-content: center; }
+
+    /* Footer */
+    .footer-nav { gap: 1rem; }
+    .footer-bottom { gap: .75rem; }
+
+    /* Scroll-top menos intrusivo */
+    #scroll-top { bottom: 1.25rem; right: 1.25rem; }
+  }
+
+  /* Móvil muy pequeño (≤360px) */
+  @media (max-width: 360px) {
+    .stat-grid { grid-template-columns: 1fr; }
+    .stat-item { padding: 1.25rem; }
+  }
+
+  /* SCRAMBLE TEXT */
+  .hero-h1 .char {
+    display: inline-block;
+    will-change: contents;
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     VOICE — FAB + Modal (AdrIAn)
+     Tokens: --bg #0a0a0a · accent #c8ff00 · Syne · JetBrains Mono
+  ───────────────────────────────────────────────────────── */
+  #voice-fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 5rem;
+    z-index: 250;
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .75rem 1.05rem .75rem .9rem;
+    background: rgba(10,10,10,.78);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(200,255,0,.55);
+    border-radius: 999px;
+    color: #c8ff00;
+    cursor: pointer;
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: .78rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    box-shadow: 0 6px 24px rgba(0,0,0,.45), 0 0 0 0 rgba(200,255,0,0);
+    transition: transform .25s ease, box-shadow .3s ease, background .3s ease, color .3s ease;
+  }
+  #voice-fab:hover {
+    background: #c8ff00;
+    color: #0a0a0a;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(0,0,0,.55), 0 0 28px rgba(200,255,0,.35);
+  }
+  #voice-fab:active { transform: translateY(0) scale(.97); }
+  #voice-fab .vfab-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #c8ff00;
+    box-shadow: 0 0 10px rgba(200,255,0,.7);
+    animation: vfabPulse 2.4s ease-in-out infinite;
+  }
+  #voice-fab:hover .vfab-dot { background: #0a0a0a; box-shadow: none; }
+  @keyframes vfabPulse {
+    0%, 100% { opacity: .6; transform: scale(1); }
+    50%      { opacity: 1;  transform: scale(1.25); }
+  }
+  @media (max-width: 700px) {
+    #voice-fab {
+      right: 5rem;
+      bottom: 1.25rem;
+      padding: .65rem .85rem .65rem .75rem;
+      font-size: .68rem;
+      letter-spacing: .1em;
+    }
+    #voice-fab .vfab-label-long { display: none; }
+  }
+
+  /* Overlay + modal */
+  #voice-overlay {
+    position: fixed; inset: 0; z-index: 400;
+    background: rgba(3,7,18,.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  #voice-overlay.open { display: flex; opacity: 1; }
+
+  .voice-modal {
+    position: relative;
+    width: min(720px, 100%);
+    height: min(90dvh, 760px);
+    background: #0a0a0a;
+    border: 1px solid rgba(245,245,240,.08);
+    border-radius: 18px;
+    overflow: hidden;
+    color: #f5f5f0;
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: -.01em;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    box-shadow: 0 32px 80px rgba(0,0,0,.6);
+    transform: translateY(16px) scale(.98);
+    opacity: 0;
+    transition: transform .35s ease, opacity .3s ease;
+  }
+  #voice-overlay.open .voice-modal { transform: translateY(0) scale(1); opacity: 1; }
+
+  .voice-modal::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 25%, rgba(200,255,0,.07), transparent 55%);
+    pointer-events: none;
+  }
+  .voice-modal::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(circle at 50% 50%, black 0%, transparent 75%);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, black 0%, transparent 75%);
+    pointer-events: none;
+  }
+
+  .voice-modal > * { position: relative; z-index: 1; }
+
+  .voice-modal .vm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem 0;
+  }
+  .voice-modal .vm-brand {
+    display: flex; align-items: center; gap: .6rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-size: .7rem;
+    color: rgba(245,245,240,.6);
+  }
+  .voice-modal .vm-brand .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #c8ff00;
+    box-shadow: 0 0 10px rgba(200,255,0,.55);
+  }
+  .voice-modal .vm-close {
+    background: transparent;
+    border: 1px solid rgba(245,245,240,.12);
+    color: rgba(245,245,240,.6);
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .voice-modal .vm-close:hover {
+    color: #f5f5f0;
+    border-color: rgba(245,245,240,.3);
+    background: rgba(245,245,240,.04);
+  }
+  .voice-modal .vm-close svg { width: 14px; height: 14px; }
+
+  .voice-modal .vm-stage {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1.25rem;
+    padding: 1rem 1.5rem;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .voice-modal .vm-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(36px, 6vw, 64px);
+    line-height: .92;
+    letter-spacing: -.04em;
+    text-align: center;
+  }
+  .voice-modal .vm-title .accent {
+    color: #c8ff00;
+    font-style: italic;
+    font-weight: 500;
+  }
+  .voice-modal .vm-subtitle {
+    text-align: center;
+    font-size: .9rem;
+    color: rgba(245,245,240,.55);
+    max-width: 380px;
+  }
+  .voice-modal .vm-subtitle strong { color: #f5f5f0; font-weight: 500; }
+
+  .voice-modal .mic-wrap {
+    position: relative;
+    width: 148px; height: 148px;
+    display: grid; place-items: center;
+  }
+  .voice-modal .mic-wrap::before,
+  .voice-modal .mic-wrap::after {
+    content: '';
+    position: absolute; inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,255,0,.18);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .4s ease;
+  }
+  .voice-modal .mic-wrap::after { inset: -28px; }
+  .voice-modal[data-state="listening"] .mic-wrap::before,
+  .voice-modal[data-state="speaking"]  .mic-wrap::before {
+    opacity: 1;
+    animation: vmRing 2s ease-out infinite;
+  }
+  .voice-modal[data-state="listening"] .mic-wrap::after,
+  .voice-modal[data-state="speaking"]  .mic-wrap::after {
+    opacity: 1;
+    animation: vmRing 2s ease-out infinite .6s;
+  }
+  @keyframes vmRing {
+    0%   { transform: scale(.92); opacity: .7; }
+    80%  { transform: scale(1.18); opacity: 0; }
+    100% { transform: scale(1.18); opacity: 0; }
+  }
+
+  .voice-modal #mic-btn {
+    width: 116px; height: 116px;
+    border-radius: 50%;
+    border: 1.5px solid #c8ff00;
+    background: #111111;
+    color: #f5f5f0;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: transform .2s, background .3s, box-shadow .3s, border-color .3s;
+  }
+  .voice-modal #mic-btn:hover { transform: scale(1.04); box-shadow: 0 0 32px rgba(200,255,0,.18); }
+  .voice-modal #mic-btn:active { transform: scale(.97); }
+  .voice-modal #mic-btn svg { width: 38px; height: 38px; transition: color .3s ease; }
+  .voice-modal #mic-btn .icon-restart { display: none; }
+  .voice-modal[data-state="ended"] #mic-btn .icon-mic { display: none; }
+  .voice-modal[data-state="ended"] #mic-btn .icon-restart { display: block; }
+
+  .voice-modal[data-state="connecting"] #mic-btn { border-color: rgba(245,245,240,.4); }
+  .voice-modal[data-state="connecting"] #mic-btn svg { animation: vmSpin 1.2s linear infinite; }
+  .voice-modal[data-state="listening"]  #mic-btn { box-shadow: 0 0 24px rgba(200,255,0,.18), 0 0 60px rgba(200,255,0,.18); }
+  .voice-modal[data-state="speaking"]   #mic-btn {
+    background: #c8ff00; color: #0a0a0a;
+    box-shadow: 0 0 44px rgba(200,255,0,.55), 0 0 96px rgba(200,255,0,.18);
+  }
+  .voice-modal[data-state="error"]      #mic-btn { border-color: #ff5a4d; }
+  .voice-modal[data-state="ended"]      #mic-btn {
+    border-color: #c8ff00;
+    background: rgba(200,255,0,.05);
+    box-shadow: 0 0 24px rgba(200,255,0,.18);
+  }
+  .voice-modal[data-state="ended"] .mic-wrap::before,
+  .voice-modal[data-state="ended"] .mic-wrap::after { opacity: 0 !important; animation: none !important; }
+  @keyframes vmSpin { to { transform: rotate(360deg); } }
+
+  .voice-modal .vm-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: rgba(245,245,240,.55);
+    min-height: 18px;
+    text-align: center;
+  }
+  .voice-modal[data-state="listening"] .vm-status,
+  .voice-modal[data-state="speaking"]  .vm-status,
+  .voice-modal[data-state="ended"]     .vm-status { color: #c8ff00; }
+  .voice-modal[data-state="error"]     .vm-status { color: #ff5a4d; }
+
+  .voice-modal #end-btn,
+  .voice-modal #restart-btn {
+    display: none;
+    align-items: center;
+    gap: .5rem;
+    padding: .55rem 1.1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    transition: all .2s ease;
+  }
+  .voice-modal #end-btn {
+    border: 1px solid rgba(255,90,77,.4);
+    background: rgba(255,90,77,.08);
+    color: #ff5a4d;
+  }
+  .voice-modal #end-btn:hover { background: rgba(255,90,77,.18); border-color: #ff5a4d; }
+  .voice-modal #end-btn svg { width: 12px; height: 12px; }
+  .voice-modal[data-state="listening"] #end-btn,
+  .voice-modal[data-state="speaking"]  #end-btn,
+  .voice-modal[data-state="connecting"] #end-btn { display: inline-flex; }
+
+  .voice-modal #restart-btn {
+    border: 1px solid #c8ff00;
+    background: rgba(200,255,0,.12);
+    color: #c8ff00;
+    font-weight: 500;
+  }
+  .voice-modal #restart-btn:hover {
+    background: #c8ff00;
+    color: #0a0a0a;
+    box-shadow: 0 0 24px rgba(200,255,0,.18);
+  }
+  .voice-modal #restart-btn svg { width: 12px; height: 12px; }
+  .voice-modal[data-state="ended"] #restart-btn { display: inline-flex; }
+
+  .voice-modal .viz-wrap { width: 100%; max-width: 440px; height: 44px; }
+  .voice-modal #viz { width: 100%; height: 100%; display: block; }
+
+  .voice-modal #transcript {
+    display: flex; flex-direction: column; gap: .5rem;
+    width: 100%;
+    max-width: 520px;
+    padding: 0 .25rem;
+    max-height: 24dvh;
+    overflow-y: auto;
+    mask-image: linear-gradient(to bottom, transparent 0, black 24px);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 24px);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(245,245,240,.08) transparent;
+  }
+  .voice-modal #transcript::-webkit-scrollbar { width: 5px; }
+  .voice-modal #transcript::-webkit-scrollbar-thumb { background: rgba(245,245,240,.08); border-radius: 5px; }
+  .voice-modal .bubble {
+    font-size: .9rem;
+    line-height: 1.45;
+    padding: .55rem .8rem;
+    border-radius: 12px;
+    max-width: 85%;
+    width: fit-content;
+    word-break: break-word;
+  }
+  .voice-modal .bubble.user {
+    background: rgba(245,245,240,.06);
+    color: #f5f5f0;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+  .voice-modal .bubble.agent {
+    background: rgba(200,255,0,.10);
+    color: #f5f5f0;
+    border: 1px solid rgba(200,255,0,.18);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+
+  .voice-modal .vm-footer {
+    display: flex; justify-content: flex-end; align-items: center;
+    padding: .9rem 1.5rem 1.1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .6rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: rgba(245,245,240,.4);
+  }
+
+  @media (max-height: 700px) {
+    .voice-modal .vm-title { font-size: clamp(32px, 5vw, 48px); }
+    .voice-modal .mic-wrap { width: 124px; height: 124px; }
+    .voice-modal #mic-btn  { width: 96px;  height: 96px; }
+    .voice-modal #mic-btn svg { width: 30px; height: 30px; }
+    .voice-modal #transcript { max-height: 18dvh; }
+  }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ WEBGL BACKGROUND
+     Mismo fondo animado global que index.html. Shader exacto. -->
+<canvas id="bg-webgl" aria-hidden="true"></canvas>
+<script>
+(function () {
+  const canvas = document.getElementById('bg-webgl');
+  if (!canvas) return;
+  const gl = canvas.getContext('webgl');
+  if (!gl) return;
+
+  const vsSource = `
+    attribute vec2 position;
+    void main() {
+      gl_Position = vec4(position, 0.0, 1.0);
+    }
+  `;
+
+  const fsSource = `
+    precision highp float;
+    uniform float u_time;
+    uniform vec2 u_resolution;
+
+    float hash(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+    }
+
+    float noise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      return mix(mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+                 mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+    }
+
+    void main() {
+      vec2 uv = (gl_FragCoord.xy * 2.0 - u_resolution.xy) / min(u_resolution.x, u_resolution.y);
+
+      // Ground Perspective Simulation
+      float depth = 1.0 / (uv.y + 1.15);
+      vec2 gridUv = vec2(uv.x * depth, depth + u_time * 0.15);
+
+      // Layered Procedural Noise for Terrain
+      float n = noise(gridUv * 3.5);
+      float ripples = sin(gridUv.y * 18.0 + n * 8.0 + u_time * 0.5);
+
+      // Neon Topographic Lines
+      float topoLine = smoothstep(0.03, 0.0, abs(ripples));
+
+      // Color Palette
+      vec3 baseColor = vec3(0.04, 0.03, 0.12); // Deep Space
+      vec3 accentColor = vec3(0.1, 0.3, 0.8);   // Electric Blue
+      vec3 neonColor = vec3(0.6, 0.2, 1.0);     // Neon Purple
+
+      // Composite
+      vec3 finalColor = mix(baseColor, accentColor, n * 0.6);
+      finalColor += topoLine * neonColor * depth * 0.4;
+
+      // Horizon Fog / Fade
+      float fade = smoothstep(0.1, -1.0, uv.y);
+      finalColor *= (1.0 - length(uv) * 0.45) * (1.0 - fade);
+
+      gl_FragColor = vec4(finalColor, 1.0);
+    }
+  `;
+
+  function createShader(type, src) {
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    return sh;
+  }
+
+  const program = gl.createProgram();
+  gl.attachShader(program, createShader(gl.VERTEX_SHADER, vsSource));
+  gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fsSource));
+  gl.linkProgram(program);
+  gl.useProgram(program);
+
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1, -1,  1, -1, -1,  1,
+    -1,  1,  1, -1,  1,  1,
+  ]), gl.STATIC_DRAW);
+
+  const posAttrib = gl.getAttribLocation(program, 'position');
+  gl.enableVertexAttribArray(posAttrib);
+  gl.vertexAttribPointer(posAttrib, 2, gl.FLOAT, false, 0, 0);
+
+  const timeLoc = gl.getUniformLocation(program, 'u_time');
+  const resLoc  = gl.getUniformLocation(program, 'u_resolution');
+
+  function render(time) {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+    }
+    gl.uniform1f(timeLoc, time * 0.001);
+    gl.uniform2f(resLoc, w, h);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+})();
+</script>
+
+<!-- NAV -->
+<nav id="nav" role="navigation" aria-label="Principal">
+  <a href="index.html" class="nav-logo">NYX</a>
+  <ul class="nav-links">
+    <li><a href="index.html" id="nav-home">Inicio</a></li>
+    <li><a href="index.html#servicios" id="nav-services">Servicios</a></li>
+    <li><a href="index.html#proceso" id="nav-process">Proceso</a></li>
+    <li><a href="index.html#casos" id="nav-cases">Casos</a></li>
+    <li class="lang-li">
+      <button class="lang-btn" id="lang-btn" aria-label="Cambiar idioma" aria-expanded="false">
+        <span id="lang-flag">🇪🇸</span>
+        <span id="lang-code" style="min-width:1.6ch">ES</span>
+        <svg class="lb-chev" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+          <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <ul class="lang-drop" id="lang-drop" role="listbox" aria-label="Idioma">
+        <li><button data-lang="es" class="active">🇪🇸 Español</button></li>
+        <li><button data-lang="en">🇬🇧 English</button></li>
+        <li><button data-lang="pt">🇵🇹 Português</button></li>
+        <li><button data-lang="fr">🇫🇷 Français</button></li>
+        <li><button data-lang="de">🇩🇪 Deutsch</button></li>
+        <li><button data-lang="it">🇮🇹 Italiano</button></li>
+        <li><button data-lang="nl">🇳🇱 Nederlands</button></li>
+        <li><button data-lang="ru">🇷🇺 Русский</button></li>
+        <li><button data-lang="zh">🇨🇳 中文</button></li>
+        <li><button data-lang="ja">🇯🇵 日本語</button></li>
+        <li><button data-lang="ko">🇰🇷 한국어</button></li>
+        <li><button data-lang="ar">🇸🇦 العربية</button></li>
+      </ul>
+    </li>
+    <li>
+      <a href="https://cal.com/woidrian/nyx-agency"
+         target="_blank" rel="noopener noreferrer" class="nav-cta" id="nav-cta" aria-label="Agenda tu cita en Cal.com" title="Agenda tu cita">
+        <svg class="cal-icon" viewBox="0 0 36 36" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect class="cal-body" x="4" y="9" width="24" height="22" rx="2.5"/>
+          <line class="cal-body" x1="4"  y1="15" x2="28" y2="15"/>
+          <line class="cal-body" x1="10" y1="5"  x2="10" y2="11"/>
+          <line class="cal-body" x1="22" y1="5"  x2="22" y2="11"/>
+          <circle class="cal-dot d1" cx="9"  cy="20" r="1.4"/>
+          <circle class="cal-dot d2" cx="16" cy="20" r="1.4"/>
+          <circle class="cal-dot d3" cx="23" cy="20" r="1.4"/>
+          <circle class="cal-dot d4" cx="9"  cy="26" r="1.4"/>
+          <circle class="cal-dot d5" cx="16" cy="26" r="1.4"/>
+          <circle class="cal-dot d6" cx="23" cy="26" r="1.4"/>
+          <circle class="cal-ping" cx="28" cy="28" r="5"/>
+          <g class="cal-plus-grp">
+            <circle class="cal-plus-bg" cx="28" cy="28" r="5"/>
+            <line class="cal-plus-h" x1="25.5" y1="28" x2="30.5" y2="28"/>
+            <line class="cal-plus-v" x1="28"   y1="25.5" x2="28" y2="30.5"/>
+          </g>
+        </svg>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero" aria-label="Quiénes somos">
+  <div class="hero-body">
+    <span class="hero-badge" id="hero-badge">Quiénes somos · Nyx Agency</span>
+    <h1 class="hero-h1" id="hero-h1">Somos Nyx.<br>Automatizamos<br>el trabajo<br>repetitivo.</h1>
+    <p class="hero-sub" id="hero-sub">
+      Fundada por Adrian Davila, Nyx nació con una idea clara:
+      las PYMEs españolas merecen la misma tecnología de automatización que tienen las grandes empresas.
+      Sin presupuestos de Fortune 500. Sin equipos técnicos internos.
+    </p>
+    <a href="index.html" class="hero-back-3d" id="hero-cta" aria-label="Volver al inicio" title="Volver al inicio">
+      <svg class="chev-icon" viewBox="0 0 56 32" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline class="chev c1" points="22,4 8,16 22,28" stroke="#ffffff" stroke-width="2.6"/>
+        <polyline class="chev c2" points="36,4 22,16 36,28" stroke="#cbd5e1" stroke-width="2.4"/>
+        <polyline class="chev c3" points="50,4 36,16 50,28" stroke="#94a3b8" stroke-width="2.2"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- HISTORIA -->
+<hr class="sec-divider">
+<section aria-labelledby="historia-title">
+  <div class="sec">
+    <div class="historia-grid">
+      <div class="historia-text rv-left">
+        <p class="eyebrow"><span class="eyebrow-n">01</span><span id="historia-ew">Nuestra historia</span></p>
+        <h2 class="s-h2" id="historia-title" data-i18n="historia.title">Por qué<br>existe Nyx.</h2>
+        <p class="s-p" id="historia-p1">
+          Trabajando con clientes en consultoría y desarrollo, Adrian vio el mismo patrón una y otra vez:
+          equipos brillantes atrapados en tareas repetitivas que ningún humano debería hacer —
+          copiar datos entre sistemas, responder las mismas preguntas, confirmar citas manualmente.
+        </p>
+        <p class="s-p" id="historia-p2">
+          La tecnología para eliminar todo eso ya existía. Pero era difícil de implementar, cara de mantener
+          y nadie la estaba adaptando al mundo real de las PYMEs. Ahí nació Nyx.
+        </p>
+        <p class="s-p" id="historia-p3">
+          Hoy diseñamos e implementamos sistemas de IA que trabajan 24/7 — sin vacaciones,
+          sin bajas, sin errores por cansancio. Para que el equipo humano pueda dedicarse
+          a lo que realmente importa.
+        </p>
+      </div>
+
+      <div class="stat-grid rv-right">
+        <div class="stat-item">
+          <span class="stat-val">+200h</span>
+          <span class="stat-lbl" id="stat1-lbl">al mes ahorradas<br>de media por cliente</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">×3</span>
+          <span class="stat-lbl" id="stat2-lbl">conversión de leads<br>con agentes IA</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">72h</span>
+          <span class="stat-lbl" id="stat3-lbl">tiempo de<br>entrega mínimo</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">100%</span>
+          <span class="stat-lbl" id="stat4-lbl">clientes activos<br>siguen con Nyx</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALORES -->
+<hr class="sec-divider">
+<section id="valores" aria-labelledby="valores-title">
+  <div class="sec">
+    <p class="eyebrow rv"><span class="eyebrow-n">02</span><span id="valores-ew">Valores</span></p>
+    <h2 class="s-h2 rv" id="valores-title" data-i18n="valores.title">Lo que nos<br>define.</h2>
+    <div class="valores-grid">
+      <div class="valor-card rv">
+        <p class="valor-n">01</p>
+        <div class="valor-icon">⚡</div>
+        <h3 class="valor-h" id="v1-h">Resultados, no humo.</h3>
+        <p class="valor-p" id="v1-p">Medimos el éxito en horas ahorradas, leads convertidos y euros recuperados. Si los números no cuadran, seguimos trabajando hasta que cuadren.</p>
+      </div>
+      <div class="valor-card rv">
+        <p class="valor-n">02</p>
+        <div class="valor-icon">🔧</div>
+        <h3 class="valor-h" id="v2-h">Sistemas, no parches.</h3>
+        <p class="valor-p" id="v2-p">No vendemos herramientas sueltas. Diseñamos arquitecturas completas que funcionan juntas. Cada pieza tiene un propósito específico en el ecosistema de tu negocio.</p>
+      </div>
+      <div class="valor-card rv">
+        <p class="valor-n">03</p>
+        <div class="valor-icon">🤝</div>
+        <h3 class="valor-h" id="v3-h">Transparencia total.</h3>
+        <p class="valor-p" id="v3-p">Sin jerga técnica innecesaria. Sin sorpresas en factura. Sin promesas que no podemos cumplir. Sabemos cuándo algo es posible y cuándo no, y lo decimos claro.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPO -->
+<hr class="sec-divider">
+<section aria-labelledby="equipo-title">
+  <div class="sec">
+    <p class="eyebrow rv"><span class="eyebrow-n">03</span><span id="equipo-ew">El equipo</span></p>
+
+    <div class="equipo-stage" id="equipo-stage">
+      <!-- MORPHING TEXT — arriba de la capa, layered detrás del robot -->
+      <div class="equipo-text-layer">
+        <div class="morph-text" aria-label="Construyo, automatizo, diseño, optimizo">
+          <span class="morph-1"></span>
+          <span class="morph-2"></span>
+        </div>
+      </div>
+
+      <!-- ROBOT 3D recreado en Three.js (cabeza sigue al ratón) -->
+      <div class="equipo-robot-wrap">
+        <canvas id="robot-canvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Filtro SVG para efecto líquido del MorphingText -->
+    <svg id="morph-svg-filters" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+      <defs>
+        <filter id="morph-threshold">
+          <feColorMatrix in="SourceGraphic" type="matrix" values="
+            1 0 0 0 0
+            0 1 0 0 0
+            0 0 1 0 0
+            0 0 0 255 -140"/>
+        </filter>
+      </defs>
+    </svg>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta" aria-label="Contacto">
+  <div class="cta-inner">
+    <h2 class="cta-h rv" id="cta-h">¿Trabajamos<br>juntos?</h2>
+    <p class="cta-p rv" id="cta-p">
+      30 minutos de diagnóstico gratuito para ver si Nyx encaja con lo que necesitas.
+      Sin presión, sin jerga, sin ventas agresivas.
+    </p>
+    <div class="cta-btns rv">
+      <a href="https://cal.com/woidrian/nyx-agency"
+         target="_blank" rel="noopener noreferrer" class="btn-wa">
+        <svg class="cal-3d" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="6" width="22" height="20" rx="2.5" stroke-width="2.6"/>
+          <line x1="3" y1="12" x2="25" y2="12" stroke-width="2.4"/>
+          <line x1="9"  y1="3" x2="9"  y2="8" stroke-width="2.4"/>
+          <line x1="19" y1="3" x2="19" y2="8" stroke-width="2.4"/>
+          <path d="M13 17 L15 16 L15 22" stroke-width="2.6"/>
+        </svg>
+        <span id="cta-wa-btn">Agenda tu cita</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer" role="contentinfo">
+  <div class="footer-top">
+    <span class="footer-logo">NYX</span>
+    <ul class="footer-nav" aria-label="Footer">
+      <li><a href="index.html#servicios" data-i18n="footerNav.services">Servicios</a></li>
+      <li><a href="index.html#casos" data-i18n="footerNav.cases">Casos</a></li>
+      <li><a href="index.html" data-i18n="footerNav.home">Inicio</a></li>
+    </ul>
+  </div>
+  <div aria-hidden="true" id="footer-wm" class="footer-wordmark">NYX</div>
+  <div class="footer-bottom">
+    <span class="footer-copy" id="footer-copy1">© 2026 Nyx. Todos los derechos reservados.</span>
+    <div class="footer-legal">
+      <button id="privacy-btn" data-i18n="footerLegal.privacy" onclick="document.getElementById('privacy-overlay').classList.add('open')">Política de Privacidad</button>
+      <button id="tc-btn" data-i18n="footerLegal.terms" onclick="document.getElementById('tc-overlay').classList.add('open')">Términos y Condiciones</button>
+    </div>
+  </div>
+</footer>
+
+<!-- VOICE — FAB (botón flotante "Habla con AdrIAn") -->
+<button id="voice-fab" type="button" aria-label="Habla con AdrIAn">
+  <span class="vfab-dot" aria-hidden="true"></span>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <rect x="9" y="3" width="6" height="12" rx="3"/>
+    <path d="M5 11a7 7 0 0 0 14 0"/>
+    <line x1="12" y1="18" x2="12" y2="22"/>
+    <line x1="8" y1="22" x2="16" y2="22"/>
+  </svg>
+  <span class="vfab-label-long">Habla con AdrIAn</span>
+</button>
+
+<!-- VOICE — Modal -->
+<div id="voice-overlay" role="dialog" aria-modal="true" aria-labelledby="vm-title" aria-hidden="true">
+  <div class="voice-modal" data-state="idle">
+    <div class="vm-header">
+      <div class="vm-brand"><span class="dot"></span> Nyx · Voice</div>
+      <button class="vm-close" id="voice-close" type="button" aria-label="Cerrar">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M1 1l12 12M13 1L1 13"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="vm-stage">
+      <div>
+        <h2 class="vm-title" id="vm-title">Habla con <span class="accent">AdrIAn</span></h2>
+        <p class="vm-subtitle">Cuéntale tu negocio y tu reto. <strong>Te responde al instante.</strong></p>
+      </div>
+
+      <div class="mic-wrap">
+        <button id="mic-btn" type="button" aria-label="Activar micrófono">
+          <svg class="icon-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="3" width="6" height="12" rx="3"/>
+            <path d="M5 11a7 7 0 0 0 14 0"/>
+            <line x1="12" y1="18" x2="12" y2="22"/>
+            <line x1="8" y1="22" x2="16" y2="22"/>
+          </svg>
+          <svg class="icon-restart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 3.5-7.1"/>
+            <polyline points="3 4 3 10 9 10"/>
+          </svg>
+        </button>
+      </div>
+
+      <div id="status" class="vm-status">Pulsa para hablar</div>
+
+      <button id="end-btn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="6" y1="18" x2="18" y2="6"/>
+        </svg>
+        Finalizar
+      </button>
+
+      <button id="restart-btn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 3.5-7.1"/>
+          <polyline points="3 4 3 10 9 10"/>
+        </svg>
+        Nueva conversación
+      </button>
+
+      <div class="viz-wrap"><canvas id="viz"></canvas></div>
+
+      <div id="transcript" aria-live="polite"></div>
+    </div>
+
+    <div class="vm-footer">nyx agency · 2026</div>
+  </div>
+</div>
+
+<!-- SCROLL TO TOP -->
+<button id="scroll-top" aria-label="Volver arriba">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 19V5M5 12l7-7 7 7"/>
+  </svg>
+</button>
+
+<!-- MODAL PRIVACIDAD -->
+<div id="privacy-overlay" role="dialog" aria-modal="true" aria-labelledby="pm-title">
+  <div id="privacy-modal">
+    <div class="pm-header">
+      <h2 id="pm-title">Política de Privacidad</h2>
+      <button class="pm-close" id="pm-close" aria-label="Cerrar">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M1 1l12 12M13 1L1 13"/>
+        </svg>
+      </button>
+    </div>
+    <div class="pm-body">
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TÉRMINOS Y CONDICIONES -->
+<div id="tc-overlay" role="dialog" aria-modal="true" aria-labelledby="tc-title">
+  <div id="tc-modal">
+    <div class="tcm-header">
+      <div>
+        <h2 id="tc-title">Términos y Condiciones de Uso</h2>
+        <p class="tcm-meta">Nyx Agency · Última actualización mayo 2026</p>
+      </div>
+      <button class="tcm-close" id="tc-close" aria-label="Cerrar">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M1 1l12 12M13 1L1 13"/>
+        </svg>
+      </button>
+    </div>
+    <div class="tcm-body">
+    </div>
+  </div>
+</div>
+
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// Nav solid on scroll
+const nav = document.getElementById('nav');
+ScrollTrigger.create({
+  start: 'top -60',
+  onUpdate: self => nav.classList.toggle('solid', self.progress > 0),
+});
+
+// Nav compacto al pasar la primera sección (~70% del viewport)
+ScrollTrigger.create({
+  start: () => 'top -' + (window.innerHeight * 0.7),
+  onUpdate: self => nav.classList.toggle('compact', self.progress > 0),
+});
+
+// Scroll reveals — vertical (generic)
+gsap.utils.toArray('.rv').forEach(el => {
+  gsap.fromTo(el,
+    { opacity:0, y:36 },
+    { opacity:1, y:0, duration:.75, ease:'power2.out',
+      scrollTrigger: { trigger:el, start:'top 87%', toggleActions:'play none none none' }
+    }
+  );
+});
+
+// Footer wordmark parallax
+gsap.to('#footer-wm', {
+  yPercent: -8, ease: 'none',
+  scrollTrigger: { trigger:'#footer', start:'top bottom', end:'bottom top', scrub:true },
+});
+
+// Hero entrance
+gsap.set(['#hero-badge','#hero-h1','#hero-sub','#hero-cta'], { y:22, opacity:0 });
+gsap.timeline({ delay:.2 })
+  .to('#hero-badge', { opacity:1, y:0, duration:.6,  ease:'power2.out' })
+  .to('#hero-h1',    { opacity:1, y:0, duration:.85, ease:'power2.out' }, '-=.35')
+  .to('#hero-sub',   { opacity:1, y:0, duration:.7,  ease:'power2.out' }, '-=.55')
+  .to('#hero-cta',   { opacity:1, y:0, duration:.6,  ease:'power2.out' }, '-=.45');
+
+// ── SCRAMBLE TEXT — hero h1 ─────────────────────────────────
+(function () {
+  const DURATION       = 0.7;
+  const SCRAMBLE_CHARS = '.:/#@!?%*';
+
+  function initScramble(el) {
+    if (!el) return;
+    const parts = el.innerHTML.split(/(<br\s*\/?>)/gi);
+    el.innerHTML = parts.map(part => {
+      if (/^<br/i.test(part)) return part;
+      return [...part].map(ch => {
+        if (ch === ' ') return ' ';
+        const safe = ch.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return `<span class="char" data-content="${safe}">${safe}</span>`;
+      }).join('');
+    }).join('');
+
+    // Fijar el ancho exacto de cada char ANTES de que empiece a scramble.
+    // Sin esto, cambiar textContent de "A" a "%" cambia el ancho del span,
+    // causa un reflow, los spans vecinos se desplazan bajo el cursor y
+    // disparan sus pointerenter en cascada — eso es lo que causaba el bug.
+    el.querySelectorAll('.char').forEach(span => {
+      const w = span.getBoundingClientRect().width;
+      span.style.width      = w + 'px';
+      span.style.textAlign  = 'center';
+    });
+  }
+
+  function scramble(charEl) {
+    if (charEl._scr) return;
+    charEl._scr = true;
+    const orig = charEl.dataset.content;
+    const obj  = { p: 0 };
+    gsap.to(obj, {
+      p: 1, duration: DURATION, ease: 'none',
+      onUpdate() {
+        charEl.textContent = obj.p < 0.78
+          ? SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
+          : orig;
+      },
+      onComplete() {
+        charEl.textContent = orig;
+        charEl._scr = false;
+      }
+    });
+  }
+
+  const h1 = document.getElementById('hero-h1');
+  initScramble(h1);
+
+  // pointerenter en cada char individualmente — el más preciso posible.
+  // Solo dispara cuando el cursor entra FÍSICAMENTE en ese span concreto.
+  // Sin radius, sin elementFromPoint, sin cascadas.
+  h1.querySelectorAll('.char').forEach(charEl => {
+    charEl.addEventListener('pointerenter', () => scramble(charEl));
+  });
+})();
+
+// Scroll reveals — horizontal (historia section)
+// En móvil usa fade-up en vez de horizontal para evitar overflow visual
+const isMobile = () => window.innerWidth <= 800;
+gsap.utils.toArray('.rv-left').forEach(el => {
+  gsap.fromTo(el,
+    isMobile() ? { opacity:0, y:36 } : { opacity:0, x:-56 },
+    { opacity:1, x:0, y:0, duration:.9, ease:'power3.out',
+      scrollTrigger:{ trigger:el, start:'top 82%', toggleActions:'play none none none' }
+    });
+});
+gsap.utils.toArray('.rv-right').forEach(el => {
+  gsap.fromTo(el,
+    isMobile() ? { opacity:0, y:36 } : { opacity:0, x:56 },
+    { opacity:1, x:0, y:0, duration:.9, ease:'power3.out',
+      scrollTrigger:{ trigger:el, start:'top 82%', toggleActions:'play none none none' }
+    });
+});
+
+document.fonts.ready.then(() => ScrollTrigger.refresh());
+
+
+/* ═══════════════════════════════════════════════════════════
+   EQUIPO STAGE — fade-in del texto (detrás del robot) al entrar en viewport
+═══════════════════════════════════════════════════════════ */
+(function() {
+  const stage = document.getElementById('equipo-stage');
+  if (!stage) return;
+  ScrollTrigger.create({
+    trigger: stage,
+    start: 'top 70%',
+    onEnter:     () => stage.classList.add('in-view'),
+    onEnterBack: () => stage.classList.add('in-view'),
+    onLeave:     () => stage.classList.remove('in-view'),
+    onLeaveBack: () => stage.classList.remove('in-view'),
+  });
+})();
+
+
+/* ═══════════════════════════════════════════════════════════
+   MORPHING TEXT — efecto líquido (vanilla JS, técnica de 21st.dev)
+   Dos spans apilados con filter:blur dinámico + filtro SVG threshold.
+═══════════════════════════════════════════════════════════ */
+(function() {
+  const TEXTS = [
+    'Construyo',
+    'Automatizo',
+    'Diseño',
+    'Optimizo',
+    'Resuelvo',
+    'Entrego'
+  ];
+
+  const text1 = document.querySelector('.morph-1');
+  const text2 = document.querySelector('.morph-2');
+  if (!text1 || !text2) return;
+
+  const morphTime = 1.5;     // segundos de transición entre palabras
+  const cooldownTime = 0.5;  // segundos en pausa con la palabra final visible
+
+  let textIndex = 0;
+  let morph = 0;
+  let cooldown = cooldownTime;
+  let lastTime = performance.now();
+
+  text1.textContent = TEXTS[0];
+  text2.textContent = TEXTS[1 % TEXTS.length];
+  text1.style.opacity = '100%';
+  text2.style.opacity = '0%';
+
+  function setMorph(fraction) {
+    text2.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
+    text2.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
+    const inv = 1 - fraction;
+    text1.style.filter = `blur(${Math.min(8 / inv - 8, 100)}px)`;
+    text1.style.opacity = `${Math.pow(inv, 0.4) * 100}%`;
+    text1.textContent = TEXTS[textIndex % TEXTS.length];
+    text2.textContent = TEXTS[(textIndex + 1) % TEXTS.length];
+  }
+
+  function doMorph() {
+    morph -= cooldown;
+    cooldown = 0;
+    let fraction = morph / morphTime;
+    if (fraction > 1) {
+      cooldown = cooldownTime;
+      fraction = 1;
+    }
+    setMorph(fraction);
+    if (fraction === 1) textIndex++;
+  }
+
+  function doCooldown() {
+    morph = 0;
+    text2.style.filter = '';
+    text2.style.opacity = '100%';
+    text1.style.filter = '';
+    text1.style.opacity = '0%';
+  }
+
+  function tick(now) {
+    const dt = (now - lastTime) / 1000;
+    lastTime = now;
+    cooldown -= dt;
+    if (cooldown <= 0) doMorph();
+    else doCooldown();
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+
+/* ═══════════════════════════════════════════════════════════
+   TRANSLATIONS
+═══════════════════════════════════════════════════════════ */
+const LANGS = {
+  es: { flag:'🇪🇸', code:'ES', dir:'ltr', t: {
+    pageTitle:'Quiénes Somos — Nyx',
+    nav:{ home:'Inicio', services:'Servicios', process:'Proceso', cases:'Casos', pricing:'Precios', cta:'Hablemos →' },
+    hero:{ badge:'Quiénes somos · Nyx Agency', h1:'Somos Nyx.<br>Automatizamos<br>el trabajo<br>repetitivo.', sub:'Fundada por Adrian Davila, Nyx nació con una idea clara: las PYMEs españolas merecen la misma tecnología de automatización que tienen las grandes empresas. Sin presupuestos de Fortune 500. Sin equipos técnicos internos.', cta:'← Volver al inicio' },
+    historia:{ ew:'Nuestra historia', title:'Por qué<br>existe Nyx.', p1:'Trabajando con clientes en consultoría y desarrollo, Adrian vio el mismo patrón una y otra vez: equipos brillantes atrapados en tareas repetitivas que ningún humano debería hacer — copiar datos entre sistemas, responder las mismas preguntas, confirmar citas manualmente.', p2:'La tecnología para eliminar todo eso ya existía. Pero era difícil de implementar, cara de mantener y nadie la estaba adaptando al mundo real de las PYMEs. Ahí nació Nyx.', p3:'Hoy diseñamos e implementamos sistemas de IA que trabajan 24/7 — sin vacaciones, sin bajas, sin errores por cansancio. Para que el equipo humano pueda dedicarse a lo que realmente importa.' },
+    stats:{ s1:'al mes ahorradas\nde media por cliente', s2:'conversión de leads\ncon agentes IA', s3:'tiempo de\nentrega mínimo', s4:'clientes activos\nsiguen con Nyx' },
+    valores:{ ew:'Valores', title:'Lo que nos<br>define.', v1h:'Resultados, no humo.', v1p:'Medimos el éxito en horas ahorradas, leads convertidos y euros recuperados. Si los números no cuadran, seguimos trabajando hasta que cuadren.', v2h:'Sistemas, no parches.', v2p:'No vendemos herramientas sueltas. Diseñamos arquitecturas completas que funcionan juntas. Cada pieza tiene un propósito específico en el ecosistema de tu negocio.', v3h:'Transparencia total.', v3p:'Sin jerga técnica innecesaria. Sin sorpresas en factura. Sin promesas que no podemos cumplir. Sabemos cuándo algo es posible y cuándo no, y lo decimos claro.' },
+    equipo:{ ew:'El equipo', title:'La persona<br>detrás de Nyx.', role:'Fundador · IA Freelance', bioh:'Construyo lo que otros dicen que es complicado.', bio1:'Adrian lleva años en el mundo de la tecnología y la automatización. Lo que empezó como consultoría independiente se convirtió en Nyx cuando quedó claro que el problema no era la tecnología — era la falta de alguien que la tradujera al lenguaje del negocio.', bio2:'Hoy trabaja directamente con cada cliente: desde el diagnóstico inicial hasta la activación del sistema y las revisiones mensuales. No hay intermediarios, no hay equipos offshore. Lo que contratas es lo que construye Adrian.', bio3:'Especializado en el stack de automatización moderno — Claude AI, n8n, Supabase, Evolution API y Retell AI — y en adaptarlo a casos de uso reales en PYMEs españolas.' },
+    cta:{ h:'¿Trabajamos<br>juntos?', p:'30 minutos de diagnóstico gratuito para ver si Nyx encaja con lo que necesitas. Sin presión, sin jerga, sin ventas agresivas.', wa:'Agenda tu cita', back:'← Volver a la web' },
+    footerNav:{ services:'Servicios', cases:'Casos', pricing:'Precios', home:'Inicio' },
+    footerLegal:{ privacy:'Política de Privacidad', terms:'Términos y Condiciones' },
+    footer:{ c1:'© 2026 Nyx. Todos los derechos reservados.', c2:'Hecho con IA. Operado por humanos.' }
+  }},
+  en: { flag:'🇬🇧', code:'EN', dir:'ltr', t: {
+    pageTitle:'About Us — Nyx',
+    nav:{ home:'Home', services:'Services', process:'Process', cases:'Cases', pricing:'Pricing', cta:'Let\'s talk →' },
+    hero:{ badge:'About Us · Nyx Agency', h1:'We are Nyx.<br>We automate<br>repetitive<br>work.', sub:'Founded by Adrian Davila, Nyx was born with a clear idea: Spanish SMEs deserve the same automation technology that large companies have. Without Fortune 500 budgets. Without internal technical teams.', cta:'← Back to home' },
+    historia:{ ew:'Our story', title:'Why<br>Nyx exists.', p1:"Working with clients in consulting and development, Adrian saw the same pattern over and over: brilliant teams trapped in repetitive tasks that no human should have to do — copying data between systems, answering the same questions, confirming appointments manually.", p2:"The technology to eliminate all of that already existed. But it was difficult to implement, expensive to maintain, and no one was adapting it to the real world of SMEs. That's where Nyx was born.", p3:'Today we design and implement AI systems that work 24/7 — without vacations, without sick leave, without errors from fatigue. So the human team can focus on what really matters.' },
+    stats:{ s1:'per month saved\non average per client', s2:'lead conversion\nwith AI agents', s3:'minimum\ndelivery time', s4:'active clients\nstay with Nyx' },
+    valores:{ ew:'Values', title:'What<br>defines us.', v1h:'Results, not smoke.', v1p:'We measure success in hours saved, leads converted and euros recovered. If the numbers don\'t add up, we keep working until they do.', v2h:'Systems, not patches.', v2p:'We don\'t sell individual tools. We design complete architectures that work together. Each piece has a specific purpose in your business ecosystem.', v3h:'Total transparency.', v3p:"No unnecessary technical jargon. No billing surprises. No promises we can't keep. We know when something is possible and when it's not, and we say it clearly." },
+    equipo:{ ew:'The team', title:'The person<br>behind Nyx.', role:'Founder · AI Freelance', bioh:'I build what others say is complicated.', bio1:'Adrian has spent years in the world of technology and automation. What started as independent consulting became Nyx when it became clear that the problem wasn\'t the technology — it was the lack of someone to translate it into business language.', bio2:'Today he works directly with each client: from initial diagnosis to system activation and monthly reviews. No intermediaries, no offshore teams. What you hire is what Adrian builds.', bio3:'Specialized in the modern automation stack — Claude AI, n8n, Supabase, Evolution API and Retell AI — and in adapting it to real use cases in Spanish SMEs.' },
+    cta:{ h:'Shall we<br>work together?', p:'30 minutes of free diagnosis to see if Nyx fits what you need. No pressure, no jargon, no aggressive sales.', wa:'Book a meeting', back:'← Back to website' },
+    footerNav:{ services:'Services', cases:'Cases', pricing:'Pricing', home:'Home' },
+    footerLegal:{ privacy:'Privacy Policy', terms:'Terms & Conditions' },
+    footer:{ c1:'© 2026 Nyx. All rights reserved.', c2:'Made with AI. Operated by humans.' }
+  }},
+  pt: { flag:'🇵🇹', code:'PT', dir:'ltr', t: {
+    pageTitle:'Quem Somos — Nyx',
+    nav:{ home:'Início', services:'Serviços', process:'Processo', cases:'Casos', pricing:'Preços', cta:'Fale conosco →' },
+    hero:{ badge:'Quem somos · Nyx Agency', h1:'Somos a Nyx.<br>Automatizamos<br>o trabalho<br>repetitivo.', sub:'Fundada por Adrian Davila, a Nyx nasceu com uma ideia clara: as PMEs merecem a mesma tecnologia de automação que as grandes empresas têm. Sem orçamentos de Fortune 500. Sem equipes técnicas internas.', cta:'← Voltar ao início' },
+    historia:{ ew:'Nossa história', title:'Por que<br>a Nyx existe.', p1:'Trabalhando com clientes em consultoria e desenvolvimento, Adrian viu o mesmo padrão repetidamente: equipes brilhantes presas em tarefas repetitivas que nenhum humano deveria fazer.', p2:'A tecnologia para eliminar tudo isso já existia. Mas era difícil de implementar, cara de manter e ninguém a estava adaptando ao mundo real das PMEs. Foi aí que nasceu a Nyx.', p3:'Hoje projetamos e implementamos sistemas de IA que trabalham 24/7 — sem férias, sem afastamentos, sem erros por cansaço. Para que a equipe humana possa se dedicar ao que realmente importa.' },
+    stats:{ s1:'por mês economizadas\nem média por cliente', s2:'conversão de leads\ncom agentes de IA', s3:'tempo mínimo\nde entrega', s4:'clientes ativos\ncontinuam com a Nyx' },
+    valores:{ ew:'Valores', title:'O que<br>nos define.', v1h:'Resultados, não fumaça.', v1p:'Medimos o sucesso em horas economizadas, leads convertidos e euros recuperados. Se os números não fecham, continuamos trabalhando até que fechem.', v2h:'Sistemas, não remendos.', v2p:'Não vendemos ferramentas avulsas. Projetamos arquiteturas completas que funcionam juntas. Cada peça tem um propósito específico no ecossistema do seu negócio.', v3h:'Transparência total.', v3p:'Sem jargão técnico desnecessário. Sem surpresas na fatura. Sem promessas que não podemos cumprir. Sabemos quando algo é possível e quando não é, e dizemos claramente.' },
+    equipo:{ ew:'A equipe', title:'A pessoa<br>por trás da Nyx.', role:'Fundador · IA Freelance', bioh:'Construo o que outros dizem ser complicado.', bio1:'Adrian passou anos no mundo da tecnologia e automação. O que começou como consultoria independente se tornou a Nyx quando ficou claro que o problema não era a tecnologia — era a falta de alguém para traduzi-la para a linguagem do negócio.', bio2:'Hoje trabalha diretamente com cada cliente: desde o diagnóstico inicial até a ativação do sistema e as revisões mensais. Sem intermediários, sem equipes offshore.', bio3:'Especializado no stack de automação moderno — Claude AI, n8n, Supabase, Evolution API e Retell AI — e em adaptá-lo a casos de uso reais em PMEs.' },
+    cta:{ h:'Vamos<br>trabalhar juntos?', p:'30 minutos de diagnóstico gratuito para ver se a Nyx se encaixa no que você precisa. Sem pressão, sem jargão, sem vendas agressivas.', wa:'Agende sua reunião', back:'← Voltar ao site' },
+    footerNav:{ services:'Serviços', cases:'Casos', pricing:'Preços', home:'Início' },
+    footerLegal:{ privacy:'Política de Privacidade', terms:'Termos e Condições' },
+    footer:{ c1:'© 2026 Nyx. Todos os direitos reservados.', c2:'Feito com IA. Operado por humanos.' }
+  }},
+  fr: { flag:'🇫🇷', code:'FR', dir:'ltr', t: {
+    pageTitle:'Qui sommes-nous — Nyx',
+    nav:{ home:'Accueil', services:'Services', process:'Processus', cases:'Cas', pricing:'Tarifs', cta:'Parlons →' },
+    hero:{ badge:'Qui sommes-nous · Nyx Agency', h1:'Nous sommes Nyx.<br>Nous automatisons<br>le travail<br>répétitif.', sub:"Fondée par Adrian Davila, Nyx est née avec une idée claire : les PME méritent la même technologie d'automatisation que les grandes entreprises. Sans budgets Fortune 500. Sans équipes techniques internes.", cta:'← Retour à l\'accueil' },
+    historia:{ ew:'Notre histoire', title:'Pourquoi<br>Nyx existe.', p1:"En travaillant avec des clients en conseil et développement, Adrian a vu le même schéma maintes fois : des équipes brillantes piégées dans des tâches répétitives qu'aucun humain ne devrait avoir à faire.", p2:"La technologie pour éliminer tout cela existait déjà. Mais elle était difficile à implémenter, coûteuse à maintenir et personne ne l'adaptait au monde réel des PME. C'est là que Nyx est née.", p3:"Aujourd'hui, nous concevons et mettons en œuvre des systèmes d'IA qui travaillent 24/7 — sans vacances, sans arrêts maladie, sans erreurs dues à la fatigue. Pour que l'équipe humaine puisse se concentrer sur ce qui compte vraiment." },
+    stats:{ s1:'par mois économisées\nen moyenne par client', s2:'conversion des leads\navec agents IA', s3:'délai minimum\nde livraison', s4:'clients actifs\nrestent avec Nyx' },
+    valores:{ ew:'Valeurs', title:'Ce qui<br>nous définit.', v1h:'Résultats, pas de fumée.', v1p:"Nous mesurons le succès en heures économisées, leads convertis et euros récupérés. Si les chiffres ne s'additionnent pas, nous continuons à travailler jusqu'à ce qu'ils le fassent.", v2h:'Systèmes, pas des rustines.', v2p:"Nous ne vendons pas des outils isolés. Nous concevons des architectures complètes qui fonctionnent ensemble. Chaque pièce a un objectif spécifique dans l'écosystème de votre entreprise.", v3h:'Transparence totale.', v3p:"Pas de jargon technique inutile. Pas de surprises en facturation. Pas de promesses que nous ne pouvons pas tenir. Nous savons quand quelque chose est possible et quand ce n'est pas le cas." },
+    equipo:{ ew:'L\'équipe', title:'La personne<br>derrière Nyx.', role:'Fondateur · IA Freelance', bioh:'Je construis ce que les autres disent être compliqué.', bio1:"Adrian a passé des années dans le monde de la technologie et de l'automatisation. Ce qui a commencé comme une consultation indépendante est devenu Nyx quand il est devenu clair que le problème n'était pas la technologie.", bio2:'Il travaille aujourd\'hui directement avec chaque client : du diagnostic initial à l\'activation du système et aux révisions mensuelles. Pas d\'intermédiaires.', bio3:'Spécialisé dans le stack d\'automatisation moderne — Claude AI, n8n, Supabase, Evolution API et Retell AI — et dans son adaptation aux cas d\'usage réels des PME.' },
+    cta:{ h:'Travaillons<br>ensemble ?', p:'30 minutes de diagnostic gratuit pour voir si Nyx correspond à ce dont vous avez besoin. Sans pression, sans jargon, sans vente agressive.', wa:'Réserver un créneau', back:'← Retour au site' },
+    footerNav:{ services:'Services', cases:'Cas', pricing:'Tarifs', home:'Accueil' },
+    footerLegal:{ privacy:'Politique de confidentialité', terms:'Conditions générales' },
+    footer:{ c1:'© 2026 Nyx. Tous droits réservés.', c2:'Fait avec IA. Opéré par des humains.' }
+  }},
+  de: { flag:'🇩🇪', code:'DE', dir:'ltr', t: {
+    pageTitle:'Über uns — Nyx',
+    nav:{ home:'Startseite', services:'Leistungen', process:'Prozess', cases:'Referenzen', pricing:'Preise', cta:'Gespräch →' },
+    hero:{ badge:'Über uns · Nyx Agency', h1:'Wir sind Nyx.<br>Wir automatisieren<br>repetitive<br>Arbeit.', sub:'Gegründet von Adrian Davila, entstand Nyx mit einer klaren Idee: KMUs verdienen dieselbe Automatisierungstechnologie, die große Unternehmen haben. Ohne Fortune-500-Budgets. Ohne interne technische Teams.', cta:'← Zurück zur Startseite' },
+    historia:{ ew:'Unsere Geschichte', title:'Warum es<br>Nyx gibt.', p1:'Bei der Arbeit mit Kunden in Beratung und Entwicklung sah Adrian immer wieder dasselbe Muster: brillante Teams, gefangen in repetitiven Aufgaben, die kein Mensch erledigen sollte.', p2:'Die Technologie, um all das zu eliminieren, existierte bereits. Aber sie war schwer zu implementieren, teuer zu warten und niemand adaptierte sie an die reale Welt der KMUs. Dort wurde Nyx geboren.', p3:'Heute entwickeln und implementieren wir KI-Systeme, die 24/7 arbeiten — ohne Urlaub, ohne Krankheit, ohne Fehler durch Müdigkeit. Damit das menschliche Team sich auf das konzentrieren kann, was wirklich wichtig ist.' },
+    stats:{ s1:'pro Monat eingespart\nim Durchschnitt pro Kunde', s2:'Lead-Konversion\nmit KI-Agenten', s3:'Mindest-\nLieferzeit', s4:'aktive Kunden\nbleiben bei Nyx' },
+    valores:{ ew:'Werte', title:'Was uns<br>definiert.', v1h:'Ergebnisse, kein Rauch.', v1p:'Wir messen Erfolg in eingesparten Stunden, konvertierten Leads und zurückgewonnenen Euros. Wenn die Zahlen nicht stimmen, arbeiten wir weiter, bis sie es tun.', v2h:'Systeme, keine Pflaster.', v2p:'Wir verkaufen keine einzelnen Tools. Wir entwerfen vollständige Architekturen, die zusammen funktionieren. Jede Komponente hat einen spezifischen Zweck im Ökosystem Ihres Unternehmens.', v3h:'Völlige Transparenz.', v3p:'Kein unnötiger Fachjargon. Keine Abrechnungsüberraschungen. Keine Versprechen, die wir nicht halten können. Wir wissen, wann etwas möglich ist und wann nicht, und sagen es klar.' },
+    equipo:{ ew:'Das Team', title:'Die Person<br>hinter Nyx.', role:'Gründer · KI Freelance', bioh:'Ich baue, was andere für kompliziert halten.', bio1:'Adrian hat Jahre in der Welt der Technologie und Automatisierung verbracht. Was als unabhängige Beratung begann, wurde zu Nyx, als klar wurde, dass das Problem nicht die Technologie war.', bio2:'Heute arbeitet er direkt mit jedem Kunden: von der Erstdiagnose bis zur Systemaktivierung und den monatlichen Reviews. Keine Vermittler, keine Offshore-Teams.', bio3:'Spezialisiert auf den modernen Automatisierungsstack — Claude AI, n8n, Supabase, Evolution API und Retell AI — und auf die Anpassung an reale Anwendungsfälle in KMUs.' },
+    cta:{ h:'Arbeiten wir<br>zusammen?', p:'30 Minuten kostenlose Diagnose, um zu sehen, ob Nyx zu Ihrem Bedarf passt. Kein Druck, kein Fachjargon, kein aggressiver Verkauf.', wa:'Termin buchen', back:'← Zurück zur Website' },
+    footerNav:{ services:'Leistungen', cases:'Referenzen', pricing:'Preise', home:'Startseite' },
+    footerLegal:{ privacy:'Datenschutz', terms:'AGB' },
+    footer:{ c1:'© 2026 Nyx. Alle Rechte vorbehalten.', c2:'Mit KI gemacht. Von Menschen betrieben.' }
+  }},
+  it: { flag:'🇮🇹', code:'IT', dir:'ltr', t: {
+    pageTitle:'Chi siamo — Nyx',
+    nav:{ home:'Home', services:'Servizi', process:'Processo', cases:'Casi', pricing:'Prezzi', cta:'Parliamo →' },
+    hero:{ badge:'Chi siamo · Nyx Agency', h1:'Siamo Nyx.<br>Automatizziamo<br>il lavoro<br>ripetitivo.', sub:"Fondata da Adrian Davila, Nyx è nata con un'idea chiara: le PMI meritano la stessa tecnologia di automazione delle grandi aziende. Senza budget Fortune 500. Senza team tecnici interni.", cta:'← Torna alla home' },
+    historia:{ ew:'La nostra storia', title:'Perché<br>esiste Nyx.', p1:'Lavorando con clienti in consulenza e sviluppo, Adrian ha visto lo stesso schema più volte: team brillanti intrappolati in compiti ripetitivi che nessun essere umano dovrebbe fare.', p2:"La tecnologia per eliminare tutto questo esisteva già. Ma era difficile da implementare, costosa da mantenere e nessuno la stava adattando al mondo reale delle PMI. Lì è nata Nyx.", p3:"Oggi progettiamo e implementiamo sistemi di IA che lavorano 24/7 — senza ferie, senza malattie, senza errori da stanchezza. Così il team umano può dedicarsi a ciò che conta davvero." },
+    stats:{ s1:'al mese risparmiate\nin media per cliente', s2:'conversione lead\ncon agenti IA', s3:'tempo minimo\ndi consegna', s4:'clienti attivi\nrestano con Nyx' },
+    valores:{ ew:'Valori', title:'Ciò che<br>ci definisce.', v1h:'Risultati, non fumo.', v1p:"Misuriamo il successo in ore risparmiate, lead convertiti ed euro recuperati. Se i numeri non tornano, continuiamo a lavorare finché non tornano.", v2h:'Sistemi, non rattoppi.', v2p:'Non vendiamo strumenti singoli. Progettiamo architetture complete che funzionano insieme. Ogni pezzo ha uno scopo specifico nell\'ecosistema del tuo business.', v3h:'Trasparenza totale.', v3p:"Nessun gergo tecnico inutile. Nessuna sorpresa in fattura. Nessuna promessa che non possiamo mantenere. Sappiamo quando qualcosa è possibile e quando non lo è, e lo diciamo chiaramente." },
+    equipo:{ ew:'Il team', title:'La persona<br>dietro Nyx.', role:'Fondatore · IA Freelance', bioh:'Costruisco quello che gli altri dicono sia complicato.', bio1:"Adrian ha trascorso anni nel mondo della tecnologia e dell'automazione. Quella che è iniziata come consulenza indipendente è diventata Nyx quando è diventato chiaro che il problema non era la tecnologia.", bio2:'Oggi lavora direttamente con ogni cliente: dalla diagnosi iniziale all\'attivazione del sistema e alle revisioni mensili. Nessun intermediario.', bio3:'Specializzato nello stack di automazione moderno — Claude AI, n8n, Supabase, Evolution API e Retell AI — e nell\'adattarlo a casi d\'uso reali nelle PMI.' },
+    cta:{ h:'Lavoriamo<br>insieme?', p:'30 minuti di diagnosi gratuita per vedere se Nyx si adatta a quello di cui hai bisogno. Senza pressione, senza gergo, senza vendite aggressive.', wa:'Prenota una call', back:'← Torna al sito' },
+    footerNav:{ services:'Servizi', cases:'Casi', pricing:'Prezzi', home:'Home' },
+    footerLegal:{ privacy:'Informativa sulla privacy', terms:'Termini e condizioni' },
+    footer:{ c1:'© 2026 Nyx. Tutti i diritti riservati.', c2:'Fatto con IA. Gestito da umani.' }
+  }},
+  nl: { flag:'🇳🇱', code:'NL', dir:'ltr', t: {
+    pageTitle:'Over ons — Nyx',
+    nav:{ home:'Home', services:'Diensten', process:'Proces', cases:'Cases', pricing:'Prijzen', cta:'Laten we praten →' },
+    hero:{ badge:'Over ons · Nyx Agency', h1:'Wij zijn Nyx.<br>Wij automatiseren<br>repetitief<br>werk.', sub:'Opgericht door Adrian Davila, is Nyx geboren met een duidelijk idee: MKB verdient dezelfde automatiseringstechnologie als grote bedrijven. Zonder Fortune 500-budgetten. Zonder interne technische teams.', cta:'← Terug naar home' },
+    historia:{ ew:'Ons verhaal', title:'Waarom<br>Nyx bestaat.', p1:'Bij het werken met klanten in consultancy en ontwikkeling zag Adrian steeds hetzelfde patroon: briljante teams gevangen in repetitieve taken die geen mens zou moeten uitvoeren.', p2:'De technologie om dit alles te elimineren bestond al. Maar het was moeilijk te implementeren, duur te onderhouden en niemand paste het aan aan de echte wereld van het MKB. Daar werd Nyx geboren.', p3:'Vandaag ontwerpen en implementeren we AI-systemen die 24/7 werken — zonder vakantie, zonder ziekte, zonder fouten door vermoeidheid. Zodat het menselijke team zich kan richten op wat echt belangrijk is.' },
+    stats:{ s1:'per maand bespaard\ngemiddeld per klant', s2:'leadconversie\nmet AI-agenten', s3:'minimale\nleveringstijd', s4:'actieve klanten\nblijven bij Nyx' },
+    valores:{ ew:'Waarden', title:'Wat ons<br>definieert.', v1h:'Resultaten, geen rook.', v1p:"We meten succes in bespaarde uren, geconverteerde leads en teruggewonnen euro's. Als de cijfers niet kloppen, blijven we werken totdat ze dat wel doen.", v2h:'Systemen, geen pleisters.', v2p:'We verkopen geen losse tools. We ontwerpen complete architecturen die samen werken. Elk onderdeel heeft een specifiek doel in het ecosysteem van uw bedrijf.', v3h:'Totale transparantie.', v3p:'Geen onnodige technisch jargon. Geen factuurverrassingen. Geen beloftes die we niet kunnen nakomen. We weten wanneer iets mogelijk is en wanneer niet, en we zeggen het duidelijk.' },
+    equipo:{ ew:'Het team', title:'De persoon<br>achter Nyx.', role:'Oprichter · AI Freelance', bioh:'Ik bouw wat anderen gecompliceerd noemen.', bio1:'Adrian heeft jaren doorgebracht in de wereld van technologie en automatisering. Wat begon als onafhankelijk advies werd Nyx toen duidelijk werd dat het probleem niet de technologie was.', bio2:'Vandaag werkt hij rechtstreeks met elke klant: van initiële diagnose tot systeemactivering en maandelijkse reviews. Geen tussenpersonen.', bio3:'Gespecialiseerd in de moderne automatiseringsstack — Claude AI, n8n, Supabase, Evolution API en Retell AI.' },
+    cta:{ h:'Werken we<br>samen?', p:'30 minuten gratis diagnose om te zien of Nyx past bij wat u nodig heeft. Geen druk, geen jargon, geen agressieve verkoop.', wa:'Plan een gesprek', back:'← Terug naar website' },
+    footerNav:{ services:'Diensten', cases:'Cases', pricing:'Prijzen', home:'Home' },
+    footerLegal:{ privacy:'Privacybeleid', terms:'Algemene voorwaarden' },
+    footer:{ c1:'© 2026 Nyx. Alle rechten voorbehouden.', c2:'Gemaakt met AI. Beheerd door mensen.' }
+  }},
+  ru: { flag:'🇷🇺', code:'RU', dir:'ltr', t: {
+    pageTitle:'О нас — Nyx',
+    nav:{ home:'Главная', services:'Услуги', process:'Процесс', cases:'Кейсы', pricing:'Цены', cta:'Обсудить →' },
+    hero:{ badge:'О нас · Nyx Agency', h1:'Мы Nyx.<br>Автоматизируем<br>рутинную<br>работу.', sub:'Основанная Адрианом Давилой, Nyx родилась с чёткой идеей: малый бизнес заслуживает той же технологии автоматизации, что и крупные компании. Без бюджетов Fortune 500. Без внутренних технических команд.', cta:'← Вернуться на главную' },
+    historia:{ ew:'Наша история', title:'Почему<br>существует Nyx.', p1:'Работая с клиентами в консалтинге и разработке, Адриан снова и снова видел одну и ту же картину: блестящие команды, застрявшие в рутинных задачах, которые не должен выполнять ни один человек.', p2:'Технология для устранения всего этого уже существовала. Но её было трудно внедрить, дорого поддерживать, и никто не адаптировал её к реальному миру малого бизнеса. Вот где родилась Nyx.', p3:'Сегодня мы проектируем и внедряем ИИ-системы, работающие 24/7 — без отпусков, без больничных, без ошибок от усталости. Чтобы человеческая команда могла сосредоточиться на том, что действительно важно.' },
+    stats:{ s1:'в месяц сэкономлено\nв среднем на клиента', s2:'конверсия лидов\nс ИИ-агентами', s3:'минимальное\nвремя доставки', s4:'активные клиенты\nостаются с Nyx' },
+    valores:{ ew:'Ценности', title:'Что нас<br>определяет.', v1h:'Результаты, не дым.', v1p:'Мы измеряем успех сэкономленными часами, конвертированными лидами и возвращёнными евро. Если цифры не сходятся, мы продолжаем работать, пока они не сойдутся.', v2h:'Системы, не заплатки.', v2p:'Мы не продаём отдельные инструменты. Мы проектируем полные архитектуры, которые работают вместе. Каждый элемент имеет конкретную цель в экосистеме вашего бизнеса.', v3h:'Полная прозрачность.', v3p:'Никакого лишнего технического жаргона. Никаких сюрпризов в счёте. Никаких обещаний, которые мы не можем выполнить. Мы знаем, когда что-то возможно, а когда нет, и говорим об этом прямо.' },
+    equipo:{ ew:'Команда', title:'Человек<br>за Nyx.', role:'Основатель · ИИ Фрилансер', bioh:'Я строю то, что другие называют сложным.', bio1:'Адриан провёл годы в мире технологий и автоматизации. То, что началось как независимый консалтинг, превратилось в Nyx, когда стало ясно, что проблема была не в технологии.', bio2:'Сегодня он работает напрямую с каждым клиентом: от первичной диагностики до активации системы и ежемесячных обзоров. Никаких посредников.', bio3:'Специализируется на современном стеке автоматизации — Claude AI, n8n, Supabase, Evolution API и Retell AI.' },
+    cta:{ h:'Будем<br>работать вместе?', p:'30 минут бесплатной диагностики, чтобы понять, подходит ли Nyx для ваших нужд. Без давления, без жаргона, без агрессивных продаж.', wa:'Записаться на встречу', back:'← Вернуться на сайт' },
+    footerNav:{ services:'Услуги', cases:'Кейсы', pricing:'Цены', home:'Главная' },
+    footerLegal:{ privacy:'Политика конфиденциальности', terms:'Условия использования' },
+    footer:{ c1:'© 2026 Nyx. Все права защищены.', c2:'Сделано с ИИ. Управляется людьми.' }
+  }},
+  zh: { flag:'🇨🇳', code:'ZH', dir:'ltr', t: {
+    pageTitle:'关于我们 — Nyx',
+    nav:{ home:'首页', services:'服务', process:'流程', cases:'案例', pricing:'价格', cta:'联系我们 →' },
+    hero:{ badge:'关于我们 · Nyx Agency', h1:'我们是Nyx。<br>我们自动化<br>重复性<br>工作。', sub:'由Adrian Davila创立，Nyx诞生于一个清晰的理念：中小企业理应享有与大公司相同的自动化技术，无需Fortune 500的预算，也无需内部技术团队。', cta:'← 返回首页' },
+    historia:{ ew:'我们的故事', title:'Nyx<br>为何存在。', p1:'在咨询和开发工作中，Adrian一次又一次看到同样的模式：才华横溢的团队被困于任何人都不该做的重复性任务——在系统间复制数据、回答同样的问题、手动确认预约。', p2:'消除这一切的技术已经存在。但它难以实施、维护成本高昂，且没有人将其适配到中小企业的实际需求中。Nyx就是在这里诞生的。', p3:'今天，我们设计并实施全天24/7运行的AI系统——无需休假、无需病假、无疲劳错误。让人类团队能够专注于真正重要的事情。' },
+    stats:{ s1:'每月平均每位\n客户节省的时间', s2:'使用AI代理的\n线索转化率', s3:'最短\n交付时间', s4:'活跃客户\n继续使用Nyx' },
+    valores:{ ew:'价值观', title:'定义<br>我们的东西。', v1h:'结果，不是烟雾弹。', v1p:'我们用节省的小时数、转化的线索和收回的欧元来衡量成功。如果数字不对，我们继续工作直到它们对了。', v2h:'系统，不是创可贴。', v2p:'我们不销售单独的工具。我们设计协同工作的完整架构。每个组件在您的业务生态系统中都有特定目的。', v3h:'完全透明。', v3p:'无不必要的技术术语。无账单惊喜。无法兑现的承诺我们不会做。我们知道什么时候某事是可能的，什么时候不是，并且清晰地说出来。' },
+    equipo:{ ew:'团队', title:'Nyx<br>背后的人。', role:'创始人 · AI自由职业者', bioh:'我构建别人说很复杂的东西。', bio1:'Adrian在技术和自动化领域工作多年。最初作为独立顾问起步，后来当他意识到问题不在于技术——而在于缺乏将其翻译成商业语言的人时，Nyx诞生了。', bio2:'他今天直接与每位客户合作：从初始诊断到系统激活和每月审核。没有中间商，没有离岸团队。', bio3:'专精于现代自动化技术栈——Claude AI、n8n、Supabase、Evolution API和Retell AI，并将其适配到中小企业的实际使用场景。' },
+    cta:{ h:'我们一起<br>合作吧？', p:'30分钟免费诊断，看看Nyx是否适合您的需求。无压力，无术语，无强行推销。', wa:'预约会议', back:'← 返回网站' },
+    footerNav:{ services:'服务', cases:'案例', pricing:'价格', home:'首页' },
+    footerLegal:{ privacy:'隐私政策', terms:'条款和条件' },
+    footer:{ c1:'© 2026 Nyx. 版权所有。', c2:'由AI构建，由人类运营。' }
+  }},
+  ja: { flag:'🇯🇵', code:'JA', dir:'ltr', t: {
+    pageTitle:'私たちについて — Nyx',
+    nav:{ home:'ホーム', services:'サービス', process:'プロセス', cases:'事例', pricing:'料金', cta:'相談する →' },
+    hero:{ badge:'私たちについて · Nyx Agency', h1:'私たちはNyx。<br>繰り返し作業を<br>自動化<br>します。', sub:'Adrian Dávilaによって設立されたNyxは、明確なアイデアを持って生まれました：中小企業は大企業と同じ自動化技術を受け取るべきです。Fortune 500の予算なしで。社内技術チームなしで。', cta:'← ホームに戻る' },
+    historia:{ ew:'私たちの物語', title:'Nyxが<br>存在する理由。', p1:'コンサルティングと開発でクライアントと仕事をする中で、Adrianは何度も同じパターンを見ました：優秀なチームが、人間がすべきでない繰り返し作業に閉じ込められていました。', p2:'それらを排除するための技術はすでに存在していました。しかし、実装が難しく、維持コストが高く、誰も中小企業の現実の世界に適応させていませんでした。そこでNyxが生まれました。', p3:'今日、私たちは24/7稼働するAIシステムを設計・実装しています — 休暇なし、病欠なし、疲労によるエラーなし。人間チームが本当に重要なことに集中できるように。' },
+    stats:{ s1:'月あたり\n平均節約時間/クライアント', s2:'AIエージェントによる\nリードコンバージョン', s3:'最短\n納品時間', s4:'アクティブクライアントが\nNyxに留まる割合' },
+    valores:{ ew:'価値観', title:'私たちを<br>定義するもの。', v1h:'煙ではなく、結果を。', v1p:'節約した時間、転換したリード、回収したユーロで成功を測ります。数字が合わない場合は、合うまで作業を続けます。', v2h:'応急処置ではなく、システムを。', v2p:'個別のツールは販売しません。一緒に機能する完全なアーキテクチャを設計します。各コンポーネントはビジネスエコシステムにおける特定の目的を持っています。', v3h:'完全な透明性。', v3p:'不必要な技術用語なし。請求書の驚きなし。果たせない約束なし。何が可能で何が不可能かを知っており、明確に述べます。' },
+    equipo:{ ew:'チーム', title:'Nyxの<br>背後にいる人物。', role:'創設者 · AIフリーランス', bioh:'他の人が複雑と言うものを構築します。', bio1:'Adrianはテクノロジーと自動化の世界で長年働いてきました。独立したコンサルティングとして始まったものが、問題は技術ではなかった—それをビジネス言語に翻訳する人がいなかったことが明らかになったときにNyxになりました。', bio2:'今日、彼は各クライアントと直接働いています：初期診断からシステム活性化、月次レビューまで。仲介者なし、オフショアチームなし。', bio3:'現代の自動化スタック — Claude AI、n8n、Supabase、Evolution API、Retell AI — に特化し、中小企業の実際のユースケースに適応させています。' },
+    cta:{ h:'一緒に<br>取り組みましょう？', p:'30分の無料診断でNyxがあなたのニーズに合うか確認しましょう。プレッシャーなし、専門用語なし、強引な販売なし。', wa:'予約する', back:'← サイトに戻る' },
+    footerNav:{ services:'サービス', cases:'事例', pricing:'料金', home:'ホーム' },
+    footerLegal:{ privacy:'プライバシーポリシー', terms:'利用規約' },
+    footer:{ c1:'© 2026 Nyx. 全著作権所有。', c2:'AIで作成。人間が運営。' }
+  }},
+  ko: { flag:'🇰🇷', code:'KO', dir:'ltr', t: {
+    pageTitle:'소개 — Nyx',
+    nav:{ home:'홈', services:'서비스', process:'프로세스', cases:'사례', pricing:'요금제', cta:'상담하기 →' },
+    hero:{ badge:'소개 · Nyx Agency', h1:'우리는 Nyx입니다.<br>반복적인 업무를<br>자동화<br>합니다.', sub:'Adrian Davila가 설립한 Nyx는 명확한 아이디어로 탄생했습니다: 중소기업도 대기업과 동일한 자동화 기술을 누려야 합니다. Fortune 500 예산 없이, 내부 기술팀 없이.', cta:'← 홈으로 돌아가기' },
+    historia:{ ew:'우리의 이야기', title:'Nyx가<br>존재하는 이유.', p1:'컨설팅과 개발 분야에서 클라이언트와 일하면서 Adrian은 같은 패턴을 반복해서 보았습니다: 재능 있는 팀들이 어떤 인간도 해서는 안 될 반복 작업에 갇혀 있었습니다.', p2:'이 모든 것을 없앨 기술은 이미 존재했습니다. 하지만 구현하기 어렵고, 유지 비용이 높으며, 아무도 중소기업의 현실 세계에 맞게 적용하지 않았습니다. 그것이 Nyx가 탄생한 곳입니다.', p3:'오늘날 우리는 24/7 작동하는 AI 시스템을 설계하고 구현합니다 — 휴가 없이, 병가 없이, 피로로 인한 오류 없이. 인간 팀이 정말 중요한 것에 집중할 수 있도록.' },
+    stats:{ s1:'월 평균 절약 시간\n클라이언트당', s2:'AI 에이전트를 통한\n리드 전환율', s3:'최소\n납품 시간', s4:'활성 클라이언트가\nNyx와 함께 유지' },
+    valores:{ ew:'가치관', title:'우리를<br>정의하는 것.', v1h:'결과, 연기가 아닌.', v1p:'절약한 시간, 전환된 리드, 회수된 유로로 성공을 측정합니다. 숫자가 맞지 않으면 맞을 때까지 계속 작업합니다.', v2h:'시스템, 임시방편이 아닌.', v2p:'개별 도구를 판매하지 않습니다. 함께 작동하는 완전한 아키텍처를 설계합니다. 각 구성 요소는 비즈니스 생태계에서 특정 목적을 가집니다.', v3h:'완전한 투명성.', v3p:'불필요한 기술 용어 없음. 청구서 놀라움 없음. 지킬 수 없는 약속 없음. 무엇이 가능하고 불가능한지 알고 명확하게 말합니다.' },
+    equipo:{ ew:'팀', title:'Nyx<br>뒤에 있는 사람.', role:'창업자 · AI 프리랜서', bioh:'남들이 복잡하다는 것을 구축합니다.', bio1:'Adrian은 기술과 자동화 세계에서 수년을 보냈습니다. 독립 컨설팅으로 시작한 것이 문제가 기술이 아니었다는 것이 명확해졌을 때 Nyx가 되었습니다.', bio2:'그는 오늘날 각 클라이언트와 직접 작업합니다: 초기 진단부터 시스템 활성화, 월간 리뷰까지. 중개자 없음, 오프쇼어 팀 없음.', bio3:'현대 자동화 스택 — Claude AI, n8n, Supabase, Evolution API, Retell AI — 전문가이며 이를 중소기업의 실제 사용 사례에 맞게 적용합니다.' },
+    cta:{ h:'함께<br>일해볼까요?', p:'Nyx가 귀하의 필요에 맞는지 확인하기 위한 30분 무료 진단. 압박 없음, 전문 용어 없음, 공격적인 영업 없음.', wa:'미팅 예약', back:'← 웹사이트로 돌아가기' },
+    footerNav:{ services:'서비스', cases:'사례', pricing:'요금제', home:'홈' },
+    footerLegal:{ privacy:'개인정보 처리방침', terms:'이용 약관' },
+    footer:{ c1:'© 2026 Nyx. 모든 권리 보유.', c2:'AI로 만들어졌습니다. 인간이 운영합니다.' }
+  }},
+  ar: { flag:'🇸🇦', code:'AR', dir:'rtl', t: {
+    pageTitle:'من نحن — Nyx',
+    nav:{ home:'الرئيسية', services:'الخدمات', process:'العملية', cases:'الحالات', pricing:'الأسعار', cta:'لنتحدث ←' },
+    hero:{ badge:'من نحن · Nyx Agency', h1:'نحن Nyx.<br>نقوم بأتمتة<br>العمل<br>المتكرر.', sub:'تأسست Nyx على يد Adrian Davila بفكرة واضحة: تستحق الشركات الصغيرة نفس تقنية الأتمتة التي تمتلكها الشركات الكبيرة. بدون ميزانيات Fortune 500. بدون فرق تقنية داخلية.', cta:'→ العودة إلى الصفحة الرئيسية' },
+    historia:{ ew:'قصتنا', title:'لماذا<br>توجد Nyx.', p1:'خلال عمله مع العملاء في الاستشارات والتطوير، رأى Adrian نفس النمط مراراً وتكراراً: فرق موهوبة محاصرة في مهام متكررة لا ينبغي لأي إنسان القيام بها.', p2:'التكنولوجيا اللازمة لإزالة كل ذلك كانت موجودة بالفعل. لكنها كانت صعبة التنفيذ ومكلفة الصيانة ولم يكن أحد يكيفها مع الواقع الفعلي للشركات الصغيرة. هناك وُلدت Nyx.', p3:'اليوم نصمم وننفذ أنظمة ذكاء اصطناعي تعمل 24/7 - بدون إجازات، بدون إجازات مرضية، بدون أخطاء من التعب. حتى يتمكن الفريق البشري من التركيز على ما يهم حقاً.' },
+    stats:{ s1:'ساعات موفرة شهرياً\nبمتوسط لكل عميل', s2:'تحويل العملاء المحتملين\nمع وكلاء الذكاء الاصطناعي', s3:'أدنى وقت\nللتسليم', s4:'العملاء النشطون\nيستمرون مع Nyx' },
+    valores:{ ew:'القيم', title:'ما الذي<br>يُعرّفنا.', v1h:'نتائج، لا دخان.', v1p:'نقيس النجاح بالساعات الموفرة والعملاء المحولين واليوروهات المستردة. إذا لم تكن الأرقام صحيحة، نستمر في العمل حتى تكون كذلك.', v2h:'أنظمة، لا رقع.', v2p:'لا نبيع أدوات منفصلة. نصمم معمارات كاملة تعمل معاً. كل قطعة لها غرض محدد في نظام أعمالك البيئي.', v3h:'شفافية تامة.', v3p:'لا مصطلحات تقنية غير ضرورية. لا مفاجآت في الفواتير. لا وعود لا يمكننا الوفاء بها. نعرف متى يكون الشيء ممكناً ومتى لا يكون، ونقول ذلك بوضوح.' },
+    equipo:{ ew:'الفريق', title:'الشخص<br>وراء Nyx.', role:'المؤسس · مستقل في الذكاء الاصطناعي', bioh:'أبني ما يقول الآخرون إنه معقد.', bio1:'قضى Adrian سنوات في عالم التكنولوجيا والأتمتة. ما بدأ كاستشارة مستقلة أصبح Nyx عندما أصبح واضحاً أن المشكلة لم تكن التكنولوجيا.', bio2:'يعمل اليوم مباشرة مع كل عميل: من التشخيص الأولي إلى تفعيل النظام والمراجعات الشهرية. لا وسطاء، لا فرق خارجية.', bio3:'متخصص في مجموعة الأتمتة الحديثة — Claude AI وn8n وSupabase وEvolution API وRetell AI.' },
+    cta:{ h:'هل نعمل<br>معاً؟', p:'30 دقيقة من التشخيص المجاني لمعرفة ما إذا كانت Nyx تناسب ما تحتاجه. بلا ضغط، بلا مصطلحات، بلا مبيعات عدوانية.', wa:'احجز موعدك', back:'→ العودة إلى الموقع' },
+    footerNav:{ services:'الخدمات', cases:'الحالات', pricing:'الأسعار', home:'الرئيسية' },
+    footerLegal:{ privacy:'سياسة الخصوصية', terms:'الشروط والأحكام' },
+    footer:{ c1:'© 2026 Nyx. جميع الحقوق محفوظة.', c2:'صُنع بالذكاء الاصطناعي. يُدار بواسطة بشر.' }
+  }},
+};
+
+function setLanguage(code) {
+  const lang = LANGS[code];
+  if (!lang) return;
+  const t = lang.t;
+
+  document.documentElement.lang = code;
+  document.documentElement.dir = lang.dir;
+  document.title = t.pageTitle;
+
+  const _navHome = document.getElementById('nav-home');
+  if (_navHome) _navHome.textContent = t.nav.home;
+  document.getElementById('nav-services').textContent = t.nav.services;
+  const _navProcess = document.getElementById('nav-process');
+  if (_navProcess) _navProcess.textContent = t.nav.process;
+  document.getElementById('nav-cases').textContent    = t.nav.cases;
+  document.getElementById('nav-cta').setAttribute('aria-label', t.nav.cta);
+
+  document.getElementById('hero-badge').textContent   = t.hero.badge;
+  document.getElementById('hero-h1').innerHTML        = t.hero.h1;
+  document.getElementById('hero-sub').textContent     = t.hero.sub;
+  document.getElementById('hero-cta').setAttribute('aria-label', t.hero.cta.replace(/^[←→\s]+/, ''));
+
+  document.getElementById('historia-ew').textContent  = t.historia.ew;
+  document.getElementById('historia-p1').textContent  = t.historia.p1;
+  document.getElementById('historia-p2').textContent  = t.historia.p2;
+  document.getElementById('historia-p3').textContent  = t.historia.p3;
+
+  document.getElementById('stat1-lbl').innerHTML = t.stats.s1.replace('\n','<br>');
+  document.getElementById('stat2-lbl').innerHTML = t.stats.s2.replace('\n','<br>');
+  document.getElementById('stat3-lbl').innerHTML = t.stats.s3.replace('\n','<br>');
+  document.getElementById('stat4-lbl').innerHTML = t.stats.s4.replace('\n','<br>');
+
+  document.getElementById('valores-ew').textContent = t.valores.ew;
+  document.getElementById('v1-h').textContent = t.valores.v1h;
+  document.getElementById('v1-p').textContent = t.valores.v1p;
+  document.getElementById('v2-h').textContent = t.valores.v2h;
+  document.getElementById('v2-p').textContent = t.valores.v2p;
+  document.getElementById('v3-h').textContent = t.valores.v3h;
+  document.getElementById('v3-p').textContent = t.valores.v3p;
+
+  document.getElementById('equipo-ew').textContent  = t.equipo.ew;
+  const _founderRole = document.getElementById('founder-role');
+  if (_founderRole) _founderRole.textContent = t.equipo.role;
+  const _bioH = document.getElementById('bio-h');
+  if (_bioH) _bioH.textContent = t.equipo.bioh;
+  const _bp1 = document.getElementById('bio-p1'); if (_bp1) _bp1.textContent = t.equipo.bio1;
+  const _bp2 = document.getElementById('bio-p2'); if (_bp2) _bp2.textContent = t.equipo.bio2;
+  const _bp3 = document.getElementById('bio-p3'); if (_bp3) _bp3.textContent = t.equipo.bio3;
+
+  document.getElementById('cta-h').innerHTML        = t.cta.h;
+  document.getElementById('cta-p').textContent      = t.cta.p;
+  document.getElementById('cta-wa-btn').textContent = t.cta.wa;
+
+  document.getElementById('footer-copy1').textContent = t.footer.c1;
+
+  // Generic data-i18n walker — applies translations declaratively via data-i18n="path.to.key"
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const value = el.dataset.i18n.split('.').reduce((o, k) => o?.[k], t);
+    if (value != null) el.innerHTML = value;
+  });
+
+  document.getElementById('lang-flag').textContent = lang.flag;
+  document.getElementById('lang-code').textContent = lang.code;
+  document.querySelectorAll('#lang-drop button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === code);
+  });
+
+  localStorage.setItem('nyx-lang', code);
+}
+
+(function () {
+  const btn  = document.getElementById('lang-btn');
+  const drop = document.getElementById('lang-drop');
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = drop.classList.toggle('open');
+    btn.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+  });
+  document.addEventListener('click', () => {
+    drop.classList.remove('open');
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  });
+  drop.addEventListener('click', (e) => {
+    const langBtn = e.target.closest('[data-lang]');
+    if (!langBtn) return;
+    setLanguage(langBtn.dataset.lang);
+    drop.classList.remove('open');
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  });
+
+  const saved = localStorage.getItem('nyx-lang');
+  if (saved && LANGS[saved] && saved !== 'es') setLanguage(saved);
+})();
+
+// MODAL PRIVACIDAD
+(function() {
+  const overlay = document.getElementById('privacy-overlay');
+  const close = () => overlay.classList.remove('open');
+  document.getElementById('pm-close').addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
+})();
+
+// MODAL TÉRMINOS Y CONDICIONES
+(function() {
+  const overlay = document.getElementById('tc-overlay');
+  if (!overlay) return;
+  const close = () => overlay.classList.remove('open');
+  const closeBtn = document.getElementById('tc-close');
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) close();
+  });
+})();
+
+// SCROLL TO TOP
+gsap.registerPlugin(ScrollToPlugin);
+(function() {
+  const btn = document.getElementById('scroll-top');
+  window.addEventListener('scroll', function() {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+  btn.addEventListener('click', function() {
+    gsap.to(window, { scrollTo: 0, duration: .45, ease: 'power2.out' });
+  });
+})();
+</script>
+
+<!-- VOICE — modal open/close + lazy load del agente -->
+<script>
+(function() {
+  const fab     = document.getElementById('voice-fab');
+  const overlay = document.getElementById('voice-overlay');
+  const modal   = overlay && overlay.querySelector('.voice-modal');
+  const closeBtn = document.getElementById('voice-close');
+  if (!fab || !overlay || !modal) return;
+
+  let agent = null;          // VoiceAgent instance, lazy-loaded on first open
+  let loadingPromise = null; // ensures we only import agent.js once
+
+  async function ensureAgent() {
+    if (agent) return agent;
+    if (!loadingPromise) {
+      loadingPromise = import(`/voice/agent.js?v=${Date.now()}`)
+        .then(({ VoiceAgent }) => {
+          agent = new VoiceAgent({ root: modal });
+          return agent;
+        })
+        .catch(err => {
+          console.error('[nyx] voice agent load failed', err);
+          loadingPromise = null;
+          throw err;
+        });
+    }
+    return loadingPromise;
+  }
+
+  async function openModal() {
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    try { await ensureAgent(); } catch {}
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (agent) agent.stop();   // stops mic + WS but keeps the instance alive
+  }
+
+  fab.addEventListener('click', openModal);
+  closeBtn && closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+  });
+})();
+</script>
+
+<!-- ROBOT 3D Three.js — recreado vanilla estilo Whobee, sin plataforma, cabeza sigue al ratón -->
+<script type="module">
+import * as THREE from 'three';
+
+(function initRobot() {
+  const canvas = document.getElementById('robot-canvas');
+  if (!canvas) return;
+  const wrap = canvas.parentElement;
+
+  // ─── Scene + Camera + Renderer ───
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 100);
+  camera.position.set(0, 0.4, 11.5);                  // más alejada y un poco arriba → robot más pequeño + ve la plataforma
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas, alpha: true, antialias: true
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+
+  // ─── Helper: rounded rectangle shape ───
+  function roundedRect(w, h, r) {
+    const s = new THREE.Shape();
+    s.moveTo(-w/2 + r, -h/2);
+    s.lineTo( w/2 - r, -h/2);
+    s.quadraticCurveTo( w/2, -h/2,  w/2, -h/2 + r);
+    s.lineTo( w/2,  h/2 - r);
+    s.quadraticCurveTo( w/2,  h/2,  w/2 - r,  h/2);
+    s.lineTo(-w/2 + r,  h/2);
+    s.quadraticCurveTo(-w/2,  h/2, -w/2,  h/2 - r);
+    s.lineTo(-w/2, -h/2 + r);
+    s.quadraticCurveTo(-w/2, -h/2, -w/2 + r, -h/2);
+    return s;
+  }
+
+  // ─── Textura de gradiente para la pantalla (púrpura → magenta → oscuro) ───
+  function makeScreenTexture() {
+    const c = document.createElement('canvas');
+    c.width = 512; c.height = 512;
+    const ctx = c.getContext('2d');
+    const g = ctx.createRadialGradient(256, 200, 30, 256, 256, 380);
+    g.addColorStop(0,   '#a855f7');
+    g.addColorStop(0.4, '#7c3aed');
+    g.addColorStop(0.8, '#3b1466');
+    g.addColorStop(1,   '#0e0420');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 512, 512);
+    // Highlight superior izquierdo (reflejo glossy)
+    const hg = ctx.createRadialGradient(180, 150, 10, 180, 150, 140);
+    hg.addColorStop(0,   'rgba(255,200,255,.55)');
+    hg.addColorStop(1,   'rgba(255,200,255,0)');
+    ctx.fillStyle = hg;
+    ctx.fillRect(0, 0, 512, 512);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }
+
+  const robot = new THREE.Group();
+
+  // ─── Cuerpo (marco negro brillante alrededor de la pantalla) ───
+  const bw = 1.85, bh = 1.18, br = 0.22;
+  const bodyGeo = new THREE.ExtrudeGeometry(roundedRect(bw, bh, br), {
+    depth: 0.78, bevelEnabled: true,
+    bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 5, curveSegments: 28
+  });
+  bodyGeo.center();
+  const bodyMat = new THREE.MeshPhysicalMaterial({
+    color: 0x0d0716, metalness: 0.75, roughness: 0.18,
+    clearcoat: 1.0, clearcoatRoughness: 0.12
+  });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  robot.add(body);
+
+  // ─── Pantalla (gradiente púrpura/magenta brillante) ───
+  const screenShape = roundedRect(1.42, 0.82, 0.16);
+  const screenGeo = new THREE.ShapeGeometry(screenShape, 24);
+  const screenMat = new THREE.MeshPhysicalMaterial({
+    map: makeScreenTexture(),
+    metalness: 0.2, roughness: 0.18,
+    clearcoat: 1.0, clearcoatRoughness: 0.06,
+    emissive: 0x4a1a8a, emissiveIntensity: 0.18
+  });
+  const screen = new THREE.Mesh(screenGeo, screenMat);
+  screen.position.z = 0.42;
+  robot.add(screen);
+
+  // ─── Ojos (discos blancos brillantes, más grandes) ───
+  const eyeGeo = new THREE.SphereGeometry(0.13, 32, 32);
+  const eyeMat = new THREE.MeshPhysicalMaterial({
+    color: 0xfafaff, metalness: 0.6, roughness: 0.08,
+    clearcoat: 1.0, clearcoatRoughness: 0.04,
+    emissive: 0xb6b0ff, emissiveIntensity: 0.45
+  });
+  const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+  eyeL.position.set(-0.36, 0.04, 0.45);
+  const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+  eyeR.position.set( 0.36, 0.04, 0.45);
+  robot.add(eyeL);
+  robot.add(eyeR);
+
+  // ─── Cuello: cono corto invertido (sin plataforma) ───
+  const neckGroup = new THREE.Group();
+  // Funnel superior (más ancho arriba)
+  const funnelGeo = new THREE.CylinderGeometry(0.32, 0.16, 0.32, 28);
+  const metalMat = new THREE.MeshPhysicalMaterial({
+    color: 0x1a0e2a, metalness: 0.85, roughness: 0.22,
+    clearcoat: 0.8, clearcoatRoughness: 0.18
+  });
+  const funnel = new THREE.Mesh(funnelGeo, metalMat);
+  funnel.position.y = -0.1;
+  neckGroup.add(funnel);
+  // Cilindro fino (poste)
+  const stickGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.28, 16);
+  const stick = new THREE.Mesh(stickGeo, metalMat);
+  stick.position.y = -0.4;
+  neckGroup.add(stick);
+  neckGroup.position.y = -0.78;
+  robot.add(neckGroup);
+
+  // ─── Plataforma (cubo brillante debajo del robot, como el original) ───
+  const platformBaseY = -1.45;
+  const platGeo = new THREE.BoxGeometry(1.55, 0.72, 1.0);
+  const platMat = new THREE.MeshPhysicalMaterial({
+    color: 0x100722, metalness: 0.78, roughness: 0.22,
+    clearcoat: 0.9, clearcoatRoughness: 0.14
+  });
+  const platform = new THREE.Mesh(platGeo, platMat);
+  platform.position.y = platformBaseY;
+  robot.add(platform);
+
+  // Reflejo púrpura proyectado bajo la plataforma (spotlight effect)
+  const glowGeo = new THREE.PlaneGeometry(3.2, 1.6);
+  const glowMat = new THREE.MeshBasicMaterial({
+    color: 0x9d4dff, transparent: true, opacity: 0.35,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  });
+  const glow = new THREE.Mesh(glowGeo, glowMat);
+  glow.rotation.x = -Math.PI / 2;
+  glow.position.y = platformBaseY - 0.36;
+  robot.add(glow);
+
+  // El head/torso (no la plataforma) es lo que rota con el ratón → separamos en sub-grupo
+  const head = new THREE.Group();
+  // Mover body, screen, eyes, neck al sub-grupo head
+  const headChildren = [body, screen, eyeL, eyeR, neckGroup];
+  headChildren.forEach(m => head.add(m));
+  robot.add(head);
+
+  // Escala global más pequeña
+  robot.scale.setScalar(0.78);
+  scene.add(robot);
+
+  // ─── Iluminación (estilo studio, púrpura/magenta) ───
+  scene.add(new THREE.AmbientLight(0x3a2e54, 0.7));
+
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+  keyLight.position.set(3, 4, 5);
+  scene.add(keyLight);
+
+  const rimLight = new THREE.DirectionalLight(0xa085ff, 1.0);
+  rimLight.position.set(-4, 0, -3);
+  scene.add(rimLight);
+
+  const accentMagenta = new THREE.PointLight(0xff3aff, 1.1, 8);
+  accentMagenta.position.set(-2.5, 1.5, 1.5);
+  scene.add(accentMagenta);
+
+  const accentTop = new THREE.PointLight(0x9d4dff, 0.9, 8);
+  accentTop.position.set(2, 3, 2);
+  scene.add(accentTop);
+
+  // ─── Resize ───
+  function resize() {
+    const w = wrap.clientWidth;
+    const h = wrap.clientHeight;
+    if (!w || !h) return;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false);
+  }
+  resize();
+  const ro = new ResizeObserver(resize);
+  ro.observe(wrap);
+
+  // ─── Mouse tracking — la CABEZA (no la plataforma) sigue al cursor ───
+  let targetRX = 0, targetRY = 0;
+  function onMove(clientX, clientY) {
+    const r = wrap.getBoundingClientRect();
+    // Posición relativa al centro del wrap, normalizada a -1..1
+    const dx = (clientX - (r.left + r.width / 2))  / (r.width  / 2);
+    const dy = (clientY - (r.top  + r.height / 2)) / (r.height / 2);
+    // Clamp a -1..1
+    const cdx = Math.max(-1, Math.min(1, dx));
+    const cdy = Math.max(-1, Math.min(1, dy));
+    // Rangos naturales: ±0.7 rad yaw (~40°), ±0.4 rad pitch (~23°)
+    targetRY =  cdx * 0.7;
+    targetRX = -cdy * 0.4;
+  }
+  window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
+  window.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches[0]) onMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+
+  // ─── Animation loop ───
+  let active = true;
+  document.addEventListener('visibilitychange', () => {
+    active = !document.hidden;
+  });
+
+  function animate(t) {
+    if (!active) { requestAnimationFrame(animate); return; }
+    // Solo la cabeza rota — la plataforma se queda fija
+    head.rotation.y += (targetRY - head.rotation.y) * 0.09;
+    head.rotation.x += (targetRX - head.rotation.x) * 0.09;
+    // Floating sutil del conjunto
+    robot.position.y = Math.sin(t * 0.0011) * 0.04;
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+})();
+</script>
+
+</body>
+</html>

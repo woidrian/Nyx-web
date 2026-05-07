@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /twiml/
+Disallow: /twilio/
+Disallow: /media-stream
+
+Sitemap: https://nyx-agency.es/sitemap.xml

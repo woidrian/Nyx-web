@@ -507,3 +507,110 @@ El orbital ocupa ~1/3 del viewport mobile, el panel de texto (número grande + t
 - **Pendiente decisión**: dominio (nyx-agency.es) + producción (Easypanel)
 - **Marcas testimonios**: validar Pulsefit / Lumea / Nordika contra registros reales antes de deploy
 
+---
+
+## Changelog 2026-05-08 — Sesión maratón: hero v2, fluid menu, logo, valores, scroll behaviors
+
+### 1. Fix nav mobile — calendario que desaparecía
+- En mobile el icono del calendario (`#nav-cta`, 44×44) seguía reservando su box completo aunque visualmente estuviera escalado con `transform: scale(.78)` → en la pill compact terminaba empujado fuera del área visible.
+- Solución provisional (después reemplazada por el fluid menu): añadidos `flex-shrink: 0` y reducido el box real (no solo el visual) por breakpoint: 36px → 32px → 30px.
+
+### 2. Fluid menu mobile — sustituye el ul.nav-links en ≤700px
+- Inspirado en `21st.dev/community/components/s/dock` (fluid menu de Kokonut UI), portado a vanilla CSS+JS (sin React/framer-motion).
+- En ≤700px se oculta `ul.nav-links` completo y aparece un **botón circular único** (44px) arriba a la derecha que al click se expande hacia abajo en cascada con `data-i="1..6"` y `transition-delay` escalonado de 30ms cada uno.
+- Items: Servicios, Proceso, Casos, Nosotros, **Calendario lime** (con `calGlow` heredado), **Globe** (idiomas).
+- El item Globe abre un sub-overlay centrado en pantalla (`position: fixed; top:50%; left:50%`) con las 12 banderas en grid 2 columnas → al click llama a `setLanguage(code)` existente y cierra todo.
+- Cierre: click fuera, Escape, click en cualquier item de navegación (con `setTimeout(closeAll, 80)` para que el href tenga tiempo de procesar).
+- z-index: nav (300) < fluid-menu (305) < lang-drop (320), todos por encima del voice FAB.
+
+### 3. Hero v2 — TrueFocus + nuevo layout
+- Reemplazo completo del hero antiguo (4-line h1 + 4 contadores animados) por v2:
+  - **Badge** con dot pulsante lime + glow + texto "AUTOMATIZACIÓN PARA PYMES ESPAÑOLAS" en DM Sans 500 mayúscula con tracking ancho.
+  - **H1 con TrueFocus** vanilla: la frase se split por espacios, las palabras inactivas tienen `blur(5px)`, y un frame con 4 corners lima va saltando de palabra en palabra (0.3s transition + 0.8s pausa). Port del componente React de **ReactBits TrueFocus** sin `motion/react` — usé puras CSS transitions + setInterval.
+  - **Subtítulo** DM Sans 300 al 45% blanco, max-width 580px, centrado.
+  - **Stats strip**: 4 columnas con hairlines verticales: `+200%`, `7`, `−60%`, `24/7` — los símbolos `%` y `/7` en lima dentro de `<em>`. Mobile (≤720px) baja a 2x2.
+  - **Animación entrada**: cada bloque entra con `fadeUp` escalonado vía CSS keyframes (no GSAP) — badge .10s, h1 .25s, sub .40s, CTAs .55s, stats .70s. Respeta `prefers-reduced-motion`.
+- **Fonts**: añadido **DM Sans** 300/400/500 al import de Google Fonts.
+- **i18n**: nuevas traducciones en 12 idiomas en un objeto separado `HERO2` (con claves badge, h1, sub, cta1, cta2, s1-s4) — separado de `LANGS` para no reescribir las 12 entradas gigantes. `setLanguage` aplica `HERO2[code]` y reinicializa TrueFocus con el texto traducido.
+- **JSON-LD y SEO**: el hero v2 mantiene compatibilidad — los IDs antiguos (`hh`, `hs`, `hm`) siguen usándose como contenedores.
+
+### 4. Hero — fondo navy del site (revertido) + textos centralizados
+- Inicialmente puse el hero con fondo `#0a0a0a` (negro). El usuario lo revertió: `background: transparent` para que herede el `var(--bg)` (navy `#030712`) del site igual que el resto de secciones.
+- Todos los `rgba(255,255,255,...)` hardcoded sustituidos por tokens del proyecto (`var(--text)`, `var(--muted)`, `var(--border)`, `var(--bmd)`).
+- **Todo centrado**: `.hero-body` con `align-items: center; text-align: center`, `.true-focus` con `justify-content: center`, sub/CTA-group/stats todos horizontalmente centrados, stats hairlines visibles en todas las separaciones.
+- max-width del hero-body: 980px.
+
+### 5. CTA primario — hand-drawn circle (Kokonut UI)
+- Eliminado el botón secundario "Ver demo" (ghost + scroll-to-#casos).
+- Reemplazado el botón pill primary lime por un **anchor transparente con SVG circle dibujado a mano** alrededor del label, port del `hand-writing-text` de Kokonut UI:
+  - Path original (`M 950 90 C 1250 300, 1050 480, 600 520 ...`) con stroke-linecap round.
+  - Reproducción del `pathLength` de framer-motion en CSS puro: atributo SVG `pathLength="1"` + `stroke-dasharray: 1; stroke-dashoffset: 1 → 0` durante 2.5s con curva original `cubic-bezier(.43,.13,.23,.96)`, delay .55s.
+  - Label "Agendar diagnóstico" en Syne 800 centrado dentro del óvalo, fade-up con delay 1.4s.
+  - **Hover**: stroke + label se tintan a lima `#c8ff00` con drop-shadow lima sutil.
+  - Click → `https://cal.com/woidrian/nyx-agency?overlayCalendar=true`.
+  - Respeta `prefers-reduced-motion`.
+
+#### Fix mobile: label se salía del círculo
+- El aspect-ratio 2:1 del óvalo dejaba muy poca altura interior en mobile → "Agendar diagnóstico" wrapping en 2 líneas que se salían.
+- **Solución**: cambié `preserveAspectRatio="xMidYMid meet"` → `preserveAspectRatio="none"` para que el óvalo se estire al container, y añadí `vector-effect="non-scaling-stroke"` para que el grosor del trazo quede uniforme aunque se aplaste verticalmente. Stroke pasó de 12 (escalado por viewBox) a 4 (absoluto).
+- Aspect-ratio progresivo: 2:1 desktop → 1.7:1 (≤720) → 1.55:1 (≤480) → 1.45:1 (≤360). Cuanto más estrecho, más cuadrado y más espacio interior.
+- Label `max-width: 66% → 60% → 58% → 56%` para forzar el wrap dentro de la zona segura del óvalo, `line-height: 1.05/1.1`.
+
+### 6. Nav: links centrales + eliminación de Servicios/Casos
+- Eliminados del nav: "Servicios", "Casos". Mantenidos: "Proceso", "Quiénes somos" (renombrado de "Nosotros"). En `nosotros.html`: "Inicio", "Proceso".
+- **Layout reorganizado**: el `<ul class="nav-links">` ahora flota **absolute centered** en el medio del nav (`left: 50%; top: 50%; transform: translate(-50%, -50%)`), y el selector de idioma + calendario se movieron a un nuevo `<ul class="nav-aux">` que queda a la derecha gracias al `justify-content: space-between` del `#nav` flex.
+- Quitado el `border-right` divisor del logo en compact mode (que ahora flotaría suelto al no tener el ul al lado).
+- Fluid menu mobile reducido en consecuencia: 4 items (Proceso, Quiénes somos, Calendario, Idioma) en index / (Inicio, Proceso, Calendario, Idioma) en nosotros.
+- **Mobile nav**: marcado el li de "Quiénes somos" / "Inicio" con clase `.nav-mobile-show` → en ≤700px se hide todos los `<li>` del nav-links excepto ese, así queda visible y centrado entre el logo y el fluid menu. Estilo prominente (`color: var(--text)`, no muted).
+- **i18n**: `setLanguage` cambiado a `_setNav` defensivo con `if (el)` — ya no rompe al intentar actualizar IDs eliminados (`nav-services`, `nav-cases`). Cambiado el valor de `nav.about` en `LANGS.es` ("Quiénes somos") y `LANGS.en` ("About us"); el resto de idiomas ya tenían su variante natural correcta.
+
+### 7. nosotros.html — Bug robot 3D + reemplazo de valores
+- **Bug fix robot 3D**: el eje Y del mouse tracking estaba invertido. En el rig actual `rotation.x` positiva inclina la cabeza hacia ABAJO (no atrás), así que la línea original `targetRX = -cdy * 0.4` hacía que al mover el cursor arriba el robot mirase abajo. Quité el menos: `targetRX = cdy * 0.4`. Ahora la cabeza sigue al cursor correctamente.
+- **Sección "Lo que nos define" rediseñada**: reemplazadas las 3 valor-cards planas (01 Resultados / 02 Sistemas / 03 Transparencia) por **skew gradient cards**, port vanilla del componente React `gradient-card-showcase` de 21st.dev:
+  - Cada card usa CSS custom props `--gf` y `--gt` para gradientes únicos: orange→pink (#ffbc00→#ff0058), blue→pink (#03a9f4→#ff0058), lime→cyan (#4dff03→#00d0ff).
+  - **Dos paneles absolutos** (sólido + 30px blur) skewed 15deg detrás de un cuerpo glassmorphism (`backdrop-filter: blur(10px)`).
+  - **Hover**: paneles se enderezan, cuerpo se desplaza a la izquierda y crece en padding, aparecen 2 blobs flotantes en las esquinas (top-left + bottom-right) con animación `skewBlob` (translateY ±10px, 2s loop, escalonada -1s).
+  - Mantenidos IDs `v1-h`, `v2-h`, `v3-h`, `v1-p`, `v2-p`, `v3-p` para no romper el i18n existente.
+- **Mobile responsive evolution** (3 iteraciones):
+  - **V1**: scroll horizontal snap con `flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory` — las 3 cards "paralelas" al hacer swipe. Encuadre con border + bg + radius.
+  - **V2** (a petición del usuario): cards más pequeñas para que cupieran encuadradas. 280×360 → 220×290 → 195×270 → 175×260 progresivo. Pull del panel oblicuo (`left: 22px → 18px → 16px → 14px`). Trim del glow blur a 18px. Tipografía proporcionada (h: 1rem → .85rem, p: .76rem → .68rem). `-webkit-line-clamp` (7→6→5) para evitar desbordes.
+  - **V3 final** (a petición del usuario "dos arriba y la otra abajo en medio"): switch de scroll horizontal a **CSS Grid 2 columnas**:
+    ```css
+    .skew-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .skew-card:nth-child(3) { grid-column: 1 / -1; justify-self: center; }
+    ```
+    Las cards 1 y 2 quedan en la fila superior lado a lado, la card 3 ocupa las 2 columnas y se centra en medio (max-width propio mantiene su tamaño igual a las de arriba). Tamaños: 220×280 (≤880) → 175×260 (≤480) → 150×240 (≤360).
+
+### 8. Logo nuevo — NYX AGENCY (marca + wordmark + tag)
+- Reemplazado el logo `NY<span class="nav-logo-x">X</span>` por un lockup completo:
+  - **Marca cuadrada** 36×36px con borde sutil (`var(--bmd)`), `border-radius: 7px` y bg ligero. Dentro: SVG inline de una "N" estilizada (3 trazos lima `#c8ff00` con stroke 2.6 + drop-shadow lima sutil).
+  - **Wordmark** "NYX" en Space Grotesk 700.
+  - **Tag** "AGENCY" en JetBrains Mono debajo, lima, con `letter-spacing: .32em`.
+  - **Hover**: cuadrado se tinta lima (border + bg), opacity de todo el lockup baja a .85.
+- **Responsive**:
+  - Default: 36px mark + 1.1rem word + 0.54rem tag.
+  - Compact (al scrollear): 30px / 0.95rem / 0.48rem.
+  - Mobile ≤700px: 32px / 1rem / 0.5rem.
+  - Mobile ≤420px: el tag "AGENCY" se hide completo, mark a 30px y word a 0.95rem para que el lockup ocupe menos en la pill al lado del fluid menu.
+- Aplicado en `index.html` y `nosotros.html`.
+
+### 9. Animated shiny shimmer en H1 hero
+- Aplicado al `.tf-word` (palabras del TrueFocus) un efecto shiny shimmer infinito, port vanilla del `AnimatedText` de 21st.dev:
+  - **Gradiente lineal** sobre el texto: `linear-gradient(90deg, rgba(241,245,249,.35), #ffffff, rgba(241,245,249,.35))` con `background-size: 200% 100%`.
+  - `background-clip: text` + `color: transparent` → el gradiente se recorta a las letras.
+  - Animación `tfShimmer 3s ease-in-out infinite alternate` mueve `background-position` de 0% a 100% y regresa, generando el sweep de luz infinito.
+  - **Coexiste con TrueFocus**: el frame lima sigue saltando palabra a palabra, las inactivas siguen con `blur(5px)`, el shimmer corre por debajo. Respeta `prefers-reduced-motion`.
+
+### 10. Nav compact al primer scroll
+- Antes: dos `ScrollTrigger.create` separados — `nav.solid` con `start: 'top -60'` y `nav.compact` con `start: 'top -' + (window.innerHeight * 0.7)` (≈ pasar la primera sección).
+- Ahora: un único `ScrollTrigger` con `start: 'top -40'` que activa ambas clases (`solid` + `compact`) a la vez. En cuanto el usuario hace cualquier scroll, el nav colapsa a la pill compacta.
+- Aplicado a `index.html` y `nosotros.html` — mismo comportamiento en desktop, tablet y mobile.
+
+### Estado del proyecto post 2026-05-08
+- **Animaciones del hero combinadas**: fadeUp escalonado (entrada) + TrueFocus (frame lima rotando) + shiny shimmer (gradiente moviéndose) + handwriting circle (path drawing). Todas en CSS puro o GSAP existente, sin nuevas librerías.
+- **Stack visual unificado**: el lima `#c8ff00` se usa coherentemente en logo, voice FAB, cal-icon nav, frame TrueFocus, blobs hero, badge dot, hand-drawn circle hover, valores hover, fluid-menu cal item, dot pulsante badge.
+- **Nav mobile claro**: logo NYX|N a la izquierda, "Quiénes somos" / "Inicio" centrado, fluid menu a la derecha — todo entre los 360-700px de viewport.
+- **Sección valores mobile** (nosotros): pirámide invertida 2+1 dentro de un encuadre con border + radius.
+- **Nav compact** ahora más responsivo: pill aparece al primer scroll real (~40px), no después de la primera sección.
+- **Pendientes** (sin cambios desde 2026-05-07): modales Privacidad/T&C vacíos para RGPD; validar marcas Pulsefit/Lumea/Nordika; deploy a producción ya activo en Vercel + dominio nyx-agency.es funcionando.
+

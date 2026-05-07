@@ -3652,17 +3652,15 @@ gsap.utils.toArray('.rv').forEach(el => {
   );
 });
 
-// Nav solid
+// Nav solid + compact ambos al primer scroll real (~40px)
 const nav = document.getElementById('nav');
 ScrollTrigger.create({
-  start: 'top -60',
-  onUpdate: self => nav.classList.toggle('solid', self.progress > 0),
-});
-
-// Nav compacto al pasar la primera sección (~70% del viewport)
-ScrollTrigger.create({
-  start: () => 'top -' + (window.innerHeight * 0.7),
-  onUpdate: self => nav.classList.toggle('compact', self.progress > 0),
+  start: 'top -40',
+  onUpdate: self => {
+    const scrolled = self.progress > 0;
+    nav.classList.toggle('solid', scrolled);
+    nav.classList.toggle('compact', scrolled);
+  },
 });
 
 // Footer wordmark parallax leve

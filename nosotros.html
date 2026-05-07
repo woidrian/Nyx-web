@@ -136,11 +136,12 @@
   .lang-btn { transition: transform .35s ease; }
   .nav-logo { font-family: var(--fh); font-size: 1.1875rem; font-weight: 700; letter-spacing: -.03em; }
   .nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
+  .nav-links > li { flex-shrink: 0; }
   .nav-links a { font-size: .875rem; color: var(--muted); transition: color .2s; }
   .nav-links a:hover { color: var(--text); }
   .nav-cta {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 44px; height: 44px;
+    width: 44px; height: 44px; flex-shrink: 0;
     color: var(--text) !important;
     background: transparent !important;
     padding: 0 !important; border-radius: 0 !important;
@@ -198,18 +199,30 @@
     .nav-links { gap: 1rem; }
     .nav-links a { font-size: .76rem; white-space: nowrap; }
     #nav { padding: .9rem 1rem; }
+    /* Reducir el box real del calendario para que quepa siempre, no solo visualmente */
+    .nav-cta { width: 36px; height: 36px; }
+    .nav-cta .cal-icon { width: 28px; height: 28px; }
+    #nav.compact .nav-cta { width: 32px; height: 32px; transform: perspective(160px) rotateX(10deg) rotateY(-10deg) scale(.95); }
+    #nav.compact .nav-cta .cal-icon { width: 26px; height: 26px; }
   }
   @media (max-width: 540px) {
     .nav-links { gap: .75rem; }
     .nav-links a { font-size: .7rem; }
     #nav { padding: .8rem .8rem; }
+    #nav.compact { padding: .5rem 1rem .5rem .9rem; }
     #nav.compact .nav-links { gap: .7rem; }
     #nav.compact .nav-links a { font-size: .68rem; }
+    #nav.compact .nav-logo { font-size: .9rem; padding-right: .6rem; margin-right: .35rem; }
+    #nav.compact .lang-btn { transform: scale(.82); transform-origin: right center; padding: .25rem .45rem; }
   }
   @media (max-width: 420px) {
     .nav-links { gap: .55rem; }
     .nav-links a { font-size: .65rem; }
     .lang-btn { font-size: .65rem; padding: .35rem .55rem; }
+    .nav-cta { width: 32px; height: 32px; }
+    .nav-cta .cal-icon { width: 26px; height: 26px; }
+    #nav.compact .nav-cta { width: 30px; height: 30px; transform: perspective(160px) rotateX(10deg) rotateY(-10deg); }
+    #nav.compact .nav-cta .cal-icon { width: 24px; height: 24px; }
   }
 
   /* Language dropdown */

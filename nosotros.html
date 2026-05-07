@@ -135,6 +135,7 @@
   .nav-links a { transition: color .2s, font-size .35s ease; }
   .lang-btn { transition: transform .35s ease; }
   .nav-logo { font-family: var(--fh); font-size: 1.1875rem; font-weight: 700; letter-spacing: -.03em; }
+  .nav-logo-x { color: #c8ff00; }
   .nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
   .nav-links a { font-size: .875rem; color: var(--muted); transition: color .2s; }
   .nav-links a:hover { color: var(--text); }
@@ -1353,7 +1354,7 @@
 
 <!-- NAV -->
 <nav id="nav" role="navigation" aria-label="Principal">
-  <a href="index.html" class="nav-logo">NYX</a>
+  <a href="index.html" class="nav-logo" aria-label="Nyx — Inicio">NY<span class="nav-logo-x">X</span></a>
   <ul class="nav-links">
     <li><a href="index.html" id="nav-home">Inicio</a></li>
     <li><a href="index.html#servicios" id="nav-services">Servicios</a></li>

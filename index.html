@@ -516,44 +516,71 @@
     margin: 0 auto 2.5rem;
   }
 
-  /* CTA group */
+  /* CTA group — un único CTA con círculo dibujado a mano (port vanilla de Kokonut UI HandWritingText) */
   .hero-cta-group {
-    display: flex; align-items: center; gap: 1rem;
-    margin-bottom: 4rem;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
+    margin: -1rem 0 1.5rem;
+    width: 100%;
   }
-  .btn-primary-lime {
-    display: inline-flex; align-items: center; gap: .65rem;
-    background: #c8ff00; color: var(--bg);
-    padding: .9rem 1.5rem; border-radius: 999px;
-    font-family: 'DM Sans', system-ui, sans-serif;
-    font-size: .9375rem; font-weight: 500;
-    letter-spacing: -.005em;
-    border: none; cursor: pointer; text-decoration: none;
-    box-shadow: 0 0 0 0 rgba(200,255,0,0);
-    transition: box-shadow .25s ease, transform .2s ease, background .2s ease;
-  }
-  .btn-primary-lime:hover {
-    background: #d6ff33;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 28px rgba(200,255,0,.32);
-  }
-  .btn-primary-lime svg { transition: transform .2s ease; }
-  .btn-primary-lime:hover svg { transform: translateX(3px); }
-
-  .btn-ghost-lime {
-    display: inline-flex; align-items: center; gap: .55rem;
-    background: transparent; color: var(--text);
-    padding: .9rem 1.25rem; border-radius: 999px;
-    font-family: 'DM Sans', system-ui, sans-serif;
-    font-size: .9375rem; font-weight: 500;
-    border: 1px solid var(--bmd);
+  .hcta-handwriting {
+    position: relative;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: min(560px, 92vw);
+    aspect-ratio: 2 / 1;
+    text-decoration: none;
+    color: var(--text);
     cursor: pointer;
-    transition: color .2s ease, border-color .2s ease, background .2s ease;
+    background: transparent;
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
   }
-  .btn-ghost-lime:hover { color: var(--text); border-color: rgba(200,255,0,.45); background: rgba(200,255,0,.04); }
-  .btn-ghost-lime svg { color: #c8ff00; flex-shrink: 0; }
+  .hcta-handwriting:hover { transform: scale(1.025); }
+  .hcta-handwriting:hover .hcta-path {
+    stroke: #c8ff00;
+    filter: drop-shadow(0 0 14px rgba(200,255,0,.45));
+  }
+  .hcta-handwriting:hover .hcta-label { color: #c8ff00; }
+
+  .hcta-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    color: var(--text);
+  }
+  .hcta-path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    animation: hwDraw 2.5s cubic-bezier(.43,.13,.23,.96) .55s forwards;
+    transition: stroke .25s ease, filter .25s ease;
+  }
+  @keyframes hwDraw {
+    0%   { stroke-dashoffset: 1; opacity: 0; }
+    6%   { opacity: .9; }
+    100% { stroke-dashoffset: 0; opacity: .9; }
+  }
+
+  .hcta-label {
+    position: relative; z-index: 1;
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 3.2vw, 2.25rem);
+    letter-spacing: -.03em;
+    color: var(--text);
+    text-align: center;
+    padding: 0 1rem;
+    opacity: 0;
+    animation: hwLabelIn .8s cubic-bezier(.4,0,.2,1) 1.4s forwards;
+    transition: color .25s ease;
+  }
+  @keyframes hwLabelIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hcta-path { animation: none; stroke-dashoffset: 0; opacity: .9; }
+    .hcta-label { animation: none; opacity: 1; transform: none; }
+  }
 
   /* Stats strip — centralizada */
   .hero-stats {
@@ -611,8 +638,9 @@
     .hero-h1-tf { margin-bottom: 1.25rem; }
     .hero-sub { font-size: .95rem; margin-bottom: 2rem; }
     .tf-word { font-size: clamp(34px, 9.5vw, 44px); letter-spacing: -.03em; }
-    .hero-cta-group { gap: .6rem; flex-direction: column; align-items: stretch; width: 100%; max-width: 320px; }
-    .btn-primary-lime, .btn-ghost-lime { width: 100%; justify-content: center; padding: .8rem 1.25rem; font-size: .9rem; }
+    .hero-cta-group { margin: -.5rem 0 1rem; }
+    .hcta-handwriting { width: 100%; aspect-ratio: 2 / 1.05; }
+    .hcta-label { font-size: clamp(1.05rem, 5vw, 1.4rem); padding: 0 .6rem; }
     .hero-stats { padding-top: 1.25rem; gap: 1.25rem 0; }
   }
 
@@ -2793,14 +2821,18 @@
     </p>
 
     <div class="hero-cta-group" id="hc">
-      <a href="https://cal.com/woidrian/nyx-agency?overlayCalendar=true" target="_blank" rel="noopener noreferrer" class="btn-primary-lime" id="hcta-primary">
-        <span id="hcta-primary-text">Agendar diagnóstico</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <a href="https://cal.com/woidrian/nyx-agency?overlayCalendar=true"
+         target="_blank" rel="noopener noreferrer"
+         class="hcta-handwriting" id="hcta-primary"
+         aria-label="Agendar diagnóstico en Cal.com">
+        <svg class="hcta-svg" viewBox="0 0 1200 600" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+          <path class="hcta-path" pathLength="1"
+            d="M 950 90 C 1250 300, 1050 480, 600 520 C 250 520, 150 480, 150 300 C 150 120, 350 80, 600 80 C 850 80, 950 180, 950 180"
+            fill="none" stroke="currentColor" stroke-width="12"
+            stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="hcta-label" id="hcta-primary-text">Agendar diagnóstico</span>
       </a>
-      <button type="button" class="btn-ghost-lime" id="hcta-demo">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-        <span id="hcta-demo-text">Ver demo</span>
-      </button>
     </div>
 
     <div class="hero-stats" id="hm">
@@ -3608,15 +3640,6 @@ function initTrueFocus(container, sentence, opts = {}) {
   });
 })();
 
-// Ver demo — scroll suave a la sección de casos
-(function () {
-  const btn = document.getElementById('hcta-demo');
-  if (!btn) return;
-  btn.addEventListener('click', () => {
-    const target = document.getElementById('casos');
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-})();
 
 
 /* ═══════════════════════════════════════════════════════════
@@ -3865,7 +3888,8 @@ function setLanguage(code) {
   setText('hb2-text', h2.badge);
   setText('hs', h2.sub);
   setText('hcta-primary-text', h2.cta1);
-  setText('hcta-demo-text', h2.cta2);
+  const ctaPrimaryEl = document.getElementById('hcta-primary');
+  if (ctaPrimaryEl) ctaPrimaryEl.setAttribute('aria-label', h2.cta1 + ' en Cal.com');
   setText('hs-l1', h2.s1);
   setText('hs-l2', h2.s2);
   setText('hs-l3', h2.s3);

@@ -253,7 +253,17 @@
   }
   /* Mobile nav: en mobile escondemos el ul tradicional y mostramos el fluid menu (ver bloque dedicado más abajo) */
   @media (max-width: 700px) {
-    .nav-links, .nav-aux { display: none !important; }
+    /* En mobile escondemos lang+cta y dejamos solo el item central marcado */
+    .nav-aux { display: none !important; }
+    .nav-links li { display: none; }
+    .nav-links li.nav-mobile-show { display: inline-flex; }
+    .nav-links li.nav-mobile-show a {
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -.005em;
+      white-space: nowrap;
+    }
     #nav { padding: .9rem 1rem; }
     #nav.compact { padding: .5rem 1rem .5rem .9rem; }
     #nav.compact .nav-logo { font-size: 1rem; padding-right: 0; border-right: none; margin-right: 0; }
@@ -2745,10 +2755,10 @@
 <!-- ═══════════════════════════════════════════════════════ NAV -->
 <nav id="nav" role="navigation" aria-label="Principal">
   <a href="#" class="nav-logo" aria-label="Nyx — Inicio">NY<span class="nav-logo-x">X</span></a>
-  <!-- Links centrales del nav (desktop) -->
+  <!-- Links centrales del nav (desktop + mobile center) -->
   <ul class="nav-links">
     <li><a href="#proceso" id="nav-process">Proceso</a></li>
-    <li><a href="nosotros.html" id="nav-about">Quiénes somos</a></li>
+    <li class="nav-mobile-show"><a href="nosotros.html" id="nav-about">Quiénes somos</a></li>
   </ul>
 
   <!-- Aux a la derecha (desktop): selector de idioma + calendario -->

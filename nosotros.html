@@ -213,7 +213,17 @@
   }
   /* Mobile nav: en mobile escondemos el ul tradicional y mostramos el fluid menu */
   @media (max-width: 700px) {
-    .nav-links, .nav-aux { display: none !important; }
+    /* En mobile escondemos lang+cta y dejamos solo el item central marcado */
+    .nav-aux { display: none !important; }
+    .nav-links li { display: none; }
+    .nav-links li.nav-mobile-show { display: inline-flex; }
+    .nav-links li.nav-mobile-show a {
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -.005em;
+      white-space: nowrap;
+    }
     #nav { padding: .9rem 1rem; }
     #nav.compact { padding: .5rem 1rem .5rem .9rem; }
     #nav.compact .nav-logo { font-size: 1rem; padding-right: 0; border-right: none; margin-right: 0; }
@@ -627,29 +637,63 @@
     color: rgba(255,255,255,.85);
   }
 
-  /* Mobile / tablet — desktop layout (3 en fila) hasta ≤ 1024px,
-     2 col en tablet medio, 1 col en mobile */
+  /* Tablet (1080-880px) — 3 cards más estrechas */
   @media (max-width: 1080px) {
     .skew-grid { gap: 1.75rem 2rem; }
     .skew-card { width: 280px; height: 360px; }
   }
+
+  /* Mobile / tablet pequeño — scroll horizontal snap, las 3 cards
+     paralelas visibles al swipear, encuadradas en un container */
   @media (max-width: 880px) {
-    .skew-grid { gap: 2rem; }
-    .skew-card { width: min(320px, 88vw); height: 340px; }
+    .skew-grid {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      scroll-padding: 1.5rem;
+      padding: 2rem 1.5rem 2.5rem;
+      gap: 1.5rem;
+      justify-content: flex-start;
+      /* Encuadre visual: borde sutil + bg + radius */
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(241,245,249,.012);
+      /* Esconde scrollbar */
+      scrollbar-width: none;
+    }
+    .skew-grid::-webkit-scrollbar { display: none; }
+    .skew-card {
+      flex-shrink: 0;
+      scroll-snap-align: center;
+      width: 280px;
+      height: 360px;
+    }
     .skew-card .skew-panel,
     .skew-card .skew-glow { left: 36px; }
+    /* En mobile no hay hover real → mantener el panel oblicuo en su sitio */
     .skew-card:hover .skew-panel,
-    .skew-card:hover .skew-glow { left: 14px; width: calc(100% - 64px); }
-    .skew-card:hover .skew-body { left: -16px; padding: 2rem 1.5rem; }
+    .skew-card:hover .skew-glow { left: 36px; transform: skewX(15deg); width: 50%; }
+    .skew-card:hover .skew-body { left: 0; padding: 1.25rem 1.5rem; }
     .skew-card .skew-body { padding: 1.25rem 1.5rem; }
   }
+
   @media (max-width: 480px) {
-    .skew-grid { gap: 1.75rem; padding: 1rem 0; }
-    .skew-card { width: 100%; max-width: 360px; height: 320px; }
-    .skew-h { font-size: 1.25rem; }
-    .skew-p { font-size: .88rem; }
+    .skew-grid {
+      gap: 1.1rem;
+      padding: 1.5rem 1.25rem 2rem;
+      scroll-padding: 1.25rem;
+    }
+    .skew-card { width: 250px; height: 340px; }
+    .skew-h { font-size: 1.2rem; margin-bottom: .65rem; }
+    .skew-p { font-size: .85rem; }
     .skew-blob { display: none; }
   }
+  @media (max-width: 360px) {
+    .skew-card { width: 230px; height: 330px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .skew-card, .skew-card *, .skew-card .skew-blob {
       animation: none !important;
@@ -1497,9 +1541,9 @@
 <!-- NAV -->
 <nav id="nav" role="navigation" aria-label="Principal">
   <a href="index.html" class="nav-logo" aria-label="Nyx — Inicio">NY<span class="nav-logo-x">X</span></a>
-  <!-- Links centrales del nav (desktop) -->
+  <!-- Links centrales del nav (desktop + mobile center) -->
   <ul class="nav-links">
-    <li><a href="index.html" id="nav-home">Inicio</a></li>
+    <li class="nav-mobile-show"><a href="index.html" id="nav-home">Inicio</a></li>
     <li><a href="index.html#proceso" id="nav-process">Proceso</a></li>
   </ul>
 

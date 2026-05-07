@@ -125,7 +125,7 @@
     border-radius: 999px;
     box-shadow: 0 10px 40px rgba(0,0,0,.35);
   }
-  #nav.compact .nav-logo { font-size: 1rem; padding-right: 1rem; border-right: 1px solid var(--border); margin-right: .5rem; }
+  #nav.compact .nav-logo { font-size: 1rem; }
   #nav.compact .nav-links { gap: 1.5rem; }
   #nav.compact .nav-links a { font-size: .8125rem; }
   #nav.compact .nav-cta { transform: perspective(160px) rotateX(10deg) rotateY(-10deg) scale(.78); }
@@ -136,7 +136,24 @@
   .lang-btn { transition: transform .35s ease; }
   .nav-logo { font-family: var(--fh); font-size: 1.1875rem; font-weight: 700; letter-spacing: -.03em; }
   .nav-logo-x { color: #c8ff00; }
-  .nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
+  /* Links centrales (Inicio + Proceso) — flotan absolute centered */
+  .nav-links {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex; align-items: center;
+    gap: 2.25rem;
+    list-style: none;
+    margin: 0; padding: 0;
+  }
+  /* Aux a la derecha (idioma + calendario) */
+  .nav-aux {
+    display: flex; align-items: center;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0; padding: 0;
+  }
+  .nav-aux > li { display: inline-flex; align-items: center; }
   .nav-links a { font-size: .875rem; color: var(--muted); transition: color .2s; }
   .nav-links a:hover { color: var(--text); }
   .nav-cta {
@@ -196,7 +213,7 @@
   }
   /* Mobile nav: en mobile escondemos el ul tradicional y mostramos el fluid menu */
   @media (max-width: 700px) {
-    .nav-links { display: none !important; }
+    .nav-links, .nav-aux { display: none !important; }
     #nav { padding: .9rem 1rem; }
     #nav.compact { padding: .5rem 1rem .5rem .9rem; }
     #nav.compact .nav-logo { font-size: 1rem; padding-right: 0; border-right: none; margin-right: 0; }
@@ -1355,11 +1372,14 @@
 <!-- NAV -->
 <nav id="nav" role="navigation" aria-label="Principal">
   <a href="index.html" class="nav-logo" aria-label="Nyx — Inicio">NY<span class="nav-logo-x">X</span></a>
+  <!-- Links centrales del nav (desktop) -->
   <ul class="nav-links">
     <li><a href="index.html" id="nav-home">Inicio</a></li>
-    <li><a href="index.html#servicios" id="nav-services">Servicios</a></li>
     <li><a href="index.html#proceso" id="nav-process">Proceso</a></li>
-    <li><a href="index.html#casos" id="nav-cases">Casos</a></li>
+  </ul>
+
+  <!-- Aux a la derecha (desktop): selector de idioma + calendario -->
+  <ul class="nav-aux">
     <li class="lang-li">
       <button class="lang-btn" id="lang-btn" aria-label="Cambiar idioma" aria-expanded="false">
         <span id="lang-flag">🇪🇸</span>
@@ -1421,19 +1441,13 @@
     <a class="fm-item" data-i="1" href="index.html" aria-label="Inicio">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     </a>
-    <a class="fm-item" data-i="2" href="index.html#servicios" aria-label="Servicios">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-    </a>
-    <a class="fm-item" data-i="3" href="index.html#proceso" aria-label="Proceso">
+    <a class="fm-item" data-i="2" href="index.html#proceso" aria-label="Proceso">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
     </a>
-    <a class="fm-item" data-i="4" href="index.html#casos" aria-label="Casos">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-    </a>
-    <a class="fm-item fm-cal" data-i="5" href="https://cal.com/woidrian/nyx-agency" target="_blank" rel="noopener noreferrer" aria-label="Agenda tu cita en Cal.com">
+    <a class="fm-item fm-cal" data-i="3" href="https://cal.com/woidrian/nyx-agency" target="_blank" rel="noopener noreferrer" aria-label="Agenda tu cita en Cal.com">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     </a>
-    <button class="fm-item" data-i="6" id="fm-lang-trigger" type="button" aria-label="Cambiar idioma" aria-expanded="false">
+    <button class="fm-item" data-i="4" id="fm-lang-trigger" type="button" aria-label="Cambiar idioma" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
     </button>
     <div class="fm-lang-drop" id="fm-lang-drop" role="listbox" aria-label="Idioma"></div>
@@ -2110,13 +2124,15 @@ function setLanguage(code) {
   document.documentElement.dir = lang.dir;
   document.title = t.pageTitle;
 
-  const _navHome = document.getElementById('nav-home');
-  if (_navHome) _navHome.textContent = t.nav.home;
-  document.getElementById('nav-services').textContent = t.nav.services;
-  const _navProcess = document.getElementById('nav-process');
-  if (_navProcess) _navProcess.textContent = t.nav.process;
-  document.getElementById('nav-cases').textContent    = t.nav.cases;
-  document.getElementById('nav-cta').setAttribute('aria-label', t.nav.cta);
+  // Nav (defensivo — Servicios y Casos ya no existen en el nav v2)
+  const _setNav = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
+  _setNav('nav-home',     t.nav.home);
+  _setNav('nav-services', t.nav.services);
+  _setNav('nav-process',  t.nav.process);
+  _setNav('nav-cases',    t.nav.cases);
+  _setNav('nav-about',    t.nav.about);
+  const _navCta = document.getElementById('nav-cta');
+  if (_navCta && t.nav.cta) _navCta.setAttribute('aria-label', t.nav.cta);
 
   document.getElementById('hero-badge').textContent   = t.hero.badge;
   document.getElementById('hero-h1').innerHTML        = t.hero.h1;

@@ -162,7 +162,7 @@
     border-radius: 999px;
     box-shadow: 0 10px 40px rgba(0,0,0,.35);
   }
-  #nav.compact .nav-logo { font-size: 1rem; padding-right: 1rem; border-right: 1px solid var(--border); margin-right: .5rem; }
+  #nav.compact .nav-logo { font-size: 1rem; }
   #nav.compact .nav-links { gap: 1.5rem; }
   #nav.compact .nav-links a { font-size: .8125rem; }
   #nav.compact .nav-cta { transform: perspective(160px) rotateX(10deg) rotateY(-10deg) scale(.78); }
@@ -176,7 +176,24 @@
     font-weight: 700; letter-spacing: -.03em;
   }
   .nav-logo-x { color: #c8ff00; }
-  .nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
+  /* Links centrales (Proceso + Quiénes somos) — flotan absolute centered */
+  .nav-links {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex; align-items: center;
+    gap: 2.25rem;
+    list-style: none;
+    margin: 0; padding: 0;
+  }
+  /* Aux a la derecha (idioma + calendario) */
+  .nav-aux {
+    display: flex; align-items: center;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0; padding: 0;
+  }
+  .nav-aux > li { display: inline-flex; align-items: center; }
   .nav-links a { font-size: .875rem; color: var(--muted); transition: color .2s; }
   .nav-links a:hover { color: var(--text); }
   .nav-cta {
@@ -236,7 +253,7 @@
   }
   /* Mobile nav: en mobile escondemos el ul tradicional y mostramos el fluid menu (ver bloque dedicado más abajo) */
   @media (max-width: 700px) {
-    .nav-links { display: none !important; }
+    .nav-links, .nav-aux { display: none !important; }
     #nav { padding: .9rem 1rem; }
     #nav.compact { padding: .5rem 1rem .5rem .9rem; }
     #nav.compact .nav-logo { font-size: 1rem; padding-right: 0; border-right: none; margin-right: 0; }
@@ -2728,11 +2745,14 @@
 <!-- ═══════════════════════════════════════════════════════ NAV -->
 <nav id="nav" role="navigation" aria-label="Principal">
   <a href="#" class="nav-logo" aria-label="Nyx — Inicio">NY<span class="nav-logo-x">X</span></a>
+  <!-- Links centrales del nav (desktop) -->
   <ul class="nav-links">
-    <li><a href="#servicios" id="nav-services">Servicios</a></li>
     <li><a href="#proceso" id="nav-process">Proceso</a></li>
-    <li><a href="#casos" id="nav-cases">Casos</a></li>
-    <li><a href="nosotros.html" id="nav-about">Nosotros</a></li>
+    <li><a href="nosotros.html" id="nav-about">Quiénes somos</a></li>
+  </ul>
+
+  <!-- Aux a la derecha (desktop): selector de idioma + calendario -->
+  <ul class="nav-aux">
     <li class="lang-li">
       <button class="lang-btn" id="lang-btn" aria-label="Cambiar idioma" aria-expanded="false">
         <span id="lang-flag">🇪🇸</span>
@@ -2791,22 +2811,16 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </span>
     </button>
-    <a class="fm-item" data-i="1" href="#servicios" aria-label="Servicios">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-    </a>
-    <a class="fm-item" data-i="2" href="#proceso" aria-label="Proceso">
+    <a class="fm-item" data-i="1" href="#proceso" aria-label="Proceso">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
     </a>
-    <a class="fm-item" data-i="3" href="#casos" aria-label="Casos">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-    </a>
-    <a class="fm-item" data-i="4" href="nosotros.html" aria-label="Nosotros">
+    <a class="fm-item" data-i="2" href="nosotros.html" aria-label="Quiénes somos">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     </a>
-    <a class="fm-item fm-cal" data-i="5" href="https://cal.com/woidrian/nyx-agency" target="_blank" rel="noopener noreferrer" aria-label="Agenda tu cita en Cal.com">
+    <a class="fm-item fm-cal" data-i="3" href="https://cal.com/woidrian/nyx-agency" target="_blank" rel="noopener noreferrer" aria-label="Agenda tu cita en Cal.com">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     </a>
-    <button class="fm-item" data-i="6" id="fm-lang-trigger" type="button" aria-label="Cambiar idioma" aria-expanded="false">
+    <button class="fm-item" data-i="4" id="fm-lang-trigger" type="button" aria-label="Cambiar idioma" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
     </button>
     <div class="fm-lang-drop" id="fm-lang-drop" role="listbox" aria-label="Idioma"></div>
@@ -3679,7 +3693,7 @@ const HERO2 = {
 const LANGS = {
   es: { flag:'🇪🇸', code:'ES', dir:'ltr', t: {
     pageTitle:'Nyx — Automatización con IA para PYMEs',
-    nav:{ services:'Servicios', process:'Proceso', cases:'Casos', pricing:'Precios', about:'Nosotros', cta:'Hablemos →' },
+    nav:{ services:'Servicios', process:'Proceso', cases:'Casos', pricing:'Precios', about:'Quiénes somos', cta:'Hablemos →' },
     hero:{ badge:'001 · Automatización con IA', h1:'Tu empresa<br>trabaja 24/7.<br>Sin contratar<br>a nadie.', sub:'Nyx diseña e implementa sistemas de IA que reemplazan el trabajo repetitivo por procesos autónomos. Agentes, flujos y voice bots para empresas que quieren crecer sin crecer en plantilla.', cta1:'Hablar con Nyx', cta2:'Ver servicios →', m1:'al mes<br>ahorradas', m2:'conversión<br>media de leads', m3:'tareas<br>manuales', m4:'sin<br>interrupciones' },
     s2:{ ew:'Servicios', h2:'Cómo<br>trabajamos contigo.', p:'Tres etapas conectadas — auditoría, desarrollo y capacitación — pensadas para que la IA aterrice en tu negocio con criterio y se sostenga sin depender de nosotros.', cards:[{h:'Auditoría de IA',t:'Analizamos tus procesos y detectamos dónde la IA genera más valor. Matriz esfuerzo-valor, análisis de ROI y plan de acción para los primeros 90 días.'},{h:'Desarrollo de Sistemas',t:'Construimos automatizaciones y agentes de IA a medida. Desde quick-wins de alto impacto hasta proyectos de mayor envergadura, todo aterrizado a tu negocio.'},{h:'Capacitación',t:'Transferimos el conocimiento para que tu equipo adopte y evolucione lo implementado. Sin dependencia externa, con criterio técnico propio.'}], tags:['Discovery','ROI','Plan 90 días','Agentes IA','Automations','A medida','Knowledge transfer','Sin dependencia','Criterio propio'] },
     s3:{ ew:'Proceso', h2:'Cómo<br>trabajamos.', p:'Desde el diagnóstico hasta el lanzamiento, en semanas. Sin burocracia, sin reuniones infinitas, sin sorpresas.', steps:[{h:'Diagnóstico',p:'Mapeamos tus procesos y cuantificamos el tiempo perdido en tareas repetitivas. Identificamos exactamente dónde la IA tiene mayor impacto.'},{h:'Arquitectura',p:'Diseñamos el sistema de automatización exacto para tu caso. Sin soluciones genéricas. Cada pieza tiene un propósito y un KPI asociado.'},{h:'Implementación',p:'Construimos, configuramos y conectamos todos los sistemas en tu stack existente. Sin migrar todo. Sin romper lo que ya funciona.'},{h:'Activación',p:'Lanzamos, monitorizamos y optimizamos durante las primeras semanas. El sistema no se entrega y ya está — se refina hasta que los números cuadran.'}] },
@@ -3695,7 +3709,7 @@ const LANGS = {
   }},
   en: { flag:'🇬🇧', code:'EN', dir:'ltr', t: {
     pageTitle:'Nyx — AI Automation for SMEs',
-    nav:{ services:'Services', process:'Process', cases:'Cases', pricing:'Pricing', about:'About', cta:'Let\'s talk →' },
+    nav:{ services:'Services', process:'Process', cases:'Cases', pricing:'Pricing', about:'About us', cta:'Let\'s talk →' },
     hero:{ badge:'001 · AI Automation · SMEs', h1:'Your company<br>works 24/7.<br>Without hiring<br>anyone.', sub:'Nyx designs and implements AI systems that replace repetitive work with autonomous processes. Agents, workflows and voice bots for companies that want to grow without growing their headcount.', cta1:'Talk to Nyx', cta2:'See services →', m1:'per month<br>saved', m2:'average lead<br>conversion', m3:'manual<br>tasks', m4:'without<br>interruptions' },
     s2:{ ew:'Services', h2:'How we<br>work with you.', p:'Three connected stages — audit, development and training — designed so AI lands in your business with judgement and keeps standing without depending on us.', cards:[{h:'AI Audit',t:'We analyze your processes and detect where AI generates the most value. Effort-value matrix, ROI analysis and an action plan for the first 90 days.'},{h:'Systems Development',t:'We build custom automations and AI agents. From high-impact quick-wins to larger projects, all grounded in your business.'},{h:'Training',t:'We transfer the knowledge so your team adopts and evolves what we implement. No external dependency, with their own technical judgement.'}], tags:['Discovery','ROI','90-day plan','AI Agents','Automations','Custom-built','Knowledge transfer','No lock-in','Own judgement'] },
     s3:{ ew:'Process', h2:'How we<br>work.', p:'From diagnosis to launch, in weeks. No bureaucracy, no endless meetings, no surprises.', steps:[{h:'Diagnosis',p:'We map your processes and quantify time lost on repetitive tasks. We identify exactly where AI has the greatest impact.'},{h:'Architecture',p:'We design the exact automation system for your case. No generic solutions. Each piece has a purpose and an associated KPI.'},{h:'Implementation',p:'We build, configure and connect all systems to your existing stack. No migrating everything. No breaking what already works.'},{h:'Activation',p:'We launch, monitor and optimize during the first weeks. The system is not just delivered — it is refined until the numbers add up.'}] },
@@ -3880,12 +3894,15 @@ function setLanguage(code) {
   document.documentElement.dir = lang.dir;
   document.title = t.pageTitle;
 
-  // Nav
-  document.getElementById('nav-services').textContent = t.nav.services;
-  document.getElementById('nav-process').textContent  = t.nav.process;
-  document.getElementById('nav-cases').textContent    = t.nav.cases;
-  document.getElementById('nav-about').textContent    = t.nav.about;
-  document.getElementById('nav-cta').setAttribute('aria-label', t.nav.cta);
+  // Nav (defensivo — algunos enlaces ya no existen en el v2 nav)
+  const setNavText = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
+  setNavText('nav-home',     t.nav.home);
+  setNavText('nav-services', t.nav.services);
+  setNavText('nav-process',  t.nav.process);
+  setNavText('nav-cases',    t.nav.cases);
+  setNavText('nav-about',    t.nav.about);
+  const navCta = document.getElementById('nav-cta');
+  if (navCta && t.nav.cta) navCta.setAttribute('aria-label', t.nav.cta);
 
   // Hero v2
   const h2 = (HERO2 && HERO2[code]) || HERO2.es;

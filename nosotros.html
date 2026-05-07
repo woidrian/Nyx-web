@@ -497,35 +497,164 @@
   }
   .stat-lbl { font-size: .85rem; color: var(--muted); font-weight: 300; line-height: 1.5; }
 
-  /* VALORES */
+  /* VALORES — gradient skew cards (port vanilla del SkewCards de 21st.dev) */
   #valores { background: transparent; }
-  .valores-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 1px; background: var(--border);
-    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  .skew-grid {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 2.25rem 3.5rem;
     margin-top: 4rem;
+    padding: 1.5rem 0;
   }
-  /* Valores: 3 cols SIEMPRE — 3 cards en línea, sin colapso */
-  .valor-card {
-    background: var(--bg2); padding: 2.5rem;
+  .skew-card {
+    --gf: #ffbc00;
+    --gt: #ff0058;
+    position: relative;
+    width: 320px;
+    height: 400px;
+    transition: all .5s cubic-bezier(.4,0,.2,1);
+    cursor: default;
+  }
+  /* Panel oblicuo en sólido (gradiente) */
+  .skew-card .skew-panel {
+    position: absolute; top: 0; left: 50px;
+    width: 50%; height: 100%;
+    border-radius: 10px;
+    transform: skewX(15deg);
+    transition: all .5s cubic-bezier(.4,0,.2,1);
+    background: linear-gradient(315deg, var(--gf), var(--gt));
+    pointer-events: none;
+  }
+  /* Panel oblicuo desenfocado detrás (glow) */
+  .skew-card .skew-glow {
+    position: absolute; top: 0; left: 50px;
+    width: 50%; height: 100%;
+    border-radius: 10px;
+    transform: skewX(15deg);
+    filter: blur(30px);
+    transition: all .5s cubic-bezier(.4,0,.2,1);
+    background: linear-gradient(315deg, var(--gf), var(--gt));
+    pointer-events: none;
+    opacity: .85;
+  }
+  /* Hover: el panel se endereza y se ensancha */
+  .skew-card:hover .skew-panel,
+  .skew-card:hover .skew-glow {
+    transform: skewX(0);
+    left: 20px;
+    width: calc(100% - 90px);
+  }
+  /* Blobs flotantes (esquinas) — solo aparecen en hover */
+  .skew-blobs {
+    position: absolute; inset: 0; z-index: 10;
+    pointer-events: none;
+  }
+  .skew-blob {
+    position: absolute;
+    width: 0; height: 0;
+    border-radius: 10px;
+    opacity: 0;
+    background: rgba(255,255,255,.10);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 5px 15px rgba(0,0,0,.10);
+    transition: all .4s cubic-bezier(.4,0,.2,1);
+  }
+  .skew-blob-tl { top: 0; left: 0; }
+  .skew-blob-br { bottom: 0; right: 0; }
+  .skew-card:hover .skew-blob-tl {
+    top: -50px; left: 50px;
+    width: 100px; height: 100px;
+    opacity: 1;
+    animation: skewBlob 2s ease-in-out infinite;
+  }
+  .skew-card:hover .skew-blob-br {
+    bottom: -50px; right: 50px;
+    width: 100px; height: 100px;
+    opacity: 1;
+    animation: skewBlob 2s ease-in-out infinite;
+    animation-delay: -1s;
+  }
+  @keyframes skewBlob {
+    0%, 100% { transform: translateY(10px); }
+    50%      { transform: translateY(-10px); }
+  }
+  /* Cuerpo (glassmorphism) sobre el panel */
+  .skew-card .skew-body {
+    position: relative; z-index: 20;
+    left: 0;
+    padding: 1.5rem 2rem;
+    background: rgba(255,255,255,.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 10px;
+    color: #fff;
+    transition: all .5s cubic-bezier(.4,0,.2,1);
+    border: 1px solid rgba(255,255,255,.06);
+    box-shadow: 0 16px 40px rgba(0,0,0,.18);
+    height: 100%;
+    display: flex; flex-direction: column;
+    justify-content: center;
     hyphens: none; -webkit-hyphens: none;
     overflow-wrap: break-word; word-break: normal;
   }
-  .valor-n { font-size: .65rem; font-weight: 600; letter-spacing: .1em; color: var(--muted); margin-bottom: 1.5rem; }
-  .valor-icon { font-size: 1.5rem; margin-bottom: 1rem; opacity: .7; }
-  .valor-h { font-family: var(--fh); font-size: 1.125rem; font-weight: 600; letter-spacing: -.02em; margin-bottom: .625rem; }
-  .valor-p { font-size: .9375rem; color: var(--muted); line-height: 1.72; font-weight: 300; }
-  @media (max-width: 720px) {
-    .valor-card { padding: 1.5rem 1.1rem; }
-    .valor-n { margin-bottom: .9rem; font-size: .58rem; }
-    .valor-icon { font-size: 1.2rem; margin-bottom: .65rem; }
-    .valor-h { font-size: .92rem; margin-bottom: .4rem; line-height: 1.25; }
-    .valor-p { font-size: .78rem; line-height: 1.5; }
+  .skew-card:hover .skew-body {
+    left: -25px;
+    padding: 2.5rem 2rem;
   }
-  @media (max-width: 420px) {
-    .valor-card { padding: 1.1rem .75rem; }
-    .valor-h { font-size: .82rem; }
-    .valor-p { font-size: .72rem; }
+  .skew-n {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: .68rem; font-weight: 400;
+    letter-spacing: .2em; text-transform: uppercase;
+    color: rgba(255,255,255,.7);
+    margin-bottom: 1.25rem;
+  }
+  .skew-h {
+    font-family: var(--fh);
+    font-size: 1.5rem; font-weight: 700;
+    letter-spacing: -.02em;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: .85rem;
+  }
+  .skew-p {
+    font-family: var(--fb);
+    font-size: .95rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: rgba(255,255,255,.85);
+  }
+
+  /* Mobile / tablet — desktop layout (3 en fila) hasta ≤ 1024px,
+     2 col en tablet medio, 1 col en mobile */
+  @media (max-width: 1080px) {
+    .skew-grid { gap: 1.75rem 2rem; }
+    .skew-card { width: 280px; height: 360px; }
+  }
+  @media (max-width: 880px) {
+    .skew-grid { gap: 2rem; }
+    .skew-card { width: min(320px, 88vw); height: 340px; }
+    .skew-card .skew-panel,
+    .skew-card .skew-glow { left: 36px; }
+    .skew-card:hover .skew-panel,
+    .skew-card:hover .skew-glow { left: 14px; width: calc(100% - 64px); }
+    .skew-card:hover .skew-body { left: -16px; padding: 2rem 1.5rem; }
+    .skew-card .skew-body { padding: 1.25rem 1.5rem; }
+  }
+  @media (max-width: 480px) {
+    .skew-grid { gap: 1.75rem; padding: 1rem 0; }
+    .skew-card { width: 100%; max-width: 360px; height: 320px; }
+    .skew-h { font-size: 1.25rem; }
+    .skew-p { font-size: .88rem; }
+    .skew-blob { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skew-card, .skew-card *, .skew-card .skew-blob {
+      animation: none !important;
+      transition: none !important;
+    }
   }
 
   /* EQUIPO — Stage con morph text arriba (layered) + robot 3D Three.js en el centro */
@@ -843,7 +972,6 @@
     .hero-body { padding: 7.5rem var(--px) 4rem; }
 
     .stat-item  { padding: 1.5rem; }
-    .valor-card { padding: 2rem 1.75rem; }
     .founder-info { padding: 1.25rem 1.5rem; }
 
     .equipo-bio h3 { font-size: 1.2rem; }
@@ -866,9 +994,6 @@
     .stat-item  { padding: 1.25rem 1rem; }
     .stat-val   { font-size: clamp(1.875rem, 9vw, 2.5rem); }
     .stat-lbl   { font-size: .8rem; }
-
-    /* Valor cards */
-    .valor-card { padding: 1.75rem 1.25rem; }
 
     /* Equipo bio */
     .equipo-bio h3  { font-size: 1.0625rem; margin-bottom: 1.25rem; }
@@ -1526,25 +1651,46 @@
   <div class="sec">
     <p class="eyebrow rv"><span class="eyebrow-n">02</span><span id="valores-ew">Valores</span></p>
     <h2 class="s-h2 rv" id="valores-title" data-i18n="valores.title">Lo que nos<br>define.</h2>
-    <div class="valores-grid">
-      <div class="valor-card rv">
-        <p class="valor-n">01</p>
-        <div class="valor-icon">⚡</div>
-        <h3 class="valor-h" id="v1-h">Resultados, no humo.</h3>
-        <p class="valor-p" id="v1-p">Medimos el éxito en horas ahorradas, leads convertidos y euros recuperados. Si los números no cuadran, seguimos trabajando hasta que cuadren.</p>
-      </div>
-      <div class="valor-card rv">
-        <p class="valor-n">02</p>
-        <div class="valor-icon">🔧</div>
-        <h3 class="valor-h" id="v2-h">Sistemas, no parches.</h3>
-        <p class="valor-p" id="v2-p">No vendemos herramientas sueltas. Diseñamos arquitecturas completas que funcionan juntas. Cada pieza tiene un propósito específico en el ecosistema de tu negocio.</p>
-      </div>
-      <div class="valor-card rv">
-        <p class="valor-n">03</p>
-        <div class="valor-icon">🤝</div>
-        <h3 class="valor-h" id="v3-h">Transparencia total.</h3>
-        <p class="valor-p" id="v3-p">Sin jerga técnica innecesaria. Sin sorpresas en factura. Sin promesas que no podemos cumplir. Sabemos cuándo algo es posible y cuándo no, y lo decimos claro.</p>
-      </div>
+    <div class="skew-grid">
+      <article class="skew-card rv" style="--gf:#ffbc00; --gt:#ff0058;">
+        <span class="skew-panel"></span>
+        <span class="skew-glow"></span>
+        <span class="skew-blobs">
+          <span class="skew-blob skew-blob-tl"></span>
+          <span class="skew-blob skew-blob-br"></span>
+        </span>
+        <div class="skew-body">
+          <p class="skew-n">01</p>
+          <h3 class="skew-h" id="v1-h">Resultados, no humo.</h3>
+          <p class="skew-p" id="v1-p">Medimos el éxito en horas ahorradas, leads convertidos y euros recuperados. Si los números no cuadran, seguimos trabajando hasta que cuadren.</p>
+        </div>
+      </article>
+      <article class="skew-card rv" style="--gf:#03a9f4; --gt:#ff0058;">
+        <span class="skew-panel"></span>
+        <span class="skew-glow"></span>
+        <span class="skew-blobs">
+          <span class="skew-blob skew-blob-tl"></span>
+          <span class="skew-blob skew-blob-br"></span>
+        </span>
+        <div class="skew-body">
+          <p class="skew-n">02</p>
+          <h3 class="skew-h" id="v2-h">Sistemas, no parches.</h3>
+          <p class="skew-p" id="v2-p">No vendemos herramientas sueltas. Diseñamos arquitecturas completas que funcionan juntas. Cada pieza tiene un propósito específico en el ecosistema de tu negocio.</p>
+        </div>
+      </article>
+      <article class="skew-card rv" style="--gf:#4dff03; --gt:#00d0ff;">
+        <span class="skew-panel"></span>
+        <span class="skew-glow"></span>
+        <span class="skew-blobs">
+          <span class="skew-blob skew-blob-tl"></span>
+          <span class="skew-blob skew-blob-br"></span>
+        </span>
+        <div class="skew-body">
+          <p class="skew-n">03</p>
+          <h3 class="skew-h" id="v3-h">Transparencia total.</h3>
+          <p class="skew-p" id="v3-p">Sin jerga técnica innecesaria. Sin sorpresas en factura. Sin promesas que no podemos cumplir. Sabemos cuándo algo es posible y cuándo no, y lo decimos claro.</p>
+        </div>
+      </article>
     </div>
   </div>
 </section>
@@ -2573,8 +2719,11 @@ import * as THREE from 'three';
     const cdx = Math.max(-1, Math.min(1, dx));
     const cdy = Math.max(-1, Math.min(1, dy));
     // Rangos naturales: ±0.7 rad yaw (~40°), ±0.4 rad pitch (~23°)
-    targetRY =  cdx * 0.7;
-    targetRX = -cdy * 0.4;
+    // Eje Y invertido respecto a la convención normal: en este rig la
+    // rotation.x positiva hace mirar hacia abajo, así que dy > 0 (cursor
+    // abajo) debe producir rotation.x positiva → mira abajo (correcto).
+    targetRY = cdx * 0.7;
+    targetRX = cdy * 0.4;
   }
   window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
   window.addEventListener('touchmove', (e) => {

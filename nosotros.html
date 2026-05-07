@@ -643,32 +643,32 @@
     .skew-card { width: 280px; height: 360px; }
   }
 
-  /* Mobile / tablet pequeño — scroll horizontal snap, las 3 cards
-     paralelas visibles al swipear, encuadradas en un container */
+  /* Mobile / tablet pequeño — layout 2+1: dos cards arriba lado a lado,
+     la tercera centrada debajo. Encuadradas en un container */
   @media (max-width: 880px) {
     .skew-grid {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      overflow-y: visible;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type: x mandatory;
-      scroll-padding: 1rem;
-      padding: 1.25rem 1rem 1.75rem;
-      gap: .9rem;
-      justify-content: flex-start;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem .8rem;
+      padding: 1.25rem 1rem 1.5rem;
+      justify-items: center;
+      align-items: stretch;
+      overflow: visible;
+      flex-wrap: initial;
       /* Encuadre visual: borde sutil + bg + radius */
       border: 1px solid var(--border);
       border-radius: 14px;
       background: rgba(241,245,249,.012);
-      /* Esconde scrollbar */
-      scrollbar-width: none;
     }
-    .skew-grid::-webkit-scrollbar { display: none; }
     .skew-card {
-      flex-shrink: 0;
-      scroll-snap-align: center;
-      width: 220px;
-      height: 290px;
+      width: 100%;
+      max-width: 220px;
+      height: 280px;
+    }
+    /* Tercera card: ocupa las 2 columnas y se centra en medio de las dos de arriba */
+    .skew-card:nth-child(3) {
+      grid-column: 1 / -1;
+      justify-self: center;
     }
     .skew-card .skew-panel,
     .skew-card .skew-glow {
@@ -699,24 +699,26 @@
 
   @media (max-width: 480px) {
     .skew-grid {
-      gap: .75rem;
-      padding: 1rem .85rem 1.5rem;
-      scroll-padding: .85rem;
+      gap: .8rem .55rem;
+      padding: 1rem .7rem 1.25rem;
     }
-    .skew-card { width: 195px; height: 270px; }
+    .skew-card { max-width: 175px; height: 260px; }
     .skew-card .skew-panel,
-    .skew-card .skew-glow { left: 18px; }
-    .skew-card .skew-body { padding: .85rem 1rem; }
-    .skew-n { font-size: .54rem; margin-bottom: .65rem; }
-    .skew-h { font-size: .92rem; margin-bottom: .45rem; }
-    .skew-p { font-size: .72rem; line-height: 1.4; -webkit-line-clamp: 6; }
+    .skew-card .skew-glow { left: 16px; }
+    .skew-card .skew-body { padding: .8rem .9rem; }
+    .skew-n { font-size: .52rem; margin-bottom: .6rem; }
+    .skew-h { font-size: .9rem; margin-bottom: .4rem; line-height: 1.15; }
+    .skew-p { font-size: .68rem; line-height: 1.38; -webkit-line-clamp: 6; }
     .skew-blob { display: none; }
   }
   @media (max-width: 360px) {
-    .skew-card { width: 175px; height: 260px; }
-    .skew-card .skew-body { padding: .75rem .9rem; }
-    .skew-h { font-size: .85rem; }
-    .skew-p { font-size: .68rem; -webkit-line-clamp: 5; }
+    .skew-grid { gap: .65rem .45rem; padding: .85rem .6rem 1.1rem; }
+    .skew-card { max-width: 150px; height: 240px; }
+    .skew-card .skew-panel,
+    .skew-card .skew-glow { left: 14px; }
+    .skew-card .skew-body { padding: .7rem .8rem; }
+    .skew-h { font-size: .82rem; }
+    .skew-p { font-size: .64rem; -webkit-line-clamp: 5; }
   }
 
   @media (prefers-reduced-motion: reduce) {

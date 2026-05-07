@@ -162,7 +162,11 @@
     border-radius: 999px;
     box-shadow: 0 10px 40px rgba(0,0,0,.35);
   }
-  #nav.compact .nav-logo { font-size: 1rem; }
+  #nav.compact .nav-logo { gap: .45rem; }
+  #nav.compact .nav-logo-mark { width: 30px; height: 30px; border-radius: 6px; }
+  #nav.compact .nav-logo-mark svg { width: 18px; height: 18px; }
+  #nav.compact .nav-logo-word { font-size: .95rem; }
+  #nav.compact .nav-logo-tag { font-size: .48rem; letter-spacing: .28em; margin-top: .15rem; }
   #nav.compact .nav-links { gap: 1.5rem; }
   #nav.compact .nav-links a { font-size: .8125rem; }
   #nav.compact .nav-cta { transform: perspective(160px) rotateX(10deg) rotateY(-10deg) scale(.78); }
@@ -171,11 +175,52 @@
   .nav-links { transition: gap .35s ease; }
   .nav-links a { transition: color .2s, font-size .35s ease; }
   .lang-btn { transition: transform .35s ease; }
+  /* Logo NYX AGENCY: marca en cuadrado + wordmark + tag */
   .nav-logo {
-    font-family: var(--fh); font-size: 1.1875rem;
-    font-weight: 700; letter-spacing: -.03em;
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: opacity .2s ease;
   }
-  .nav-logo-x { color: #c8ff00; }
+  .nav-logo:hover { opacity: .85; }
+  .nav-logo-mark {
+    width: 36px; height: 36px;
+    border: 1px solid var(--bmd);
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    background: rgba(241,245,249,.02);
+    flex-shrink: 0;
+    transition: border-color .25s ease, background .25s ease, width .35s ease, height .35s ease;
+  }
+  .nav-logo:hover .nav-logo-mark {
+    border-color: rgba(200,255,0,.45);
+    background: rgba(200,255,0,.04);
+  }
+  .nav-logo-mark svg { width: 22px; height: 22px; overflow: visible; filter: drop-shadow(0 0 4px rgba(200,255,0,.25)); }
+  .nav-logo-text {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1;
+  }
+  .nav-logo-word {
+    font-family: var(--fh);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    color: var(--text);
+  }
+  .nav-logo-tag {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: .54rem;
+    font-weight: 400;
+    letter-spacing: .32em;
+    color: #c8ff00;
+    margin-top: .22rem;
+  }
   /* Links centrales (Proceso + Quiénes somos) — flotan absolute centered */
   .nav-links {
     position: absolute;
@@ -266,7 +311,23 @@
     }
     #nav { padding: .9rem 1rem; }
     #nav.compact { padding: .5rem 1rem .5rem .9rem; }
-    #nav.compact .nav-logo { font-size: 1rem; padding-right: 0; border-right: none; margin-right: 0; }
+    /* Logo más compacto en mobile */
+    .nav-logo { gap: .45rem; }
+    .nav-logo-mark { width: 32px; height: 32px; }
+    .nav-logo-mark svg { width: 19px; height: 19px; }
+    .nav-logo-word { font-size: 1rem; }
+    .nav-logo-tag { font-size: .5rem; letter-spacing: .28em; margin-top: .18rem; }
+    #nav.compact .nav-logo-mark { width: 28px; height: 28px; }
+    #nav.compact .nav-logo-mark svg { width: 16px; height: 16px; }
+    #nav.compact .nav-logo-word { font-size: .9rem; }
+    #nav.compact .nav-logo-tag { font-size: .44rem; }
+  }
+  @media (max-width: 420px) {
+    /* En pantallas muy estrechas, esconder "AGENCY" para dejar más espacio */
+    .nav-logo-tag { display: none; }
+    .nav-logo-mark { width: 30px; height: 30px; }
+    .nav-logo-mark svg { width: 18px; height: 18px; }
+    .nav-logo-word { font-size: .95rem; }
   }
 
   /* ─────────────────────────────────────────────────────────
@@ -2754,7 +2815,19 @@
 
 <!-- ═══════════════════════════════════════════════════════ NAV -->
 <nav id="nav" role="navigation" aria-label="Principal">
-  <a href="#" class="nav-logo" aria-label="Nyx — Inicio">NY<span class="nav-logo-x">X</span></a>
+  <a href="#" class="nav-logo" aria-label="Nyx Agency — Inicio">
+    <span class="nav-logo-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="9.5" y1="7" x2="9.5" y2="25" stroke="#c8ff00" stroke-width="2.6"/>
+        <line x1="9.5" y1="7" x2="22.5" y2="25" stroke="#c8ff00" stroke-width="2.6"/>
+        <line x1="22.5" y1="7" x2="22.5" y2="25" stroke="#c8ff00" stroke-width="2.6"/>
+      </svg>
+    </span>
+    <span class="nav-logo-text">
+      <span class="nav-logo-word">NYX</span>
+      <span class="nav-logo-tag">AGENCY</span>
+    </span>
+  </a>
   <!-- Links centrales del nav (desktop + mobile center) -->
   <ul class="nav-links">
     <li><a href="#proceso" id="nav-process">Proceso</a></li>

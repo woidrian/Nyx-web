@@ -652,9 +652,9 @@
       overflow-y: visible;
       -webkit-overflow-scrolling: touch;
       scroll-snap-type: x mandatory;
-      scroll-padding: 1.5rem;
-      padding: 2rem 1.5rem 2.5rem;
-      gap: 1.5rem;
+      scroll-padding: 1rem;
+      padding: 1.25rem 1rem 1.75rem;
+      gap: .9rem;
       justify-content: flex-start;
       /* Encuadre visual: borde sutil + bg + radius */
       border: 1px solid var(--border);
@@ -667,31 +667,56 @@
     .skew-card {
       flex-shrink: 0;
       scroll-snap-align: center;
-      width: 280px;
-      height: 360px;
+      width: 220px;
+      height: 290px;
     }
     .skew-card .skew-panel,
-    .skew-card .skew-glow { left: 36px; }
+    .skew-card .skew-glow {
+      left: 22px;
+      width: 50%;
+      border-radius: 8px;
+    }
+    .skew-card .skew-glow { filter: blur(18px); opacity: .7; }
     /* En mobile no hay hover real → mantener el panel oblicuo en su sitio */
     .skew-card:hover .skew-panel,
-    .skew-card:hover .skew-glow { left: 36px; transform: skewX(15deg); width: 50%; }
-    .skew-card:hover .skew-body { left: 0; padding: 1.25rem 1.5rem; }
-    .skew-card .skew-body { padding: 1.25rem 1.5rem; }
+    .skew-card:hover .skew-glow { left: 22px; transform: skewX(15deg); width: 50%; }
+    .skew-card:hover .skew-body { left: 0; padding: 1rem 1.1rem; }
+    .skew-card .skew-body {
+      padding: 1rem 1.1rem;
+      border-radius: 8px;
+    }
+    .skew-n { font-size: .58rem; letter-spacing: .16em; margin-bottom: .8rem; }
+    .skew-h { font-size: 1rem; line-height: 1.18; margin-bottom: .55rem; }
+    .skew-p {
+      font-size: .76rem;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 7;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
   }
 
   @media (max-width: 480px) {
     .skew-grid {
-      gap: 1.1rem;
-      padding: 1.5rem 1.25rem 2rem;
-      scroll-padding: 1.25rem;
+      gap: .75rem;
+      padding: 1rem .85rem 1.5rem;
+      scroll-padding: .85rem;
     }
-    .skew-card { width: 250px; height: 340px; }
-    .skew-h { font-size: 1.2rem; margin-bottom: .65rem; }
-    .skew-p { font-size: .85rem; }
+    .skew-card { width: 195px; height: 270px; }
+    .skew-card .skew-panel,
+    .skew-card .skew-glow { left: 18px; }
+    .skew-card .skew-body { padding: .85rem 1rem; }
+    .skew-n { font-size: .54rem; margin-bottom: .65rem; }
+    .skew-h { font-size: .92rem; margin-bottom: .45rem; }
+    .skew-p { font-size: .72rem; line-height: 1.4; -webkit-line-clamp: 6; }
     .skew-blob { display: none; }
   }
   @media (max-width: 360px) {
-    .skew-card { width: 230px; height: 330px; }
+    .skew-card { width: 175px; height: 260px; }
+    .skew-card .skew-body { padding: .75rem .9rem; }
+    .skew-h { font-size: .85rem; }
+    .skew-p { font-size: .68rem; -webkit-line-clamp: 5; }
   }
 
   @media (prefers-reduced-motion: reduce) {

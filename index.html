@@ -571,9 +571,29 @@
     font-size: clamp(40px, 6vw, 72px);
     line-height: 1.05;
     letter-spacing: -.04em;
-    color: var(--text);
     white-space: nowrap;
     transition: filter .3s ease;
+    /* Shiny shimmer infinito — gradiente que se mueve a través del texto */
+    background-image: linear-gradient(
+      90deg,
+      rgba(241,245,249,.35) 0%,
+      #ffffff 50%,
+      rgba(241,245,249,.35) 100%
+    );
+    background-size: 200% 100%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+            color: transparent;
+    animation: tfShimmer 3s ease-in-out infinite alternate;
+  }
+  @keyframes tfShimmer {
+    from { background-position:   0% 50%; }
+    to   { background-position: 100% 50%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tf-word { animation: none; background-position: 50% 50%; }
   }
   .tf-frame {
     position: absolute;

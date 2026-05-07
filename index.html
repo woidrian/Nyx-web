@@ -565,10 +565,12 @@
     font-family: 'Syne', system-ui, sans-serif;
     font-weight: 800;
     font-size: clamp(1.4rem, 3.2vw, 2.25rem);
+    line-height: 1.05;
     letter-spacing: -.03em;
     color: var(--text);
     text-align: center;
     padding: 0 1rem;
+    max-width: 66%;
     opacity: 0;
     animation: hwLabelIn .8s cubic-bezier(.4,0,.2,1) 1.4s forwards;
     transition: color .25s ease;
@@ -625,6 +627,8 @@
   @media (max-width: 720px) {
     .hero-body { padding: 6.5rem 1.25rem 0; justify-content: flex-start; }
     .hero-cta-group { gap: .75rem; margin-bottom: 3rem; }
+    .hcta-handwriting { aspect-ratio: 1.7 / 1; }
+    .hcta-label { max-width: 60%; font-size: clamp(1.15rem, 3.6vw, 1.6rem); }
     .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 1.5rem 0; padding-top: 1.5rem; }
     .hs-item:nth-child(3)::before { display: none; }
     .hs-val { font-size: clamp(1.4rem, 7vw, 1.9rem); }
@@ -639,9 +643,18 @@
     .hero-sub { font-size: .95rem; margin-bottom: 2rem; }
     .tf-word { font-size: clamp(34px, 9.5vw, 44px); letter-spacing: -.03em; }
     .hero-cta-group { margin: -.5rem 0 1rem; }
-    .hcta-handwriting { width: 100%; aspect-ratio: 2 / 1.05; }
-    .hcta-label { font-size: clamp(1.05rem, 5vw, 1.4rem); padding: 0 .6rem; }
+    .hcta-handwriting { width: 100%; aspect-ratio: 1.55 / 1; }
+    .hcta-label {
+      max-width: 58%;
+      font-size: clamp(1rem, 4.6vw, 1.25rem);
+      padding: 0 .25rem;
+      line-height: 1.1;
+    }
     .hero-stats { padding-top: 1.25rem; gap: 1.25rem 0; }
+  }
+  @media (max-width: 360px) {
+    .hcta-handwriting { aspect-ratio: 1.45 / 1; }
+    .hcta-label { max-width: 56%; font-size: clamp(.92rem, 4.4vw, 1.1rem); }
   }
 
   /* Botones legacy del hero antiguo (siguen disponibles para otras secciones) */
@@ -2825,10 +2838,11 @@
          target="_blank" rel="noopener noreferrer"
          class="hcta-handwriting" id="hcta-primary"
          aria-label="Agendar diagnóstico en Cal.com">
-        <svg class="hcta-svg" viewBox="0 0 1200 600" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+        <svg class="hcta-svg" viewBox="0 0 1200 600" aria-hidden="true" preserveAspectRatio="none">
           <path class="hcta-path" pathLength="1"
             d="M 950 90 C 1250 300, 1050 480, 600 520 C 250 520, 150 480, 150 300 C 150 120, 350 80, 600 80 C 850 80, 950 180, 950 180"
-            fill="none" stroke="currentColor" stroke-width="12"
+            fill="none" stroke="currentColor" stroke-width="4"
+            vector-effect="non-scaling-stroke"
             stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <span class="hcta-label" id="hcta-primary-text">Agendar diagnóstico</span>

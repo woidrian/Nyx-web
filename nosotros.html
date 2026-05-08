@@ -357,15 +357,20 @@
   }
   .fluid-menu .fm-item.fm-cal:hover { color: #d6ff33; background: #1f2a0a; border-color: rgba(200,255,0,.5); }
 
-  .fluid-menu .fm-lang-drop {
+  /* Sub-overlay de idiomas del fluid menu mobile — vive a nivel <body>
+     (fuera del #nav.compact con backdrop-filter, que rompe position:fixed). */
+  .fm-lang-drop {
     position: fixed;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%) scale(.96);
     background: #090e1c; border: 1px solid var(--bmd);
     border-radius: 14px; padding: .55rem;
     display: none;
-    width: min(280px, calc(100vw - 2rem));
-    max-height: 70vh; overflow-y: auto;
+    width: min(300px, calc(100vw - 2rem));
+    max-height: min(80vh, 480px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     box-shadow: 0 24px 60px rgba(0,0,0,.75);
     z-index: 320;
     grid-template-columns: 1fr 1fr;
@@ -373,21 +378,20 @@
     opacity: 0;
     transition: opacity .2s ease, transform .2s ease;
   }
-  .fluid-menu .fm-lang-drop.open {
+  .fm-lang-drop.open {
     display: grid;
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
-  .fluid-menu .fm-lang-drop.open { display: grid; }
-  .fluid-menu .fm-lang-drop button {
+  .fm-lang-drop button {
     background: none; border: none; color: var(--muted);
-    cursor: pointer; padding: .4rem .5rem; border-radius: 6px;
-    font-size: .72rem; font-family: var(--fb); text-align: left;
-    display: flex; align-items: center; gap: .35rem;
+    cursor: pointer; padding: .45rem .55rem; border-radius: 6px;
+    font-size: .78rem; font-family: var(--fb); text-align: left;
+    display: flex; align-items: center; gap: .4rem;
     transition: background .15s, color .15s;
   }
-  .fluid-menu .fm-lang-drop button:hover { background: rgba(241,245,249,.06); color: var(--text); }
-  .fluid-menu .fm-lang-drop button.active { color: var(--text); font-weight: 500; background: rgba(241,245,249,.04); }
+  .fm-lang-drop button:hover { background: rgba(241,245,249,.06); color: var(--text); }
+  .fm-lang-drop button.active { color: var(--text); font-weight: 500; background: rgba(241,245,249,.04); }
 
   /* Language dropdown */
   .lang-li { position: relative; list-style: none; }
@@ -1722,9 +1726,13 @@
     <button class="fm-item" data-i="4" id="fm-lang-trigger" type="button" aria-label="Cambiar idioma" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
     </button>
-    <div class="fm-lang-drop" id="fm-lang-drop" role="listbox" aria-label="Idioma"></div>
   </div>
 </nav>
+
+<!-- Sub-overlay de idiomas del fluid menu mobile.
+     Vive FUERA del #nav porque #nav.compact usa backdrop-filter, lo cual
+     crea un containing block que romperia el position:fixed del overlay. -->
+<div class="fm-lang-drop" id="fm-lang-drop" role="listbox" aria-label="Idioma"></div>
 
 <!-- HERO -->
 <section id="hero" aria-label="Quiénes somos">

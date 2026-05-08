@@ -953,12 +953,12 @@
   /* Mobile — rail aún más estrecho pero sigue lateral, manteniendo el sticky scroll */
   @media (max-width: 540px) {
     .svc-scroll {
-      grid-template-columns: 108px 1fr;
+      grid-template-columns: 124px 1fr;
       gap: 1rem;
     }
   }
   @media (max-width: 380px) {
-    .svc-scroll { grid-template-columns: 92px 1fr; gap: .75rem; }
+    .svc-scroll { grid-template-columns: 104px 1fr; gap: .75rem; }
   }
 
   /* — Rail izquierdo (sticky) — */
@@ -1001,7 +1001,10 @@
     opacity: 1;
     border-left-color: #c8ff00;
   }
-  /* Mobile — rail solo número + nombre vertical compacto */
+  /* Mobile — rail solo número + nombre vertical compacto.
+     CRÍTICO: NO permitir partir palabras (sin word-break/overflow-wrap),
+     en su lugar la columna grid es lo bastante ancha para que la palabra
+     más larga ('Capacitación', 12 chars) entre completa en una línea. */
   @media (max-width: 540px) {
     .svc-rail-list { gap: 1.25rem; }
     .svc-rail-item {
@@ -1010,16 +1013,16 @@
       padding-left: .75rem;
     }
     .svc-rail-name {
-      font-size: .68rem;
+      font-size: .66rem;
       line-height: 1.2;
-      overflow-wrap: anywhere;
-      word-break: break-word;
+      overflow-wrap: normal;
+      word-break: normal;
       hyphens: none;
     }
   }
   @media (max-width: 380px) {
     .svc-rail-item { padding-left: .55rem; }
-    .svc-rail-name { font-size: .62rem; }
+    .svc-rail-name { font-size: .58rem; }
   }
 
   .svc-rail-num {

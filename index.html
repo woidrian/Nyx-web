@@ -953,12 +953,12 @@
   /* Mobile — rail aún más estrecho pero sigue lateral, manteniendo el sticky scroll */
   @media (max-width: 540px) {
     .svc-scroll {
-      grid-template-columns: 84px 1fr;
+      grid-template-columns: 108px 1fr;
       gap: 1rem;
     }
   }
   @media (max-width: 380px) {
-    .svc-scroll { grid-template-columns: 64px 1fr; gap: .75rem; }
+    .svc-scroll { grid-template-columns: 92px 1fr; gap: .75rem; }
   }
 
   /* — Rail izquierdo (sticky) — */
@@ -992,6 +992,7 @@
     padding-left: 1.5rem;
     border-left: 1px solid var(--border);
     opacity: .35;
+    min-width: 0;
     transition: opacity .4s cubic-bezier(.4,0,.2,1),
                 border-left-color .4s cubic-bezier(.4,0,.2,1);
     cursor: default;
@@ -1008,7 +1009,17 @@
       gap: .35rem;
       padding-left: .75rem;
     }
-    .svc-rail-name { font-size: .72rem; line-height: 1.25; }
+    .svc-rail-name {
+      font-size: .68rem;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      hyphens: none;
+    }
+  }
+  @media (max-width: 380px) {
+    .svc-rail-item { padding-left: .55rem; }
+    .svc-rail-name { font-size: .62rem; }
   }
 
   .svc-rail-num {
@@ -3192,8 +3203,8 @@
 <section id="casos" aria-labelledby="s5-title">
   <div class="sec">
     <div class="casos-v2-head rv">
-      <p class="casos-v2-eyebrow">Resultados reales</p>
-      <h2 id="s5-title" class="casos-v2-h2">
+      <p class="casos-v2-eyebrow" data-i18n="casos.eyebrow">Resultados reales</p>
+      <h2 id="s5-title" class="casos-v2-h2" data-i18n="casos.h2">
         Empresas que ya<br>
         <span class="accent">operan diferente.</span>
       </h2>
@@ -3203,22 +3214,22 @@
       <div class="csv2-stat" role="listitem">
         <span class="csv2-dot"></span>
         <div class="csv2-v">+40%</div>
-        <div class="csv2-l">Eficiencia operativa promedio<br>en empresas implementadas</div>
+        <div class="csv2-l" data-i18n="casos.stats.0">Eficiencia operativa promedio<br>en empresas implementadas</div>
       </div>
       <div class="csv2-stat" role="listitem">
         <span class="csv2-dot"></span>
         <div class="csv2-v">−60%</div>
-        <div class="csv2-l">Tiempo en tareas repetitivas<br>tras la implementación</div>
+        <div class="csv2-l" data-i18n="casos.stats.1">Tiempo en tareas repetitivas<br>tras la implementación</div>
       </div>
       <div class="csv2-stat" role="listitem">
         <span class="csv2-dot"></span>
         <div class="csv2-v">3×</div>
-        <div class="csv2-l">Más capacidad de atención<br>sin aumentar el equipo</div>
+        <div class="csv2-l" data-i18n="casos.stats.2">Más capacidad de atención<br>sin aumentar el equipo</div>
       </div>
     </div>
 
     <div class="casos-v2-stack rv" aria-label="Testimonios de clientes (arrastra la tarjeta del frente)">
-      <span class="csv2-hint" aria-hidden="true"><span class="arr arr-l">←</span> Arrastra para ver más <span class="arr arr-r">→</span></span>
+      <span class="csv2-hint" aria-hidden="true"><span class="arr arr-l">←</span> <span data-i18n="casos.hint">Arrastra para ver más</span> <span class="arr arr-r">→</span></span>
       <article class="csv2-card csv2-card-back2" aria-hidden="true">
         <div class="csv2-avatar" aria-label="Logo Nordika">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Nordika">
@@ -3229,8 +3240,8 @@
             <text x="50" y="80" text-anchor="middle" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" font-size="11.5" fill="#0a0a0a" letter-spacing="1.5">NORDIKA</text>
           </svg>
         </div>
-        <p class="csv2-quote">"El soporte 24/7 con IA bajó nuestros tickets manuales un 60%. Solo intervenimos cuando el caso lo requiere."</p>
-        <p class="csv2-author">Daniel Ortega — Founder de Nordika</p>
+        <p class="csv2-quote" data-i18n="casos.testi.0.q">"El soporte 24/7 con IA bajó nuestros tickets manuales un 60%. Solo intervenimos cuando el caso lo requiere."</p>
+        <p class="csv2-author" data-i18n="casos.testi.0.a">Daniel Ortega — Founder de Nordika</p>
       </article>
       <article class="csv2-card csv2-card-back1" aria-hidden="true">
         <div class="csv2-avatar" aria-label="Logo Lumea Clinic">
@@ -3239,8 +3250,8 @@
             <text x="50" y="82" text-anchor="middle" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" font-size="13" fill="#0a0a0a" letter-spacing="2">LUMEA</text>
           </svg>
         </div>
-        <p class="csv2-quote">"El sistema de citas con seguimiento automatizado nos liberó 12h semanales. La agenda se llena sola."</p>
-        <p class="csv2-author">Laura Bermejo — Coordinadora en Lumea Clinic</p>
+        <p class="csv2-quote" data-i18n="casos.testi.1.q">"El sistema de citas con seguimiento automatizado nos liberó 12h semanales. La agenda se llena sola."</p>
+        <p class="csv2-author" data-i18n="casos.testi.1.a">Laura Bermejo — Coordinadora en Lumea Clinic</p>
       </article>
       <article class="csv2-card csv2-card-front">
         <div class="csv2-avatar" aria-label="Logo Pulsefit">
@@ -3251,8 +3262,8 @@
             <text x="50" y="80" text-anchor="middle" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" font-size="12" fill="#0a0a0a" letter-spacing="1.2">PULSEFIT</text>
           </svg>
         </div>
-        <p class="csv2-quote">"Implementaron el agente de WhatsApp en 2 semanas. Triplicamos las demos agendadas sin tocar nuestro CRM."</p>
-        <p class="csv2-author">Carlos Méndez — Director Comercial en Pulsefit</p>
+        <p class="csv2-quote" data-i18n="casos.testi.2.q">"Implementaron el agente de WhatsApp en 2 semanas. Triplicamos las demos agendadas sin tocar nuestro CRM."</p>
+        <p class="csv2-author" data-i18n="casos.testi.2.a">Carlos Méndez — Director Comercial en Pulsefit</p>
       </article>
     </div>
   </div>
@@ -3366,8 +3377,8 @@
   <div class="sec">
     <div class="cmp-head rv">
       <p class="eyebrow" style="justify-content:center"><span class="eyebrow-n">006B</span><span>Diferenciación</span></p>
-      <h2 id="s6b-title" class="s-h2">No somos lo mismo<br>que ya conoces.</h2>
-      <p class="s-p">Comparativa directa contra los modelos habituales. Sin marketing, sin rodeos.</p>
+      <h2 id="s6b-title" class="s-h2" data-i18n="dif.h2">No somos lo mismo<br>que ya conoces.</h2>
+      <p class="s-p" data-i18n="dif.p">Comparativa directa contra los modelos habituales. Sin marketing, sin rodeos.</p>
     </div>
 
     <div class="cmp-grid rv">
@@ -3381,11 +3392,11 @@
             </svg>
           </span>
           <div>
-            <p class="cmp-row-label">Otros</p>
-            <h3 class="cmp-h">Proveedores sin diagnóstico</h3>
+            <p class="cmp-row-label" data-i18n="dif.otros">Otros</p>
+            <h3 class="cmp-h" data-i18n="dif.rows.0.h">Proveedores sin diagnóstico</h3>
           </div>
         </div>
-        <p class="cmp-p">Implementan rápido sin entender el negocio. Soluciones desconectadas de la operación real.</p>
+        <p class="cmp-p" data-i18n="dif.rows.0.p">Implementan rápido sin entender el negocio. Soluciones desconectadas de la operación real.</p>
       </div>
       <div class="cmp-cell cmp-good">
         <div class="cmp-cell-top">
@@ -3395,11 +3406,11 @@
             </svg>
           </span>
           <div>
-            <p class="cmp-row-label">Nyx</p>
-            <h3 class="cmp-h">Auditoría antes de ejecutar</h3>
+            <p class="cmp-row-label" data-i18n="dif.nyx">Nyx</p>
+            <h3 class="cmp-h" data-i18n="dif.rows.1.h">Auditoría antes de ejecutar</h3>
           </div>
         </div>
-        <p class="cmp-p">Primero entendemos qué conviene mejorar. Cada decisión viene respaldada por datos reales.</p>
+        <p class="cmp-p" data-i18n="dif.rows.1.p">Primero entendemos qué conviene mejorar. Cada decisión viene respaldada por datos reales.</p>
       </div>
 
       <!-- Fila 2 -->
@@ -3412,11 +3423,11 @@
             </svg>
           </span>
           <div>
-            <p class="cmp-row-label">Otros</p>
-            <h3 class="cmp-h">Consultores que no ejecutan</h3>
+            <p class="cmp-row-label" data-i18n="dif.otros">Otros</p>
+            <h3 class="cmp-h" data-i18n="dif.rows.2.h">Consultores que no ejecutan</h3>
           </div>
         </div>
-        <p class="cmp-p">Hacen análisis pero la empresa queda sola para implementar.</p>
+        <p class="cmp-p" data-i18n="dif.rows.2.p">Hacen análisis pero la empresa queda sola para implementar.</p>
       </div>
       <div class="cmp-cell cmp-good">
         <div class="cmp-cell-top">
@@ -3426,11 +3437,11 @@
             </svg>
           </span>
           <div>
-            <p class="cmp-row-label">Nyx</p>
-            <h3 class="cmp-h">Estrategia y ejecución juntas</h3>
+            <p class="cmp-row-label" data-i18n="dif.nyx">Nyx</p>
+            <h3 class="cmp-h" data-i18n="dif.rows.3.h">Estrategia y ejecución juntas</h3>
           </div>
         </div>
-        <p class="cmp-p">El mismo equipo que detecta las oportunidades las construye.</p>
+        <p class="cmp-p" data-i18n="dif.rows.3.p">El mismo equipo que detecta las oportunidades las construye.</p>
       </div>
 
       <!-- Fila 3 -->
@@ -3443,11 +3454,11 @@
             </svg>
           </span>
           <div>
-            <p class="cmp-row-label">Otros</p>
-            <h3 class="cmp-h">Formación teórica sin aplicación</h3>
+            <p class="cmp-row-label" data-i18n="dif.otros">Otros</p>
+            <h3 class="cmp-h" data-i18n="dif.rows.4.h">Formación teórica sin aplicación</h3>
           </div>
         </div>
-        <p class="cmp-p">Capacitan en herramientas genéricas sin conexión a los procesos reales.</p>
+        <p class="cmp-p" data-i18n="dif.rows.4.p">Capacitan en herramientas genéricas sin conexión a los procesos reales.</p>
       </div>
       <div class="cmp-cell cmp-good">
         <div class="cmp-cell-top">
@@ -3457,11 +3468,11 @@
             </svg>
           </span>
           <div>
-            <p class="cmp-row-label">Nyx</p>
-            <h3 class="cmp-h">Formación integrada a lo implementado</h3>
+            <p class="cmp-row-label" data-i18n="dif.nyx">Nyx</p>
+            <h3 class="cmp-h" data-i18n="dif.rows.5.h">Formación integrada a lo implementado</h3>
           </div>
         </div>
-        <p class="cmp-p">El equipo aprende usando las soluciones propias, no casos genéricos.</p>
+        <p class="cmp-p" data-i18n="dif.rows.5.p">El equipo aprende usando las soluciones propias, no casos genéricos.</p>
       </div>
     </div>
   </div>
@@ -3806,6 +3817,8 @@ const LANGS = {
     footerLegal:{ privacy:'Política de Privacidad', terms:'Términos y Condiciones' },
     agentes:{ h2:'27 especialistas.<br>Una sola factura.', p:'Cada agente tiene un rol, un KPI y opera 24/7. Sin bajas, sin vacaciones, sin fricciones. Tu empresa completa gestionada por IA, coordinada en un solo sistema.', badge5:'5 agentes', badge4:'4 agentes', deps:[{n:'Ventas & Comercial',items:['Prospección automática de leads','Cold outreach y seguimiento 48h','Cualificación y scoring de prospectos','Generación de presupuestos','Cierre asistido por IA']},{n:'Marketing & Contenido',items:['Copy para emails y newsletters','Programación de redes sociales','Análisis SEO continuo','Ideas y briefs creativos','Monitorización de competidores']},{n:'Atención al Cliente',items:['Chat web 24/7 en tiempo real','Agente de voz natural (VAPI)','Gestión de tickets y reclamaciones','Resolución automática de FAQs']},{n:'Admin & Finanzas',items:['Gestión de agenda (Google Cal)','Procesamiento de facturas','Control de gastos y categorización','Informes financieros mensuales']},{n:'RRHH & Operaciones',items:['Onboarding automático de empleados','Archivo y gestión documental','Creación de manuales y SOPs','Control de estado de tareas']},{n:'Dirección & Legal',items:['Dashboards de KPIs en tiempo real','Briefing diario para el CEO','Investigación de mercado y tendencias','Revisión de contratos','Compliance GDPR continuo']}], stats:['agentes activos','sin interrupciones','coste vs plantilla tradicional','departamentos cubiertos'] },
     bnf:{ h2:'Lo que ganas<br>al automatizar con Nyx.', p:'Cinco ejes que cambian cómo opera tu empresa. Pulsa cualquier nodo para ver el detalle.', idle:'Selecciona un nodo para ver el detalle', nodes:['Eficiencia','Control','Escala','Claridad','Capacidad'] },
+    casos:{ eyebrow:'Resultados reales', h2:'Empresas que ya<br><span class="accent">operan diferente.</span>', stats:['Eficiencia operativa promedio<br>en empresas implementadas','Tiempo en tareas repetitivas<br>tras la implementación','Más capacidad de atención<br>sin aumentar el equipo'], hint:'Arrastra para ver más', testi:[{q:'"El soporte 24/7 con IA bajó nuestros tickets manuales un 60%. Solo intervenimos cuando el caso lo requiere."',a:'Daniel Ortega — Founder de Nordika'},{q:'"El sistema de citas con seguimiento automatizado nos liberó 12h semanales. La agenda se llena sola."',a:'Laura Bermejo — Coordinadora en Lumea Clinic'},{q:'"Implementaron el agente de WhatsApp en 2 semanas. Triplicamos las demos agendadas sin tocar nuestro CRM."',a:'Carlos Méndez — Director Comercial en Pulsefit'}] },
+    dif:{ h2:'No somos lo mismo<br>que ya conoces.', p:'Comparativa directa contra los modelos habituales. Sin marketing, sin rodeos.', otros:'Otros', nyx:'Nyx', rows:[{h:'Proveedores sin diagnóstico',p:'Implementan rápido sin entender el negocio. Soluciones desconectadas de la operación real.'},{h:'Auditoría antes de ejecutar',p:'Primero entendemos qué conviene mejorar. Cada decisión viene respaldada por datos reales.'},{h:'Consultores que no ejecutan',p:'Hacen análisis pero la empresa queda sola para implementar.'},{h:'Estrategia y ejecución juntas',p:'El mismo equipo que detecta las oportunidades las construye.'},{h:'Formación teórica sin aplicación',p:'Capacitan en herramientas genéricas sin conexión a los procesos reales.'},{h:'Formación integrada a lo implementado',p:'El equipo aprende usando las soluciones propias, no casos genéricos.'}] },
     footer:{ c1:'© 2026 Nyx. Todos los derechos reservados.', c2:'Hecho con IA. Operado por humanos.' }
   }},
   en: { flag:'🇬🇧', code:'EN', dir:'ltr', t: {
@@ -3822,6 +3835,8 @@ const LANGS = {
     footerLegal:{ privacy:'Privacy Policy', terms:'Terms & Conditions' },
     agentes:{ h2:'27 specialists.<br>One single invoice.', p:'Every agent has a role, a KPI and runs 24/7. No sick days, no holidays, no friction. Your entire company managed by AI, coordinated in a single system.', badge5:'5 agents', badge4:'4 agents', deps:[{n:'Sales & Commercial',items:['Automated lead prospecting','Cold outreach and 48h follow-up','Prospect qualification and scoring','Quote generation','AI-assisted closing']},{n:'Marketing & Content',items:['Copy for emails and newsletters','Social media scheduling','Continuous SEO analysis','Creative ideas and briefs','Competitor monitoring']},{n:'Customer Support',items:['24/7 real-time web chat','Natural voice agent (VAPI)','Ticket and complaint management','Automatic FAQ resolution']},{n:'Admin & Finance',items:['Calendar management (Google Cal)','Invoice processing','Expense control and categorization','Monthly financial reports']},{n:'HR & Operations',items:['Automated employee onboarding','Document filing and management','Manual and SOP creation','Task status tracking']},{n:'Leadership & Legal',items:['Real-time KPI dashboards','Daily CEO briefing','Market and trend research','Contract review','Continuous GDPR compliance']}], stats:['active agents','no interruptions','cost vs traditional staff','departments covered'] },
     bnf:{ h2:'What you gain<br>by automating with Nyx.', p:'Five pillars that change how your company operates. Click any node to see the details.', idle:'Select a node to see the details', nodes:['Efficiency','Control','Scale','Clarity','Capacity'] },
+    casos:{ eyebrow:'Real results', h2:'Companies already<br><span class="accent">operating differently.</span>', stats:['Average operational efficiency<br>in implementing companies','Time on repetitive tasks<br>after implementation','More attention capacity<br>without growing the team'], hint:'Drag to see more', testi:[{q:'"24/7 AI support cut our manual tickets by 60%. We only step in when the case requires it."',a:'Daniel Ortega — Founder of Nordika'},{q:'"The automated appointment and follow-up system freed up 12 hours a week. The calendar fills itself."',a:'Laura Bermejo — Coordinator at Lumea Clinic'},{q:'"They deployed the WhatsApp agent in 2 weeks. We tripled booked demos without touching our CRM."',a:'Carlos Méndez — Sales Director at Pulsefit'}] },
+    dif:{ h2:'We are not the same<br>as what you already know.', p:'Direct comparison against the usual models. No marketing, no detours.', otros:'Others', nyx:'Nyx', rows:[{h:'Providers without diagnosis',p:'They implement fast without understanding the business. Solutions disconnected from real operations.'},{h:'Audit before execution',p:'First we understand what is worth improving. Every decision is backed by real data.'},{h:"Consultants who don't execute",p:'They do the analysis but leave the company alone to implement.'},{h:'Strategy and execution together',p:'The same team that spots opportunities builds them.'},{h:'Theoretical training without application',p:'They train on generic tools disconnected from real processes.'},{h:'Training integrated with what we built',p:'The team learns using their own solutions, not generic cases.'}] },
     footer:{ c1:'© 2026 Nyx. All rights reserved.', c2:'Made with AI. Operated by humans.' }
   }},
   pt: { flag:'🇵🇹', code:'PT', dir:'ltr', t: {
@@ -3838,6 +3853,8 @@ const LANGS = {
     footerLegal:{ privacy:'Política de Privacidade', terms:'Termos e Condições' },
     agentes:{ h2:'27 especialistas.<br>Uma única fatura.', p:'Cada agente tem um papel, um KPI e opera 24/7. Sem faltas, sem férias, sem atritos. Toda a sua empresa gerida por IA, coordenada num único sistema.', badge5:'5 agentes', badge4:'4 agentes', deps:[{n:'Vendas & Comercial',items:['Prospecção automática de leads','Cold outreach e follow-up em 48h','Qualificação e scoring de prospects','Geração de orçamentos','Fechamento assistido por IA']},{n:'Marketing & Conteúdo',items:['Copy para e-mails e newsletters','Agendamento de redes sociais','Análise SEO contínua','Ideias e briefings criativos','Monitoramento de concorrentes']},{n:'Atendimento ao Cliente',items:['Chat web 24/7 em tempo real','Agente de voz natural (VAPI)','Gestão de tickets e reclamações','Resolução automática de FAQs']},{n:'Admin & Finanças',items:['Gestão de agenda (Google Cal)','Processamento de faturas','Controle de despesas e categorização','Relatórios financeiros mensais']},{n:'RH & Operações',items:['Onboarding automático de colaboradores','Arquivo e gestão documental','Criação de manuais e SOPs','Controle do status de tarefas']},{n:'Direção & Jurídico',items:['Dashboards de KPIs em tempo real','Briefing diário para o CEO','Pesquisa de mercado e tendências','Revisão de contratos','Compliance GDPR contínuo']}], stats:['agentes ativos','sem interrupções','custo vs equipe tradicional','departamentos cobertos'] },
     bnf:{ h2:'O que você ganha<br>ao automatizar com a Nyx.', p:'Cinco eixos que mudam como sua empresa opera. Clique em qualquer nó para ver os detalhes.', idle:'Selecione um nó para ver os detalhes', nodes:['Eficiência','Controle','Escala','Clareza','Capacidade'] },
+    casos:{ eyebrow:'Resultados reais', h2:'Empresas que já<br><span class="accent">operam diferente.</span>', stats:['Eficiência operacional média<br>em empresas implementadas','Tempo em tarefas repetitivas<br>após a implementação','Mais capacidade de atendimento<br>sem aumentar a equipe'], hint:'Arraste para ver mais', testi:[{q:'"O suporte 24/7 com IA reduziu nossos tickets manuais em 60%. Só intervimos quando o caso exige."',a:'Daniel Ortega — Fundador da Nordika'},{q:'"O sistema de agendamento com follow-up automatizado liberou 12 horas semanais. A agenda se preenche sozinha."',a:'Laura Bermejo — Coordenadora na Lumea Clinic'},{q:'"Implementaram o agente de WhatsApp em 2 semanas. Triplicamos as demos agendadas sem tocar no nosso CRM."',a:'Carlos Méndez — Diretor Comercial da Pulsefit'}] },
+    dif:{ h2:'Não somos o mesmo<br>que você já conhece.', p:'Comparação direta com os modelos habituais. Sem marketing, sem rodeios.', otros:'Outros', nyx:'Nyx', rows:[{h:'Fornecedores sem diagnóstico',p:'Implementam rápido sem entender o negócio. Soluções desconectadas da operação real.'},{h:'Auditoria antes de executar',p:'Primeiro entendemos o que vale a pena melhorar. Cada decisão é respaldada por dados reais.'},{h:'Consultores que não executam',p:'Fazem análises mas a empresa fica sozinha para implementar.'},{h:'Estratégia e execução juntas',p:'A mesma equipe que detecta as oportunidades as constrói.'},{h:'Formação teórica sem aplicação',p:'Capacitam em ferramentas genéricas sem conexão com os processos reais.'},{h:'Formação integrada ao que foi implementado',p:'A equipe aprende usando as soluções próprias, não casos genéricos.'}] },
     footer:{ c1:'© 2026 Nyx. Todos os direitos reservados.', c2:'Feito com IA. Operado por humanos.' }
   }},
   fr: { flag:'🇫🇷', code:'FR', dir:'ltr', t: {
@@ -3854,6 +3871,8 @@ const LANGS = {
     footerLegal:{ privacy:'Politique de confidentialité', terms:'Conditions générales' },
     agentes:{ h2:'27 spécialistes.<br>Une seule facture.', p:"Chaque agent a un rôle, un KPI et opère 24/7. Pas d'arrêts maladie, pas de congés, pas de friction. Toute votre entreprise gérée par l'IA, coordonnée dans un seul système.", badge5:'5 agents', badge4:'4 agents', deps:[{n:'Ventes & Commercial',items:['Prospection automatique de leads','Cold outreach et relance 48h','Qualification et scoring des prospects','Génération de devis',"Closing assisté par l'IA"]},{n:'Marketing & Contenu',items:['Copy pour emails et newsletters','Programmation des réseaux sociaux','Analyse SEO continue','Idées et briefs créatifs','Veille concurrentielle']},{n:'Service Client',items:['Chat web 24/7 en temps réel','Agent vocal naturel (VAPI)','Gestion des tickets et réclamations','Résolution automatique des FAQ']},{n:'Admin & Finances',items:["Gestion de l'agenda (Google Cal)",'Traitement des factures','Contrôle des dépenses et catégorisation','Rapports financiers mensuels']},{n:'RH & Opérations',items:['Onboarding automatique des employés','Archivage et gestion documentaire','Création de manuels et SOPs',"Suivi de l'état des tâches"]},{n:'Direction & Juridique',items:['Dashboards KPIs en temps réel','Briefing quotidien pour le CEO','Étude de marché et tendances','Revue de contrats','Conformité GDPR continue']}], stats:['agents actifs','sans interruptions','coût vs équipe traditionnelle','départements couverts'] },
     bnf:{ h2:'Ce que vous gagnez<br>en automatisant avec Nyx.', p:'Cinq axes qui transforment le fonctionnement de votre entreprise. Cliquez sur un nœud pour voir le détail.', idle:'Sélectionnez un nœud pour voir le détail', nodes:['Efficacité','Contrôle','Échelle','Clarté','Capacité'] },
+    casos:{ eyebrow:'Résultats réels', h2:'Des entreprises qui<br><span class="accent">opèrent autrement.</span>', stats:["Efficacité opérationnelle moyenne<br>dans les entreprises implémentées","Temps sur les tâches répétitives<br>après l'implémentation","Plus de capacité d'attention<br>sans agrandir l'équipe"], hint:'Glissez pour voir plus', testi:[{q:'"Le support IA 24/7 a réduit nos tickets manuels de 60 %. Nous n\'intervenons que si le cas l\'exige."',a:'Daniel Ortega — Fondateur de Nordika'},{q:"\"Le système de rendez-vous avec suivi automatisé nous a libéré 12 h par semaine. L'agenda se remplit tout seul.\"",a:'Laura Bermejo — Coordinatrice chez Lumea Clinic'},{q:"\"Ils ont déployé l'agent WhatsApp en 2 semaines. Nous avons triplé les démos sans toucher à notre CRM.\"",a:'Carlos Méndez — Directeur Commercial chez Pulsefit'}] },
+    dif:{ h2:'Nous ne sommes pas<br>comme ce que vous connaissez.', p:'Comparaison directe avec les modèles habituels. Sans marketing, sans détours.', otros:'Autres', nyx:'Nyx', rows:[{h:'Prestataires sans diagnostic',p:"Ils implémentent vite sans comprendre l'activité. Des solutions déconnectées de l'opération réelle."},{h:"Audit avant l'exécution",p:"Nous comprenons d'abord ce qu'il faut améliorer. Chaque décision est appuyée par des données réelles."},{h:"Consultants qui n'exécutent pas",p:"Ils font des analyses mais l'entreprise reste seule pour implémenter."},{h:'Stratégie et exécution ensemble',p:'La même équipe qui repère les opportunités les construit.'},{h:'Formation théorique sans application',p:'Ils forment sur des outils génériques sans lien avec les processus réels.'},{h:'Formation intégrée à ce qui est en place',p:"L'équipe apprend avec ses propres solutions, pas des cas génériques."}] },
     footer:{ c1:'© 2026 Nyx. Tous droits réservés.', c2:'Fait avec IA. Opéré par des humains.' }
   }},
   de: { flag:'🇩🇪', code:'DE', dir:'ltr', t: {
@@ -3870,6 +3889,8 @@ const LANGS = {
     footerLegal:{ privacy:'Datenschutz', terms:'AGB' },
     agentes:{ h2:'27 Spezialisten.<br>Eine einzige Rechnung.', p:'Jeder Agent hat eine Rolle, einen KPI und arbeitet 24/7. Keine Krankheitstage, kein Urlaub, keine Reibung. Ihr gesamtes Unternehmen, von KI gesteuert und in einem System koordiniert.', badge5:'5 Agenten', badge4:'4 Agenten', deps:[{n:'Vertrieb & Sales',items:['Automatische Lead-Prospektion','Cold Outreach und Follow-up nach 48h','Qualifizierung und Scoring von Prospects','Angebotserstellung','KI-gestützter Abschluss']},{n:'Marketing & Content',items:['Copy für E-Mails und Newsletter','Social-Media-Planung','Kontinuierliche SEO-Analyse','Kreative Ideen und Briefings','Wettbewerbsbeobachtung']},{n:'Kundenservice',items:['24/7 Web-Chat in Echtzeit','Natürlicher Sprachagent (VAPI)','Ticket- und Beschwerdemanagement','Automatische FAQ-Lösung']},{n:'Admin & Finanzen',items:['Kalenderverwaltung (Google Cal)','Rechnungsverarbeitung','Ausgabenkontrolle und Kategorisierung','Monatliche Finanzberichte']},{n:'HR & Operations',items:['Automatisches Mitarbeiter-Onboarding','Dokumentenablage und -verwaltung','Erstellung von Handbüchern und SOPs','Aufgabenstatus-Tracking']},{n:'Leitung & Recht',items:['Echtzeit-KPI-Dashboards','Tägliches CEO-Briefing','Markt- und Trendforschung','Vertragsprüfung','Kontinuierliche GDPR-Compliance']}], stats:['aktive Agenten','ohne Unterbrechungen','Kosten vs. klassisches Team','abgedeckte Abteilungen'] },
     bnf:{ h2:'Was Sie gewinnen,<br>wenn Sie mit Nyx automatisieren.', p:'Fünf Säulen, die verändern, wie Ihr Unternehmen arbeitet. Klicken Sie auf einen Knoten, um Details zu sehen.', idle:'Wählen Sie einen Knoten, um Details zu sehen', nodes:['Effizienz','Kontrolle','Skalierung','Klarheit','Kapazität'] },
+    casos:{ eyebrow:'Echte Ergebnisse', h2:'Unternehmen, die<br><span class="accent">anders arbeiten.</span>', stats:['Durchschnittliche operative Effizienz<br>in implementierten Unternehmen','Zeit für Routineaufgaben<br>nach der Implementierung','Mehr Bearbeitungskapazität<br>ohne Teamerweiterung'], hint:'Zum Weiterlesen ziehen', testi:[{q:'"Der 24/7-KI-Support reduzierte manuelle Tickets um 60%. Wir greifen nur ein, wenn der Fall es erfordert."',a:'Daniel Ortega — Gründer von Nordika'},{q:'"Das automatisierte Termin- und Follow-up-System sparte 12 Stunden pro Woche. Der Kalender füllt sich von selbst."',a:'Laura Bermejo — Koordinatorin bei Lumea Clinic'},{q:'"Sie haben den WhatsApp-Agenten in 2 Wochen implementiert. Wir haben gebuchte Demos verdreifacht, ohne unser CRM anzufassen."',a:'Carlos Méndez — Vertriebsleiter bei Pulsefit'}] },
+    dif:{ h2:'Wir sind nicht dasselbe,<br>was Sie schon kennen.', p:'Direkter Vergleich mit den üblichen Modellen. Kein Marketing, keine Umwege.', otros:'Andere', nyx:'Nyx', rows:[{h:'Anbieter ohne Diagnose',p:'Sie implementieren schnell, ohne das Geschäft zu verstehen. Lösungen ohne Bezug zur realen Praxis.'},{h:'Audit vor der Ausführung',p:'Erst verstehen wir, was wirklich verbessert werden sollte. Jede Entscheidung basiert auf echten Daten.'},{h:'Berater, die nicht umsetzen',p:'Sie analysieren, aber das Unternehmen bleibt mit der Umsetzung allein.'},{h:'Strategie und Umsetzung zusammen',p:'Dasselbe Team, das die Chancen erkennt, baut sie auch auf.'},{h:'Theoretische Schulung ohne Anwendung',p:'Sie schulen an generischen Tools ohne Bezug zu realen Prozessen.'},{h:'Schulung, integriert in das Implementierte',p:'Das Team lernt mit den eigenen Lösungen, nicht mit Fallbeispielen.'}] },
     footer:{ c1:'© 2026 Nyx. Alle Rechte vorbehalten.', c2:'Mit KI gemacht. Von Menschen betrieben.' }
   }},
   it: { flag:'🇮🇹', code:'IT', dir:'ltr', t: {
@@ -3886,6 +3907,8 @@ const LANGS = {
     footerLegal:{ privacy:'Informativa sulla privacy', terms:'Termini e condizioni' },
     agentes:{ h2:'27 specialisti.<br>Una sola fattura.', p:"Ogni agente ha un ruolo, un KPI e opera 24/7. Niente malattie, niente ferie, nessun attrito. Tutta la tua azienda gestita dall'IA, coordinata in un unico sistema.", badge5:'5 agenti', badge4:'4 agenti', deps:[{n:'Vendite & Commerciale',items:['Prospezione automatica dei lead','Cold outreach e follow-up in 48h','Qualificazione e scoring dei prospect','Generazione preventivi',"Closing assistito dall'IA"]},{n:'Marketing & Contenuti',items:['Copy per email e newsletter','Pianificazione dei social','Analisi SEO continua','Idee e brief creativi','Monitoraggio dei competitor']},{n:'Customer Care',items:['Chat web 24/7 in tempo reale','Agente vocale naturale (VAPI)','Gestione di ticket e reclami','Risoluzione automatica delle FAQ']},{n:'Admin & Finanza',items:["Gestione dell'agenda (Google Cal)",'Elaborazione delle fatture','Controllo spese e categorizzazione','Report finanziari mensili']},{n:'HR & Operations',items:['Onboarding automatico dei dipendenti','Archiviazione e gestione documentale','Creazione di manuali e SOP','Tracciamento stato delle attività']},{n:'Direzione & Legale',items:['Dashboard KPI in tempo reale','Briefing quotidiano per il CEO','Ricerca di mercato e trend','Revisione contratti','Compliance GDPR continua']}], stats:['agenti attivi','senza interruzioni','costo vs team tradizionale','dipartimenti coperti'] },
     bnf:{ h2:'Cosa guadagni<br>automatizzando con Nyx.', p:'Cinque assi che cambiano il modo in cui opera la tua azienda. Clicca su un nodo per vedere il dettaglio.', idle:'Seleziona un nodo per vedere il dettaglio', nodes:['Efficienza','Controllo','Scala','Chiarezza','Capacità'] },
+    casos:{ eyebrow:'Risultati reali', h2:'Aziende che già<br><span class="accent">operano diversamente.</span>', stats:['Efficienza operativa media<br>nelle aziende implementate',"Tempo in attività ripetitive<br>dopo l'implementazione",'Più capacità di attenzione<br>senza ingrandire il team'], hint:'Trascina per vedere altro', testi:[{q:'"Il supporto IA 24/7 ha ridotto i ticket manuali del 60%. Interveniamo solo se il caso lo richiede."',a:'Daniel Ortega — Fondatore di Nordika'},{q:"\"Il sistema di appuntamenti con follow-up automatizzato ci ha liberato 12 ore alla settimana. L'agenda si riempie da sola.\"",a:'Laura Bermejo — Coordinatrice presso Lumea Clinic'},{q:'"Hanno implementato l\'agente WhatsApp in 2 settimane. Abbiamo triplicato le demo prenotate senza toccare il CRM."',a:'Carlos Méndez — Direttore Commerciale di Pulsefit'}] },
+    dif:{ h2:'Non siamo gli stessi<br>che già conosci.', p:'Confronto diretto con i modelli abituali. Senza marketing, senza giri di parole.', otros:'Altri', nyx:'Nyx', rows:[{h:'Fornitori senza diagnosi',p:'Implementano in fretta senza capire il business. Soluzioni scollegate dalla realtà operativa.'},{h:"Audit prima dell'esecuzione",p:'Prima capiamo cosa conviene migliorare. Ogni decisione è supportata da dati reali.'},{h:'Consulenti che non eseguono',p:"Fanno analisi ma l'azienda resta sola a implementare."},{h:'Strategia ed esecuzione insieme',p:'Lo stesso team che individua le opportunità le costruisce.'},{h:'Formazione teorica senza applicazione',p:'Formano su strumenti generici senza collegamento ai processi reali.'},{h:'Formazione integrata a ciò che è stato implementato',p:'Il team impara usando le proprie soluzioni, non casi generici.'}] },
     footer:{ c1:'© 2026 Nyx. Tutti i diritti riservati.', c2:'Fatto con IA. Gestito da umani.' }
   }},
   nl: { flag:'🇳🇱', code:'NL', dir:'ltr', t: {
@@ -3902,6 +3925,8 @@ const LANGS = {
     footerLegal:{ privacy:'Privacybeleid', terms:'Algemene voorwaarden' },
     agentes:{ h2:'27 specialisten.<br>Eén enkele factuur.', p:'Elke agent heeft een rol, een KPI en werkt 24/7. Geen ziektedagen, geen vakantie, geen frictie. Je hele bedrijf gerund door AI, gecoördineerd in één systeem.', badge5:'5 agents', badge4:'4 agents', deps:[{n:'Sales & Commercieel',items:['Automatische lead-prospectie','Cold outreach en 48u opvolging','Kwalificatie en scoring van prospects','Offertes opstellen','AI-ondersteunde closing']},{n:'Marketing & Content',items:['Copy voor e-mails en nieuwsbrieven','Planning van social media','Continue SEO-analyse','Creatieve ideeën en briefings','Concurrentiemonitoring']},{n:'Klantenservice',items:['24/7 realtime webchat','Natuurlijke voice-agent (VAPI)','Beheer van tickets en klachten','Automatische FAQ-oplossing']},{n:'Admin & Financiën',items:['Agendabeheer (Google Cal)','Factuurverwerking','Uitgavenbeheer en categorisering','Maandelijkse financiële rapporten']},{n:'HR & Operations',items:['Automatische onboarding van medewerkers','Documentbeheer en archivering','Opstellen van handleidingen en SOPs','Statusopvolging van taken']},{n:'Directie & Juridisch',items:['Realtime KPI-dashboards','Dagelijkse CEO-briefing','Markt- en trendonderzoek','Contractbeoordeling','Doorlopende GDPR-compliance']}], stats:['actieve agents','zonder onderbrekingen','kosten vs traditioneel team','gedekte afdelingen'] },
     bnf:{ h2:'Wat je wint<br>door te automatiseren met Nyx.', p:'Vijf assen die veranderen hoe je bedrijf werkt. Klik op een knooppunt voor de details.', idle:'Selecteer een knooppunt om de details te zien', nodes:['Efficiëntie','Controle','Schaal','Helderheid','Capaciteit'] },
+    casos:{ eyebrow:'Echte resultaten', h2:'Bedrijven die al<br><span class="accent">anders werken.</span>', stats:['Gemiddelde operationele efficiëntie<br>bij geïmplementeerde bedrijven','Tijd aan repetitieve taken<br>na de implementatie','Meer aandachtscapaciteit<br>zonder team-uitbreiding'], hint:'Sleep om meer te zien', testi:[{q:'"24/7 AI-support verlaagde onze handmatige tickets met 60%. We grijpen alleen in als de case dat vereist."',a:'Daniel Ortega — Founder van Nordika'},{q:'"Het geautomatiseerde afsprakensysteem met follow-up bespaarde ons 12 uur per week. De agenda vult zich vanzelf."',a:'Laura Bermejo — Coördinator bij Lumea Clinic'},{q:'"Ze implementeerden de WhatsApp-agent in 2 weken. We verdrievoudigden geboekte demo\'s zonder onze CRM aan te raken."',a:'Carlos Méndez — Sales Director bij Pulsefit'}] },
+    dif:{ h2:'We zijn niet hetzelfde<br>als wat u al kent.', p:'Directe vergelijking met de gebruikelijke modellen. Geen marketing, geen omhalen.', otros:'Anderen', nyx:'Nyx', rows:[{h:'Aanbieders zonder diagnose',p:'Ze implementeren snel zonder het bedrijf te begrijpen. Oplossingen losgekoppeld van de echte operatie.'},{h:'Audit vóór uitvoering',p:'Eerst begrijpen we wat verbeterd moet worden. Elke beslissing onderbouwd met echte data.'},{h:'Consultants die niet uitvoeren',p:'Ze doen de analyse maar laten het bedrijf alleen implementeren.'},{h:'Strategie en uitvoering samen',p:'Hetzelfde team dat kansen ziet, bouwt ze ook.'},{h:'Theoretische training zonder toepassing',p:'Ze trainen op generieke tools zonder link met echte processen.'},{h:'Training geïntegreerd met wat is gebouwd',p:'Het team leert met de eigen oplossingen, niet met generieke cases.'}] },
     footer:{ c1:'© 2026 Nyx. Alle rechten voorbehouden.', c2:'Gemaakt met AI. Beheerd door mensen.' }
   }},
   ru: { flag:'🇷🇺', code:'RU', dir:'ltr', t: {
@@ -3918,6 +3943,8 @@ const LANGS = {
     footerLegal:{ privacy:'Политика конфиденциальности', terms:'Условия использования' },
     agentes:{ h2:'27 специалистов.<br>Один счёт.', p:'У каждого агента есть роль, KPI и работа 24/7. Без больничных, без отпусков, без трений. Вся компания под управлением ИИ, скоординированная в одной системе.', badge5:'5 агентов', badge4:'4 агента', deps:[{n:'Продажи и коммерция',items:['Автоматический поиск лидов','Холодные касания и follow-up за 48 ч','Квалификация и скоринг потенциальных клиентов','Подготовка коммерческих предложений','Закрытие сделок с помощью ИИ']},{n:'Маркетинг и контент',items:['Тексты для писем и рассылок','Планирование соцсетей','Непрерывный SEO-анализ','Креативные идеи и брифы','Мониторинг конкурентов']},{n:'Клиентская поддержка',items:['Веб-чат 24/7 в реальном времени','Естественный голосовой агент (VAPI)','Управление тикетами и жалобами','Автоматическое решение FAQ']},{n:'Администрация и финансы',items:['Управление календарём (Google Cal)','Обработка счетов','Контроль и категоризация расходов','Ежемесячные финансовые отчёты']},{n:'HR и операции',items:['Автоматический онбординг сотрудников','Архив и управление документами','Создание мануалов и SOPs','Контроль статуса задач']},{n:'Руководство и юридический отдел',items:['Дашборды KPI в реальном времени','Ежедневный брифинг для CEO','Исследование рынка и трендов','Проверка договоров','Постоянный GDPR-комплаенс']}], stats:['активных агентов','без перерывов','стоимость vs традиционный штат','охваченных отделов'] },
     bnf:{ h2:'Что вы получаете,<br>автоматизируя с Nyx.', p:'Пять направлений, которые меняют работу вашей компании. Нажмите на любой узел, чтобы увидеть детали.', idle:'Выберите узел, чтобы увидеть детали', nodes:['Эффективность','Контроль','Масштаб','Ясность','Мощность'] },
+    casos:{ eyebrow:'Реальные результаты', h2:'Компании, которые уже<br><span class="accent">работают по-другому.</span>', stats:['Средняя операционная эффективность<br>в компаниях после внедрения','Время на рутинные задачи<br>после внедрения','Больше возможностей<br>без расширения команды'], hint:'Потяните, чтобы увидеть больше', testi:[{q:'"Поддержка 24/7 с ИИ снизила ручные тикеты на 60%. Вмешиваемся только когда требуется."',a:'Даниэль Ортега — Основатель Nordika'},{q:'"Автоматизированная система записи и фоллоу-апа высвободила 12 часов в неделю. График заполняется сам."',a:'Лаура Бермехо — Координатор Lumea Clinic'},{q:'"Они внедрили WhatsApp-агента за 2 недели. Утроили число забронированных демо, не трогая CRM."',a:'Карлос Мендес — Коммерческий директор Pulsefit'}] },
+    dif:{ h2:'Мы не такие, как<br>те, кого вы уже знаете.', p:'Прямое сравнение с привычными моделями. Без маркетинга, без обиняков.', otros:'Другие', nyx:'Nyx', rows:[{h:'Поставщики без диагностики',p:'Внедряют быстро, не разобравшись в бизнесе. Решения, оторванные от реальной работы.'},{h:'Аудит до запуска',p:'Сначала понимаем, что действительно стоит улучшить. Каждое решение опирается на реальные данные.'},{h:'Консультанты, которые не внедряют',p:'Делают анализ, но компания остаётся одна на этапе внедрения.'},{h:'Стратегия и реализация вместе',p:'Одна и та же команда находит возможности и реализует их.'},{h:'Теоретическое обучение без применения',p:'Обучают по общим инструментам, оторванным от реальных процессов.'},{h:'Обучение, интегрированное в внедрённое',p:'Команда учится на собственных решениях, а не общих примерах.'}] },
     footer:{ c1:'© 2026 Nyx. Все права защищены.', c2:'Сделано с ИИ. Управляется людьми.' }
   }},
   zh: { flag:'🇨🇳', code:'ZH', dir:'ltr', t: {
@@ -3934,6 +3961,8 @@ const LANGS = {
     footerLegal:{ privacy:'隐私政策', terms:'条款和条件' },
     agentes:{ h2:'27 位专家。<br>一张账单。', p:'每位智能体都有明确角色和 KPI，全天候 24/7 运行。不请假、不休假、零摩擦。整个公司由 AI 管理，统一在一个系统中协调。', badge5:'5 个智能体', badge4:'4 个智能体', deps:[{n:'销售与商务',items:['自动化潜在客户开发','冷接触与 48 小时跟进','潜客资格审查与打分','报价单生成','AI 辅助成交']},{n:'营销与内容',items:['邮件与电子报文案','社交媒体排程','持续 SEO 分析','创意灵感与简报','竞争对手监控']},{n:'客户服务',items:['全天候实时网页聊天','自然语音智能体 (VAPI)','工单与投诉管理','FAQ 自动解答']},{n:'行政与财务',items:['日程管理 (Google Cal)','发票处理','费用管控与分类','月度财务报告']},{n:'人力与运营',items:['员工自动入职','文档归档与管理','手册与 SOPs 编写','任务状态追踪']},{n:'管理与法务',items:['KPI 实时看板','每日 CEO 简报','市场与趋势研究','合同审查','持续 GDPR 合规']}], stats:['活跃智能体','无中断','成本 vs 传统团队','覆盖部门'] },
     bnf:{ h2:'与 Nyx 自动化<br>带给你的价值。', p:'五大支柱，改变你公司的运营方式。点击任意节点查看详情。', idle:'选择一个节点查看详情', nodes:['效率','控制','规模','清晰','产能'] },
+    casos:{ eyebrow:'真实成果', h2:'已经在<br><span class="accent">用新方式运营的公司。</span>', stats:['已实施企业的<br>平均运营效率','实施后用于<br>重复任务的时间','不增加团队即可<br>获得更多服务能力'], hint:'拖动查看更多', testi:[{q:'"24/7 AI 支持将我们的手工工单减少了 60%。仅在必要时介入。"',a:'Daniel Ortega — Nordika 创始人'},{q:'"自动化预约和跟进系统每周省下 12 小时。日程自动排满。"',a:'Laura Bermejo — Lumea Clinic 协调员'},{q:'"他们在 2 周内部署了 WhatsApp 智能体。我们在不动 CRM 的情况下让预约演示数翻了两倍。"',a:'Carlos Méndez — Pulsefit 商务总监'}] },
+    dif:{ h2:'我们不同于<br>您已经熟悉的那些。', p:'与常见模式直接对比。不做营销，不绕弯子。', otros:'其他', nyx:'Nyx', rows:[{h:'没有诊断的供应商',p:'不了解业务就快速上线，方案与真实运营脱节。'},{h:'执行前先做审计',p:'我们先确认值得优化的环节，每个决策都有真实数据支撑。'},{h:'只分析不执行的顾问',p:'他们做分析，但公司只能自己去实施。'},{h:'战略与执行同在',p:'发现机会的团队就是负责落地的团队。'},{h:'理论培训缺少应用',p:'只培训通用工具，与真实流程脱节。'},{h:'培训与所实施的方案融为一体',p:'团队在自己的方案上学习，不是看通用案例。'}] },
     footer:{ c1:'© 2026 Nyx. 版权所有。', c2:'由AI构建，由人类运营。' }
   }},
   ja: { flag:'🇯🇵', code:'JA', dir:'ltr', t: {
@@ -3950,6 +3979,8 @@ const LANGS = {
     footerLegal:{ privacy:'プライバシーポリシー', terms:'利用規約' },
     agentes:{ h2:'27人のスペシャリスト。<br>請求書は1枚だけ。', p:'各エージェントには役割とKPIがあり、24/7で稼働します。病欠も休暇も摩擦もありません。会社全体をAIが運営し、一つのシステムで統合管理します。', badge5:'5エージェント', badge4:'4エージェント', deps:[{n:'セールス & コマーシャル',items:['リードの自動プロスペクティング','コールドアウトリーチと48時間以内のフォローアップ','見込み客の資格認定とスコアリング','見積書の自動生成','AI支援によるクロージング']},{n:'マーケティング & コンテンツ',items:['メールとニュースレターのコピー','SNSのスケジューリング','継続的なSEO分析','クリエイティブなアイデアとブリーフ','競合モニタリング']},{n:'カスタマーサポート',items:['24/7のリアルタイムWebチャット','自然な音声エージェント (VAPI)','チケットとクレームの管理','FAQの自動解決']},{n:'管理 & 財務',items:['スケジュール管理 (Google Cal)','請求書処理','経費管理とカテゴリ分類','月次財務レポート']},{n:'人事 & オペレーション',items:['従業員の自動オンボーディング','ドキュメントの保管と管理','マニュアルとSOPsの作成','タスクのステータス管理']},{n:'経営 & 法務',items:['リアルタイムKPIダッシュボード','CEO向けのデイリーブリーフィング','市場とトレンドのリサーチ','契約レビュー','継続的なGDPRコンプライアンス']}], stats:['稼働中のエージェント','中断なし','従来の人員と比べたコスト','カバーする部門'] },
     bnf:{ h2:'Nyxで自動化することで<br>得られるもの。', p:'会社の運営方法を変える5つの軸。任意のノードをクリックして詳細をご覧ください。', idle:'ノードを選択して詳細を表示', nodes:['効率','コントロール','スケール','明確性','キャパシティ'] },
+    casos:{ eyebrow:'実際の成果', h2:'すでに違う方法で<br><span class="accent">運営している企業。</span>', stats:['導入企業における<br>平均的な業務効率','導入後の繰り返し作業に<br>要する時間','チーム拡大なしで<br>対応力アップ'], hint:'ドラッグして他を見る', testi:[{q:'"24/7のAIサポートで手作業のチケットが60%減。必要な時だけ介入します。"',a:'ダニエル・オルテガ — Nordika 創業者'},{q:'"予約とフォローアップの自動化で週12時間が浮きました。カレンダーが自動で埋まります。"',a:'ラウラ・ベルメホ — Lumea Clinic コーディネーター'},{q:'"WhatsAppエージェントを2週間で導入。CRMには手を入れず、予約デモが3倍になりました。"',a:'カルロス・メンデス — Pulsefit セールスディレクター'}] },
+    dif:{ h2:'あなたが知っているものとは<br><span class="accent">違います。</span>', p:'よくあるモデルとの直接比較。マーケティングなし、回り道なし。', otros:'他社', nyx:'Nyx', rows:[{h:'診断のないベンダー',p:'ビジネスを理解せず素早く導入。実運用と切り離されたソリューション。'},{h:'実行前に監査',p:'何を改善すべきかをまず理解。すべての決定は実データに基づきます。'},{h:'実行しないコンサル',p:'分析はしますが、実装は会社任せです。'},{h:'戦略と実行を一体に',p:'機会を見つけたチームがそのまま構築します。'},{h:'応用のない理論研修',p:'実プロセスと結び付かない汎用ツールを教えます。'},{h:'実装と統合した研修',p:'チームは汎用事例ではなく自社のソリューションで学びます。'}] },
     footer:{ c1:'© 2026 Nyx. 全著作権所有。', c2:'AIで作成。人間が運営。' }
   }},
   ko: { flag:'🇰🇷', code:'KO', dir:'ltr', t: {
@@ -3966,6 +3997,8 @@ const LANGS = {
     footerLegal:{ privacy:'개인정보 처리방침', terms:'이용 약관' },
     agentes:{ h2:'27명의 전문가.<br>단 한 장의 청구서.', p:'각 에이전트는 역할과 KPI를 가지고 24/7 운영됩니다. 병가도, 휴가도, 마찰도 없습니다. 회사 전체가 AI로 관리되고 하나의 시스템에서 조율됩니다.', badge5:'에이전트 5명', badge4:'에이전트 4명', deps:[{n:'영업 & 상업',items:['리드 자동 발굴','콜드 아웃리치 및 48시간 팔로업','잠재 고객 자격 검토 및 스코어링','견적서 생성','AI 지원 클로징']},{n:'마케팅 & 콘텐츠',items:['이메일 및 뉴스레터 카피','소셜 미디어 스케줄링','지속적인 SEO 분석','크리에이티브 아이디어 및 브리프','경쟁사 모니터링']},{n:'고객 지원',items:['24/7 실시간 웹 채팅','자연스러운 음성 에이전트 (VAPI)','티켓 및 클레임 관리','FAQ 자동 해결']},{n:'관리 & 재무',items:['일정 관리 (Google Cal)','청구서 처리','지출 통제 및 분류','월간 재무 보고서']},{n:'인사 & 운영',items:['직원 자동 온보딩','문서 보관 및 관리','매뉴얼 및 SOPs 작성','업무 상태 추적']},{n:'경영 & 법무',items:['실시간 KPI 대시보드','CEO를 위한 일일 브리핑','시장 및 트렌드 조사','계약서 검토','지속적인 GDPR 컴플라이언스']}], stats:['활성 에이전트','중단 없음','기존 인력 대비 비용','커버하는 부서'] },
     bnf:{ h2:'Nyx로 자동화하면<br>얻게 되는 것.', p:'회사 운영 방식을 바꾸는 다섯 가지 축. 노드를 클릭하면 상세 내용을 볼 수 있습니다.', idle:'노드를 선택하여 상세 내용을 확인하세요', nodes:['효율','통제','확장','명확성','역량'] },
+    casos:{ eyebrow:'실제 결과', h2:'이미 다르게<br><span class="accent">운영하는 기업들.</span>', stats:['도입 기업의<br>평균 운영 효율','도입 후 반복 작업에<br>들이는 시간','팀을 늘리지 않고<br>늘어난 응대 역량'], hint:'드래그해서 더 보기', testi:[{q:'"24/7 AI 지원으로 수기 티켓이 60% 줄었습니다. 필요한 경우에만 개입합니다."',a:'다니엘 오르테가 — Nordika 창업자'},{q:'"자동화된 예약 및 팔로업 시스템 덕분에 주당 12시간이 확보되었습니다. 일정은 알아서 채워집니다."',a:'라우라 베르메호 — Lumea Clinic 코디네이터'},{q:'"2주 만에 WhatsApp 에이전트를 도입했습니다. CRM은 손대지 않고 예약 데모가 3배가 됐습니다."',a:'카를로스 멘데스 — Pulsefit 상업 디렉터'}] },
+    dif:{ h2:'이미 알고 있는<br>곳들과는 다릅니다.', p:'흔한 모델들과 직접 비교. 마케팅도, 돌려 말하기도 없습니다.', otros:'다른 곳', nyx:'Nyx', rows:[{h:'진단 없는 공급사',p:'비즈니스를 이해하지 않고 빠르게 구현합니다. 실제 운영과 연결되지 않은 솔루션.'},{h:'실행 전 감사',p:'먼저 무엇을 개선해야 하는지 파악합니다. 모든 결정은 실제 데이터로 뒷받침됩니다.'},{h:'실행하지 않는 컨설턴트',p:'분석은 하지만 구현은 회사 몫으로 남습니다.'},{h:'전략과 실행을 함께',p:'기회를 발견한 같은 팀이 그것을 구축합니다.'},{h:'적용 없는 이론 교육',p:'실제 프로세스와 무관한 일반 도구를 가르칩니다.'},{h:'구현된 것과 통합된 교육',p:'팀은 일반 사례가 아닌 자체 솔루션으로 배웁니다.'}] },
     footer:{ c1:'© 2026 Nyx. 모든 권리 보유.', c2:'AI로 만들어졌습니다. 인간이 운영합니다.' }
   }},
   ar: { flag:'🇸🇦', code:'AR', dir:'rtl', t: {
@@ -3982,6 +4015,8 @@ const LANGS = {
     footerLegal:{ privacy:'سياسة الخصوصية', terms:'الشروط والأحكام' },
     agentes:{ h2:'27 متخصصاً.<br>فاتورة واحدة فقط.', p:'لكل وكيل دور و KPI ويعمل على مدار الساعة طوال أيام الأسبوع. بلا إجازات مرضية، بلا عطلات، بلا احتكاكات. شركتك بالكامل تُدار بالذكاء الاصطناعي ومنسقة في نظام واحد.', badge5:'5 وكلاء', badge4:'4 وكلاء', deps:[{n:'المبيعات والتجارة',items:['البحث التلقائي عن العملاء المحتملين','التواصل البارد والمتابعة خلال 48 ساعة','تأهيل العملاء المحتملين وتقييمهم','إنشاء عروض الأسعار','إتمام الصفقات بمساعدة الذكاء الاصطناعي']},{n:'التسويق والمحتوى',items:['كتابة نصوص البريد الإلكتروني والنشرات','جدولة وسائل التواصل الاجتماعي','تحليل SEO مستمر','أفكار وملخصات إبداعية','مراقبة المنافسين']},{n:'خدمة العملاء',items:['دردشة ويب فورية 24/7','وكيل صوتي طبيعي (VAPI)','إدارة التذاكر والشكاوى','حل الأسئلة الشائعة تلقائياً']},{n:'الإدارة والمالية',items:['إدارة الأجندة (Google Cal)','معالجة الفواتير','مراقبة المصروفات وتصنيفها','تقارير مالية شهرية']},{n:'الموارد البشرية والعمليات',items:['الإعداد التلقائي للموظفين','أرشفة وإدارة المستندات','إنشاء الأدلة و SOPs','تتبع حالة المهام']},{n:'الإدارة العليا والشؤون القانونية',items:['لوحات KPI فورية','إحاطة يومية للـ CEO','أبحاث السوق والاتجاهات','مراجعة العقود','الامتثال المستمر لـ GDPR']}], stats:['وكلاء نشطون','بلا انقطاع','التكلفة مقابل الفريق التقليدي','الأقسام المغطاة'] },
     bnf:{ h2:'ما تكسبه<br>عند الأتمتة مع Nyx.', p:'خمسة محاور تُغيّر طريقة عمل شركتك. اضغط على أي عقدة لرؤية التفاصيل.', idle:'اختر عقدة لرؤية التفاصيل', nodes:['الكفاءة','التحكم','التوسع','الوضوح','القدرة'] },
+    casos:{ eyebrow:'نتائج حقيقية', h2:'شركات تعمل<br><span class="accent">بشكل مختلف.</span>', stats:['متوسط الكفاءة التشغيلية<br>في الشركات المُنفِّذة','الوقت على المهام المتكررة<br>بعد التنفيذ','سعة اهتمام أكبر<br>دون توسيع الفريق'], hint:'اسحب لرؤية المزيد', testi:[{q:'"خفض دعم الذكاء الاصطناعي على مدار الساعة تذاكرنا اليدوية بنسبة 60٪. نتدخّل فقط عند الحاجة."',a:'Daniel Ortega — مؤسس Nordika'},{q:'"نظام المواعيد والمتابعة الآلية وفّر لنا 12 ساعة أسبوعياً. الجدول يمتلئ من تلقاء نفسه."',a:'Laura Bermejo — منسّقة في Lumea Clinic'},{q:'"نشروا وكيل WhatsApp في أسبوعين. ضاعفنا حجوزات العروض ثلاث مرات دون لمس الـCRM."',a:'Carlos Méndez — مدير المبيعات في Pulsefit'}] },
+    dif:{ h2:'لسنا مثل<br>ما تعرفه بالفعل.', p:'مقارنة مباشرة مع النماذج المعتادة. بدون تسويق، بدون لف ودوران.', otros:'آخرون', nyx:'Nyx', rows:[{h:'موردون بلا تشخيص',p:'يُنفّذون بسرعة دون فهم العمل. حلول منفصلة عن التشغيل الفعلي.'},{h:'تدقيق قبل التنفيذ',p:'نفهم أولاً ما يستحق التحسين. كل قرار مدعوم ببيانات حقيقية.'},{h:'استشاريون لا يُنفّذون',p:'يُحلّلون ثم تبقى الشركة وحدها لتنفّذ.'},{h:'الاستراتيجية والتنفيذ معاً',p:'الفريق نفسه الذي يكتشف الفرص هو من يبنيها.'},{h:'تدريب نظري بلا تطبيق',p:'يدرّبون على أدوات عامة منقطعة عن العمليات الفعلية.'},{h:'تدريب مدمج مع ما تم تنفيذه',p:'يتعلم الفريق باستخدام حلوله الخاصة لا حالات عامة.'}] },
     footer:{ c1:'© 2026 Nyx. جميع الحقوق محفوظة.', c2:'صُنع بالذكاء الاصطناعي. يُدار بواسطة بشر.' }
   }},
 };

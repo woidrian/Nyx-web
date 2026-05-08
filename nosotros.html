@@ -837,10 +837,27 @@
     .skew-p { font-size: .64rem; -webkit-line-clamp: 5; }
   }
 
+  /* Entrada en cascada al hacer scroll — desktop + mobile */
+  @media (prefers-reduced-motion: no-preference) {
+    .skew-card { opacity: 0; }
+    .skew-card.is-in {
+      animation: skewIn 950ms cubic-bezier(.22,.61,.36,1) forwards;
+    }
+    .skew-grid .skew-card:nth-child(1).is-in { animation-delay:   0ms; }
+    .skew-grid .skew-card:nth-child(2).is-in { animation-delay: 180ms; }
+    .skew-grid .skew-card:nth-child(3).is-in { animation-delay: 360ms; }
+  }
+  @keyframes skewIn {
+    from { opacity: 0; transform: translateY(48px) scale(.92); filter: blur(10px); }
+    60%  { opacity: 1; filter: blur(0); }
+    to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .skew-card, .skew-card *, .skew-card .skew-blob {
       animation: none !important;
       transition: none !important;
+      opacity: 1 !important;
     }
   }
 
@@ -2422,6 +2439,31 @@ document.fonts.ready.then(() => ScrollTrigger.refresh());
   }
   // Fallback: arrancar a los 60ms post-DOM ready si el observer no se disparó
   setTimeout(start, 80);
+})();
+
+
+/* ═══════════════════════════════════════════════════════════
+   VALORES — entrada en cascada al hacer scroll
+═══════════════════════════════════════════════════════════ */
+(function () {
+  const cards = document.querySelectorAll('.skew-grid .skew-card');
+  if (!cards.length) return;
+
+  if (!('IntersectionObserver' in window)) {
+    cards.forEach(c => c.classList.add('is-in'));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+  cards.forEach(c => io.observe(c));
 })();
 
 

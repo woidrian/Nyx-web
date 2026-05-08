@@ -515,6 +515,39 @@
     font-weight: 700; line-height: 1.0; letter-spacing: -.045em;
     margin-bottom: 1.75rem; max-width: 14ch;
   }
+  /* Stagger text — port vanilla del componente 21st.dev/community/components/s/text
+     Cada caracter sube desde abajo con un delay incremental. El wrapper .st-line
+     mantiene el clip vertical para ocultar el offset inicial (translateY 110%).
+     padding-bottom + margin-bottom negativo compensan el clip para que letras
+     con descendientes (g, p, q, y) NO queden recortadas, sin afectar el layout. */
+  .hero-h1 .st-line {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    line-height: inherit;
+    padding: .04em .02em .22em .02em;
+    margin: -.04em -.02em -.22em -.02em;
+  }
+  .hero-h1 .st-char {
+    display: inline-block;
+    transform: translateY(110%);
+    opacity: 0;
+    will-change: transform, opacity;
+    transition:
+      transform 620ms cubic-bezier(.22,.61,.36,1),
+      opacity 420ms cubic-bezier(.25,.1,.25,1);
+  }
+  .hero-h1 .st-char.is-in {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-h1 .st-char {
+      transform: none;
+      opacity: 1;
+      transition: none;
+    }
+  }
   .hero-sub {
     font-size: clamp(1rem, 1.8vw, 1.1875rem); color: var(--muted);
     max-width: 520px; line-height: 1.78; font-weight: 300;
@@ -2266,6 +2299,103 @@ document.fonts.ready.then(() => ScrollTrigger.refresh());
 
 
 /* ═══════════════════════════════════════════════════════════
+   STAGGER TEXT — port vanilla de 21st.dev/community/components/s/text
+   Envuelve cada char en .st-char con animation-delay incremental.
+   Respeta <br> y otros nodos hijos (los preserva sin tocar).
+═══════════════════════════════════════════════════════════ */
+(function () {
+  const HERO_H1 = document.getElementById('hero-h1');
+  if (!HERO_H1) return;
+
+  // Reglas: separadas por <br>; dentro de cada línea, cada char (excepto espacios)
+  // queda envuelto en <span class="st-char"> con su delay propio.
+  function wrapChars(rootEl, opts) {
+    const stagger = opts?.stagger ?? 32;       // ms entre chars
+    const baseDelay = opts?.baseDelay ?? 80;   // ms inicial antes del primer char
+
+    // Tomamos el HTML actual y lo procesamos línea por línea (split por <br>).
+    const html = rootEl.innerHTML;
+    const lines = html.split(/<br\s*\/?>/i);
+    let charIndex = 0;
+    const out = [];
+
+    for (let l = 0; l < lines.length; l++) {
+      // Cada línea va dentro de un span.st-line con overflow:hidden, así
+      // el offset inicial del char (translateY 110%) queda ocultado limpio.
+      let lineHtml = '';
+      // Para soportar nodos hijos como <span class="accent">, parseamos el
+      // HTML de la línea con un contenedor temporal y recorremos sus nodos.
+      const tmp = document.createElement('div');
+      tmp.innerHTML = lines[l];
+
+      const walk = (node) => {
+        let res = '';
+        node.childNodes.forEach(child => {
+          if (child.nodeType === Node.TEXT_NODE) {
+            const txt = child.textContent;
+            for (let i = 0; i < txt.length; i++) {
+              const ch = txt[i];
+              if (ch === ' ' || ch === ' ') {
+                res += ' ';
+              } else {
+                const delay = baseDelay + charIndex * stagger;
+                // entity escape mínimo
+                const safe = ch.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                res += `<span class="st-char" style="transition-delay:${delay}ms,${delay + 60}ms">${safe}</span>`;
+                charIndex++;
+              }
+            }
+          } else if (child.nodeType === Node.ELEMENT_NODE) {
+            // Conservamos el tag con sus atributos, recurriendo en su contenido
+            const tag = child.tagName.toLowerCase();
+            const attrs = [...child.attributes].map(a => `${a.name}="${a.value}"`).join(' ');
+            res += `<${tag}${attrs ? ' ' + attrs : ''}>${walk(child)}</${tag}>`;
+          }
+        });
+        return res;
+      };
+
+      lineHtml = walk(tmp);
+      out.push(`<span class="st-line">${lineHtml}</span>`);
+    }
+
+    rootEl.innerHTML = out.join('<br>');
+  }
+
+  function play(rootEl) {
+    const chars = rootEl.querySelectorAll('.st-char');
+    // forzar reflow para reset si veníamos de un play anterior
+    chars.forEach(c => c.classList.remove('is-in'));
+    // double rAF para asegurar que el browser asienta el estado pre-anim
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      chars.forEach(c => c.classList.add('is-in'));
+    }));
+  }
+
+  // Expuesta globalmente para que setLanguage pueda re-disparar la animación
+  // tras escribir un nuevo innerHTML traducido en el hero-h1.
+  window.runHeroStagger = function () {
+    wrapChars(HERO_H1, { stagger: 32, baseDelay: 80 });
+    play(HERO_H1);
+  };
+
+  // Init: al primer paint o cuando el hero entra en viewport (lo que suceda
+  // antes). Como el hero está en la parte alta, casi siempre será al cargar.
+  let started = false;
+  const start = () => { if (started) return; started = true; window.runHeroStagger(); };
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { start(); io.disconnect(); } });
+    }, { threshold: 0.2 });
+    io.observe(HERO_H1);
+  }
+  // Fallback: arrancar a los 60ms post-DOM ready si el observer no se disparó
+  setTimeout(start, 80);
+})();
+
+
+/* ═══════════════════════════════════════════════════════════
    TRANSLATIONS
 ═══════════════════════════════════════════════════════════ */
 const LANGS = {
@@ -2469,6 +2599,9 @@ function setLanguage(code) {
   safe(() => {
     setText('hero-badge', t.hero?.badge);
     setHTML('hero-h1',    t.hero?.h1);
+    // Re-disparar stagger: el setHTML acaba de pisar los <span class='st-char'>,
+    // hay que volver a envolver y reproducir la animación con el texto nuevo.
+    if (typeof window.runHeroStagger === 'function') window.runHeroStagger();
     setText('hero-sub',   t.hero?.sub);
     const heroCta = document.getElementById('hero-cta');
     if (heroCta && t.hero?.cta) heroCta.setAttribute('aria-label', t.hero.cta.replace(/^[←→\s]+/, ''));

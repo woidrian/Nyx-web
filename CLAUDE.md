@@ -741,3 +741,129 @@ El orbital ocupa ~1/3 del viewport mobile, el panel de texto (número grande + t
 - **Animación H1 nosotros**: stagger asimétrico funcional, palabras enteras (incluido punto final), velocidad ajustada.
 - **Pendientes (sin cambios)**: modales Privacy + T&C vacíos para RGPD, validar marcas Pulsefit/Lumea/Nordika, voice modal i18n.
 
+---
+
+## Changelog 2026-05-08 (tarde) — Clean URLs, carrusel infinito, animación skew cards, subrayado nav
+
+### 1. Clean URLs — eliminado `.html` de la barra de direcciones
+**Problema reportado**: clicar "Inicio" o "Quiénes somos" mostraba `nyx-agency.es/index.html` y `nyx-agency.es/nosotros.html` en la URL. Usuario quería URLs limpias (sin extensión).
+
+**Aclaración importante sobre el deploy**: aunque la memoria dice "Vercel", el dominio `nyx-agency.es` lo sirve **`server.py` (FastAPI)** — la respuesta `{"detail":"Not Found"}` cuando piden `/nosotros` es la 404 default de FastAPI/Starlette, no de Vercel. Vercel sí está conectado al repo, pero las rutas no estáticas las maneja la app Python. Por eso `cleanUrls` del `vercel.json` solo aplica si la web fuese 100% estática.
+
+**Doble fix aplicado por seguridad**:
+
+#### `vercel.json` (por si en el futuro la web se sirve estática)
+- Añadido `"cleanUrls": true` y `"trailingSlash": false`. Si Vercel toma el control, sirve `nosotros.html` en `/nosotros` y emite 308 desde `/nosotros.html` automáticamente.
+
+#### `server.py` (lo que realmente está activo en producción)
+```python
+from fastapi.responses import RedirectResponse  # nuevo import
+
+@app.get("/nosotros")
+async def nosotros() -> FileResponse:
+    return FileResponse(ROOT_DIR / "nosotros.html", media_type="text/html", headers=_HTML_HEADERS)
+
+@app.get("/nosotros.html")
+async def nosotros_html() -> RedirectResponse:
+    return RedirectResponse(url="/nosotros", status_code=308)
+
+@app.get("/index.html")
+async def index_html() -> RedirectResponse:
+    return RedirectResponse(url="/", status_code=308)
+```
+
+#### Enlaces internos en HTML
+- `index.html`: 3 hrefs `nosotros.html` → `/nosotros`.
+- `nosotros.html`: 9 hrefs `index.html(...)` → `/(...)` (logo, nav, hero back chevron, footer + anchors `#proceso`, `#servicios`, `#casos`).
+
+#### SEO
+- `nosotros.html`: `<link rel="canonical">` y `<meta property="og:url">` actualizados a `https://nyx-agency.es/nosotros` (sin `.html`).
+- `sitemap.xml`: `/nosotros.html` → `/nosotros`, `lastmod` 2026-05-08.
+
+**Resultado**: cualquier URL legacy con `.html` redirige permanentemente (308) a la versión limpia. Los enlaces nuevos siempre apuntan a `/` y `/nosotros`.
+
+### 2. Carrusel de tecnologías — scroll infinito sin pausa al hover
+**Antes**: `.carousel-wrap:hover .carousel-track { animation-play-state: paused; }` → al pasar el ratón sobre los logos, el carrusel se detenía.
+
+**Ahora**: regla eliminada. El carrusel mantiene la animación `scrollLeft`/`scrollRight` continua aunque el usuario hover sobre las marcas. Es solo una decoración visual, no un componente interactivo.
+
+### 3. Sección Valores (nosotros) — entrada en cascada de las skew cards al scroll
+
+**Antes**: las 3 skew gradient cards (Resultados / Sistemas / Transparencia) aparecían al cargar la página, sin animación de entrada.
+
+**Ahora**:
+- **CSS**: las cards arrancan con `opacity: 0`. Cuando reciben `.is-in`, ejecutan el keyframe `skewIn`:
+  ```css
+  @keyframes skewIn {
+    from { opacity: 0; transform: translateY(48px) scale(.92); filter: blur(10px); }
+    60%  { opacity: 1; filter: blur(0); }
+    to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+  ```
+  - Duración: 950ms con cubic-bezier(.22,.61,.36,1).
+  - El `60%` del keyframe quita el blur y normaliza opacity antes del final → da sensación de "lift suave" sin re-blurear al final.
+- **Stagger left-to-right** vía `nth-child` en el grid:
+  - Card 1 (Resultados, naranja→rosa) → delay 0ms.
+  - Card 2 (Sistemas, azul→rosa) → delay 180ms.
+  - Card 3 (Transparencia, lima→cian) → delay 360ms.
+- **JS — IntersectionObserver**:
+  - `threshold: 0.18` y `rootMargin: '0px 0px -8% 0px'` → la animación arranca cuando la card está ~18% visible, un pelín antes de llegar al centro del viewport.
+  - Cada card se observa individualmente y se desuscribe al disparar (`io.unobserve(e.target)`) para que no se vuelva a animar en re-scroll.
+  - Fallback sin IntersectionObserver: aplica `.is-in` a todas las cards inmediatamente.
+- **Mobile**: el layout 2+1 (cards 1-2 arriba, card 3 centrada abajo) mantiene el mismo stagger ya que las 3 cards entran al viewport prácticamente a la vez al hacer scroll.
+- **Accesibilidad**: `prefers-reduced-motion: reduce` desactiva la animación con `opacity: 1 !important` (las cards se muestran directamente sin movimiento).
+
+### 4. Nav — links más legibles + subrayado lima animado izq→der
+
+**Problema**: las palabras "Proceso" y "Quiénes somos" (index) / "Inicio" y "Proceso" (nosotros) eran poco distinguibles en reposo (color `--muted` que es un slate medio bastante apagado).
+
+**Cambios aplicados en ambas páginas, mismo selector `.nav-links a`**:
+
+#### Texto en reposo más diferenciado
+- Color: `#cbd5e1` (slate-300, casi blanco con tono frío) — antes `var(--muted)` (#64748b).
+- `font-weight: 500` (antes default 400).
+- `letter-spacing: .005em` (toque editorial sutil sin afear).
+- Hover: blanco completo `var(--text)` (#f1f5f9).
+
+#### Subrayado animado izq→der con pseudo-elemento
+```css
+.nav-links a {
+  position: relative;
+  padding-bottom: 4px;  /* hace sitio para la línea sin afectar layout */
+}
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%;
+  height: 1.5px;
+  background: #c8ff00;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .5s cubic-bezier(.22,.61,.36,1);
+  box-shadow: 0 0 6px rgba(200,255,0,.5);
+  border-radius: 1px;
+  pointer-events: none;
+}
+.nav-links a:hover::after,
+.nav-links a:focus-visible::after,
+.nav-links a:active::after { transform: scaleX(1); }
+```
+
+**Decisiones de diseño**:
+- **`scaleX` + `transform-origin: left center`** en lugar de animar `width`: usa GPU compositor (más fluido), arranca desde la izquierda y crece hacia la derecha de forma natural.
+- **Color lima `#c8ff00`**: mismo accent que el voice FAB, el frame TrueFocus del hero, el badge dot, el calendario nav y los blobs lima — coherencia visual.
+- **`box-shadow` lima sutil**: la línea no es solo un trazo plano, tiene un glow suave que la integra en el sistema de luces lima del site.
+- **`border-radius: 1px`** en una línea de 1.5px: puntas redondeadas casi imperceptibles que dan acabado profesional.
+- **Triple trigger** (`:hover`, `:focus-visible`, `:active`): cubre desktop (hover), navegación por teclado (focus accesible) y mobile (tap activa `:active`).
+- **Easing cubic-bezier(.22,.61,.36,1)**: arranca rápido, desacelera al final — sensación elegante.
+
+**Mobile (≤700px)**: el item `.nav-mobile-show a` (única palabra del nav visible en mobile, "Quiénes somos" en index / "Inicio" en nosotros) hereda el mismo `::after` automáticamente. Al tocar la palabra en mobile, la línea lima aparece como feedback de presión.
+
+### Estado del proyecto post 2026-05-08 (tarde)
+- **URLs limpias 100%**: ningún enlace interno usa `.html`. Cualquier acceso legacy con extensión hace 308 a la URL limpia.
+- **Carrusel tecnologías**: no se interrumpe nunca, pure decoración fluida.
+- **Sección valores**: entrada animada coherente con el resto del site (ya teníamos animaciones en hero stats, hero h1, true focus, etc).
+- **Nav**: visualmente más fuerte y con feedback claro en hover/click. La línea lima refuerza la identidad de marca.
+- **Aclaración sobre arquitectura de deploy**: el usuario tiene contradicción en su memoria — el CLAUDE.md original dice Easypanel + FastAPI, la memoria de auto-deploy dice Vercel. La realidad es que **el dominio lo sirve `server.py`** (lo evidencia el `{"detail":"Not Found"}` de FastAPI). Vercel puede estar como pipeline CI, pero las rutas las decide Python. Para futuras sesiones: si una ruta no existe en producción, **buscar primero en `server.py`** antes que en `vercel.json`.
+

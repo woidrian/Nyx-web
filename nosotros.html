@@ -511,13 +511,16 @@
   }
   .hero-h1 {
     font-family: var(--fh);
-    font-size: clamp(2.25rem, 5.6vw, 4.25rem);
+    font-size: clamp(2rem, 5.2vw, 4rem);
     font-weight: 700; line-height: 1.08; letter-spacing: -.035em;
     margin-bottom: 1.75rem;
-    /* Sin max-width: dejar que el ancho natural del contenedor decida.
-       Las palabras (st-char) tienen white-space:nowrap para que NUNCA
-       se partan; el wrap entre palabras ocurre normal. */
+    /* Anular reglas globales del body que parten palabras (rompen el "."
+       de "repetitivo." dejándolo suelto). El wrap solo entre palabras. */
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
   }
+  .hero-h1 * { overflow-wrap: normal; word-break: normal; }
   /* Stagger text — port vanilla del componente 21st.dev/community/components/s/text
      adaptado: cada PALABRA entra como un BLOQUE deslizando lateralmente DENTRO
      de su propio wrapper inline-block. El wrapper reserva el espacio en el
@@ -532,6 +535,8 @@
     display: inline-block;
     overflow: hidden;
     vertical-align: top;
+    /* el contenido NUNCA se parte (incluye su puntuación pegada) */
+    white-space: nowrap;
     /* compensación de descendientes (g, p, q, y) sin afectar layout */
     padding: .04em 0 .25em 0;
     margin: -.04em 0 -.25em 0;
@@ -545,8 +550,8 @@
     transform: translateX(0);
     will-change: transform, opacity;
     transition:
-      transform 720ms cubic-bezier(.22,.61,.36,1),
-      opacity 500ms cubic-bezier(.25,.1,.25,1);
+      transform 480ms cubic-bezier(.22,.61,.36,1),
+      opacity 320ms cubic-bezier(.25,.1,.25,1);
   }
   /* Estado pre-anim aplicado por JS antes de disparar la animación */
   .hero-h1 .st-line.is-prep[data-from="left"]  .st-char { opacity: 0; transform: translateX(-110%); }
@@ -2400,7 +2405,7 @@ document.fonts.ready.then(() => ScrollTrigger.refresh());
   // Expuesta globalmente para que setLanguage pueda re-disparar la animación
   // tras escribir un nuevo innerHTML traducido en el hero-h1.
   window.runHeroStagger = function () {
-    wrapChars(HERO_H1, { stagger: 90, baseDelay: 100 });
+    wrapChars(HERO_H1, { stagger: 55, baseDelay: 60 });
     play(HERO_H1);
   };
 

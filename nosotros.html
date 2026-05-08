@@ -519,12 +519,19 @@
        se partan; el wrap entre palabras ocurre normal. */
   }
   /* Stagger text — port vanilla del componente 21st.dev/community/components/s/text
-     adaptado: cada PALABRA entra como un BLOQUE deslizando lateralmente.
+     adaptado: cada PALABRA entra como un BLOQUE deslizando lateralmente DENTRO
+     de su propio wrapper inline-block. El wrapper reserva el espacio en el
+     flow del DOM (la palabra siguiente no se desplaza durante la animación)
+     y clipea el char con overflow:hidden mientras está fuera de su sitio.
      L1 entra desde la izquierda (Somos → Nyx).
      L2 entra desde la derecha en orden inverso (repetitivo → trabajo → el → Automatizamos). */
   .hero-h1 .st-line {
     display: block;
+  }
+  .hero-h1 .st-word {
+    display: inline-block;
     overflow: hidden;
+    vertical-align: top;
     /* compensación de descendientes (g, p, q, y) sin afectar layout */
     padding: .04em 0 .25em 0;
     margin: -.04em 0 -.25em 0;
@@ -2350,13 +2357,15 @@ document.fonts.ready.then(() => ScrollTrigger.refresh());
 
       // 2ª pasada: emitir HTML asignando delay por palabra. Para fromRight,
       // el orden es inverso: la ÚLTIMA palabra de la línea entra primero.
+      // Cada palabra va envuelta en .st-word (clip box que reserva el sitio
+      // en el flow); la palabra real es .st-char y se anima dentro del wrap.
       let lineHtml = '';
       let wIdx = 0;
       for (const tok of tokens) {
         if (tok.type === 'space') { lineHtml += tok.val; continue; }
         const orderIdx = fromRight ? (wordCount - 1 - wIdx) : wIdx;
         const delay = baseDelay + orderIdx * stagger;
-        lineHtml += `<span class="st-char" style="transition-delay:${delay}ms,${delay + 60}ms">${escape(tok.val)}</span>`;
+        lineHtml += `<span class="st-word"><span class="st-char" style="transition-delay:${delay}ms,${delay + 60}ms">${escape(tok.val)}</span></span>`;
         wIdx++;
       }
 

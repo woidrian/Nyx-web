@@ -2424,72 +2424,100 @@ function setLanguage(code) {
   if (!lang) return;
   const t = lang.t;
 
+  // ── Defensive helpers ─────────────────────────────────────────────────────
+  const setText = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
+  const setHTML = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.innerHTML = val; };
+  const safe    = (fn) => { try { fn(); } catch (e) { /* swallow */ } };
+
   document.documentElement.lang = code;
   document.documentElement.dir = lang.dir;
-  document.title = t.pageTitle;
+  if (t.pageTitle) document.title = t.pageTitle;
 
-  // Nav (defensivo — Servicios y Casos ya no existen en el nav v2)
-  const _setNav = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
-  _setNav('nav-home',     t.nav.home);
-  _setNav('nav-services', t.nav.services);
-  _setNav('nav-process',  t.nav.process);
-  _setNav('nav-cases',    t.nav.cases);
-  _setNav('nav-about',    t.nav.about);
+  // Nav (defensive)
+  setText('nav-home',     t.nav?.home);
+  setText('nav-services', t.nav?.services);
+  setText('nav-process',  t.nav?.process);
+  setText('nav-cases',    t.nav?.cases);
+  setText('nav-about',    t.nav?.about);
   const _navCta = document.getElementById('nav-cta');
-  if (_navCta && t.nav.cta) _navCta.setAttribute('aria-label', t.nav.cta);
+  if (_navCta && t.nav?.cta) _navCta.setAttribute('aria-label', t.nav.cta);
 
-  document.getElementById('hero-badge').textContent   = t.hero.badge;
-  document.getElementById('hero-h1').innerHTML        = t.hero.h1;
-  document.getElementById('hero-sub').textContent     = t.hero.sub;
-  document.getElementById('hero-cta').setAttribute('aria-label', t.hero.cta.replace(/^[←→\s]+/, ''));
-
-  document.getElementById('historia-ew').textContent  = t.historia.ew;
-  document.getElementById('historia-p1').textContent  = t.historia.p1;
-  document.getElementById('historia-p2').textContent  = t.historia.p2;
-  document.getElementById('historia-p3').textContent  = t.historia.p3;
-
-  document.getElementById('stat1-lbl').innerHTML = t.stats.s1.replace('\n','<br>');
-  document.getElementById('stat2-lbl').innerHTML = t.stats.s2.replace('\n','<br>');
-  document.getElementById('stat3-lbl').innerHTML = t.stats.s3.replace('\n','<br>');
-  document.getElementById('stat4-lbl').innerHTML = t.stats.s4.replace('\n','<br>');
-
-  document.getElementById('valores-ew').textContent = t.valores.ew;
-  document.getElementById('v1-h').textContent = t.valores.v1h;
-  document.getElementById('v1-p').textContent = t.valores.v1p;
-  document.getElementById('v2-h').textContent = t.valores.v2h;
-  document.getElementById('v2-p').textContent = t.valores.v2p;
-  document.getElementById('v3-h').textContent = t.valores.v3h;
-  document.getElementById('v3-p').textContent = t.valores.v3p;
-
-  document.getElementById('equipo-ew').textContent  = t.equipo.ew;
-  if (t.equipo.morph && typeof window.setMorphWords === 'function') window.setMorphWords(t.equipo.morph);
-  const _founderRole = document.getElementById('founder-role');
-  if (_founderRole) _founderRole.textContent = t.equipo.role;
-  const _bioH = document.getElementById('bio-h');
-  if (_bioH) _bioH.textContent = t.equipo.bioh;
-  const _bp1 = document.getElementById('bio-p1'); if (_bp1) _bp1.textContent = t.equipo.bio1;
-  const _bp2 = document.getElementById('bio-p2'); if (_bp2) _bp2.textContent = t.equipo.bio2;
-  const _bp3 = document.getElementById('bio-p3'); if (_bp3) _bp3.textContent = t.equipo.bio3;
-
-  document.getElementById('cta-h').innerHTML        = t.cta.h;
-  document.getElementById('cta-p').textContent      = t.cta.p;
-  document.getElementById('cta-wa-btn').textContent = t.cta.wa;
-
-  document.getElementById('footer-copy1').textContent = t.footer.c1;
-
-  // Generic data-i18n walker — applies translations declaratively via data-i18n="path.to.key"
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const value = el.dataset.i18n.split('.').reduce((o, k) => o?.[k], t);
-    if (value != null) el.innerHTML = value;
+  // ── Generic data-i18n walker — RUN FIRST so it always applies ────────────
+  safe(() => {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const value = el.dataset.i18n.split('.').reduce((o, k) => o?.[k], t);
+      if (value != null) el.innerHTML = value;
+    });
   });
 
-  document.getElementById('lang-flag').textContent = lang.flag;
-  document.getElementById('lang-code').textContent = lang.code;
-  document.querySelectorAll('#lang-drop button').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === code);
+  // ── Morph words (robot 3D) — reactive to language ────────────────────────
+  safe(() => {
+    if (t.equipo?.morph && typeof window.setMorphWords === 'function') {
+      window.setMorphWords(t.equipo.morph);
+    }
   });
 
-  localStorage.setItem('nyx-lang', code);
+  // Hero
+  safe(() => {
+    setText('hero-badge', t.hero?.badge);
+    setHTML('hero-h1',    t.hero?.h1);
+    setText('hero-sub',   t.hero?.sub);
+    const heroCta = document.getElementById('hero-cta');
+    if (heroCta && t.hero?.cta) heroCta.setAttribute('aria-label', t.hero.cta.replace(/^[←→\s]+/, ''));
+  });
+
+  // Historia
+  safe(() => {
+    setText('historia-ew', t.historia?.ew);
+    setText('historia-p1', t.historia?.p1);
+    setText('historia-p2', t.historia?.p2);
+    setText('historia-p3', t.historia?.p3);
+  });
+
+  // Stats
+  safe(() => {
+    setHTML('stat1-lbl', t.stats?.s1?.replace('\n','<br>'));
+    setHTML('stat2-lbl', t.stats?.s2?.replace('\n','<br>'));
+    setHTML('stat3-lbl', t.stats?.s3?.replace('\n','<br>'));
+    setHTML('stat4-lbl', t.stats?.s4?.replace('\n','<br>'));
+  });
+
+  // Valores
+  safe(() => {
+    setText('valores-ew', t.valores?.ew);
+    setText('v1-h', t.valores?.v1h); setText('v1-p', t.valores?.v1p);
+    setText('v2-h', t.valores?.v2h); setText('v2-p', t.valores?.v2p);
+    setText('v3-h', t.valores?.v3h); setText('v3-p', t.valores?.v3p);
+  });
+
+  // Equipo
+  safe(() => {
+    setText('equipo-ew',   t.equipo?.ew);
+    setText('founder-role', t.equipo?.role);
+    setText('bio-h',  t.equipo?.bioh);
+    setText('bio-p1', t.equipo?.bio1);
+    setText('bio-p2', t.equipo?.bio2);
+    setText('bio-p3', t.equipo?.bio3);
+  });
+
+  // CTA + Footer
+  safe(() => {
+    setHTML('cta-h',      t.cta?.h);
+    setText('cta-p',      t.cta?.p);
+    setText('cta-wa-btn', t.cta?.wa);
+    setText('footer-copy1', t.footer?.c1);
+  });
+
+  // Lang button (defensive)
+  setText('lang-flag', lang.flag);
+  setText('lang-code', lang.code);
+  safe(() => {
+    document.querySelectorAll('#lang-drop button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === code);
+    });
+  });
+
+  try { localStorage.setItem('nyx-lang', code); } catch (e) { /* private mode */ }
 }
 
 (function () {

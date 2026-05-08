@@ -4026,89 +4026,106 @@ function setLanguage(code) {
   if (!lang) return;
   const t = lang.t;
 
+  // ── Defensive helpers — never throw if an element/key is missing ──────────
+  const setText = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
+  const setHTML = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.innerHTML = val; };
+  const safe = (fn) => { try { fn(); } catch (e) { /* swallow */ } };
+
   document.documentElement.lang = code;
   document.documentElement.dir = lang.dir;
-  document.title = t.pageTitle;
+  if (t.pageTitle) document.title = t.pageTitle;
 
-  // Nav (defensivo — algunos enlaces ya no existen en el v2 nav)
-  const setNavText = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
-  setNavText('nav-home',     t.nav.home);
-  setNavText('nav-services', t.nav.services);
-  setNavText('nav-process',  t.nav.process);
-  setNavText('nav-cases',    t.nav.cases);
-  setNavText('nav-about',    t.nav.about);
+  // Nav (defensive)
+  setText('nav-home',     t.nav?.home);
+  setText('nav-services', t.nav?.services);
+  setText('nav-process',  t.nav?.process);
+  setText('nav-cases',    t.nav?.cases);
+  setText('nav-about',    t.nav?.about);
   const navCta = document.getElementById('nav-cta');
-  if (navCta && t.nav.cta) navCta.setAttribute('aria-label', t.nav.cta);
+  if (navCta && t.nav?.cta) navCta.setAttribute('aria-label', t.nav.cta);
 
-  // Hero v2
-  const h2 = (HERO2 && HERO2[code]) || HERO2.es;
-  const tfHero = document.getElementById('tf-hero');
-  if (tfHero) {
-    tfHero.setAttribute('aria-label', h2.h1);
-    initTrueFocus(tfHero, h2.h1, {
-      blurAmount: 5, borderColor: '#c8ff00',
-      glowColor: 'rgba(200,255,0,.6)',
-      animationDuration: 0.3, pauseBetweenAnimations: 0.8
+  // ── Generic data-i18n walker — RUN FIRST so it always applies, even if ───
+  //    a later section throws. Covers casos.*, dif.*, bnf.*, s2.tags.*, etc.
+  safe(() => {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const value = el.dataset.i18n.split('.').reduce((o, k) => o?.[k], t);
+      if (value != null) el.innerHTML = value;
     });
-  }
-  const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  setText('hb2-text', h2.badge);
-  setText('hs', h2.sub);
-  setText('hcta-primary-text', h2.cta1);
-  const ctaPrimaryEl = document.getElementById('hcta-primary');
-  if (ctaPrimaryEl) ctaPrimaryEl.setAttribute('aria-label', h2.cta1 + ' en Cal.com');
-  setText('hs-l1', h2.s1);
-  setText('hs-l2', h2.s2);
-  setText('hs-l3', h2.s3);
-  setText('hs-l4', h2.s4);
+  });
+
+  // Hero v2 (defensive)
+  safe(() => {
+    const h2 = (typeof HERO2 !== 'undefined' && HERO2[code]) || (typeof HERO2 !== 'undefined' && HERO2.es) || null;
+    if (!h2) return;
+    const tfHero = document.getElementById('tf-hero');
+    if (tfHero && typeof initTrueFocus === 'function') {
+      tfHero.setAttribute('aria-label', h2.h1);
+      initTrueFocus(tfHero, h2.h1, {
+        blurAmount: 5, borderColor: '#c8ff00',
+        glowColor: 'rgba(200,255,0,.6)',
+        animationDuration: 0.3, pauseBetweenAnimations: 0.8
+      });
+    }
+    setText('hb2-text', h2.badge);
+    setText('hs', h2.sub);
+    setText('hcta-primary-text', h2.cta1);
+    const ctaPrimaryEl = document.getElementById('hcta-primary');
+    if (ctaPrimaryEl && h2.cta1) ctaPrimaryEl.setAttribute('aria-label', h2.cta1 + ' en Cal.com');
+    setText('hs-l1', h2.s1);
+    setText('hs-l2', h2.s2);
+    setText('hs-l3', h2.s3);
+    setText('hs-l4', h2.s4);
+  });
 
   // Section 2
-  document.getElementById('s2-eyebrow').textContent = t.s2.ew;
-  document.getElementById('s2-title').innerHTML     = t.s2.h2;
-  document.getElementById('s2-p').textContent       = t.s2.p;
-  document.querySelectorAll('.s-card').forEach((card, i) => {
-    if (t.s2.cards[i]) {
-      card.querySelector('.s-h').textContent  = t.s2.cards[i].h;
-      card.querySelector('.s-txt').textContent = t.s2.cards[i].t;
-    }
+  safe(() => {
+    setText('s2-eyebrow', t.s2?.ew);
+    setHTML('s2-title',   t.s2?.h2);
+    setText('s2-p',       t.s2?.p);
+    document.querySelectorAll('.s-card').forEach((card, i) => {
+      const c = t.s2?.cards?.[i]; if (!c) return;
+      const h = card.querySelector('.s-h');   if (h && c.h != null) h.textContent = c.h;
+      const x = card.querySelector('.s-txt'); if (x && c.t != null) x.textContent = c.t;
+    });
   });
 
   // Section 3
-  document.getElementById('s3-eyebrow').textContent = t.s3.ew;
-  document.getElementById('s3-title').innerHTML     = t.s3.h2;
-  document.getElementById('s3-p').textContent       = t.s3.p;
-  document.querySelectorAll('.step').forEach((step, i) => {
-    if (t.s3.steps[i]) {
-      step.querySelector('.step-h').textContent = t.s3.steps[i].h;
-      step.querySelector('.step-p').textContent = t.s3.steps[i].p;
-    }
+  safe(() => {
+    setText('s3-eyebrow', t.s3?.ew);
+    setHTML('s3-title',   t.s3?.h2);
+    setText('s3-p',       t.s3?.p);
+    document.querySelectorAll('.step').forEach((step, i) => {
+      const s = t.s3?.steps?.[i]; if (!s) return;
+      const h = step.querySelector('.step-h'); if (h && s.h != null) h.textContent = s.h;
+      const p = step.querySelector('.step-p'); if (p && s.p != null) p.textContent = s.p;
+    });
   });
 
   // Section 4
-  document.getElementById('s4-eyebrow').textContent = t.s4.ew;
-  document.getElementById('s4-title').innerHTML     = t.s4.h2;
-  document.getElementById('s4-p').textContent       = t.s4.p;
-
-  // Section 8
-  document.getElementById('s8-eyebrow').textContent = t.s8.ew;
-  document.getElementById('s8-h').innerHTML         = t.s8.h2;
-  document.getElementById('s8-p').textContent       = t.s8.p;
-  document.getElementById('s8-cta').textContent     = t.s8.cta;
-
-  // Footer
-  document.getElementById('footer-copy1').textContent = t.footer.c1;
-
-  // Generic data-i18n walker — applies translations declaratively via data-i18n="path.to.key"
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const value = el.dataset.i18n.split('.').reduce((o, k) => o?.[k], t);
-    if (value != null) el.innerHTML = value;
+  safe(() => {
+    setText('s4-eyebrow', t.s4?.ew);
+    setHTML('s4-title',   t.s4?.h2);
+    setText('s4-p',       t.s4?.p);
   });
 
-  // Update lang button
-  document.getElementById('lang-flag').textContent = lang.flag;
-  document.getElementById('lang-code').textContent = lang.code;
-  document.querySelectorAll('#lang-drop button').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === code);
+  // Section 8
+  safe(() => {
+    setText('s8-eyebrow', t.s8?.ew);
+    setHTML('s8-h',       t.s8?.h2);
+    setText('s8-p',       t.s8?.p);
+    setText('s8-cta',     t.s8?.cta);
+  });
+
+  // Footer
+  setText('footer-copy1', t.footer?.c1);
+
+  // Update lang button (defensive)
+  setText('lang-flag', lang.flag);
+  setText('lang-code', lang.code);
+  safe(() => {
+    document.querySelectorAll('#lang-drop button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === code);
+    });
   });
 
   localStorage.setItem('nyx-lang', code);

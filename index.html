@@ -1643,10 +1643,38 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 2rem; flex-wrap: wrap;
   }
-  .footer-logo { font-family: var(--fh); font-size: 1.0625rem; font-weight: 700; letter-spacing: -.03em; }
+  /* Footer brand: reutiliza las clases .nav-logo* del nav (mark + word + tag) */
+  .footer-brand { text-decoration: none; }
   .footer-nav { display: flex; gap: 2rem; list-style: none; flex-wrap: wrap; }
-  .footer-nav a { font-size: .875rem; color: var(--muted); transition: color .2s; }
-  .footer-nav a:hover { color: var(--text); }
+  .footer-nav a {
+    position: relative;
+    font-size: .875rem;
+    font-weight: 500;
+    letter-spacing: .005em;
+    color: #cbd5e1;
+    transition: color .25s ease;
+    padding-bottom: 4px;
+  }
+  .footer-nav a::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%;
+    height: 1.5px;
+    background: #c8ff00;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .5s cubic-bezier(.22,.61,.36,1);
+    box-shadow: 0 0 6px rgba(200,255,0,.5);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+  .footer-nav a:hover,
+  .footer-nav a:focus-visible,
+  .footer-nav a:active { color: var(--text); }
+  .footer-nav a:hover::after,
+  .footer-nav a:focus-visible::after,
+  .footer-nav a:active::after { transform: scaleX(1); }
 
   /* Wordmark enorme */
   .footer-wordmark {
@@ -1655,7 +1683,7 @@
     font-size: clamp(8rem, 22vw, 22rem);
     font-weight: 700; letter-spacing: -.06em; line-height: .82;
     color: transparent;
-    -webkit-text-stroke: 1px rgba(241,245,249,0.1);
+    -webkit-text-stroke: 1.5px rgba(203,213,225,0.32);
     user-select: none; pointer-events: none;
     padding: 0 var(--px);
     /* Ligero parallax gestionado por JS */
@@ -1670,8 +1698,38 @@
   }
   .footer-copy { font-size: .8rem; color: var(--muted); }
   .footer-legal { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
-  .footer-legal button { font-size: .8rem; color: var(--muted); background: none; border: none; cursor: pointer; padding: 0; transition: color .2s; }
-  .footer-legal button:hover { color: var(--text); }
+  .footer-legal button {
+    position: relative;
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .005em;
+    color: #cbd5e1;
+    background: none; border: none;
+    cursor: pointer;
+    padding: 0 0 4px 0;
+    transition: color .25s ease;
+    font-family: inherit;
+  }
+  .footer-legal button::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%;
+    height: 1.5px;
+    background: #c8ff00;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .5s cubic-bezier(.22,.61,.36,1);
+    box-shadow: 0 0 6px rgba(200,255,0,.5);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+  .footer-legal button:hover,
+  .footer-legal button:focus-visible,
+  .footer-legal button:active { color: var(--text); }
+  .footer-legal button:hover::after,
+  .footer-legal button:focus-visible::after,
+  .footer-legal button:active::after { transform: scaleX(1); }
 
   /* MODAL PRIVACIDAD — mismo estilo que el modal de T&C: bg #111,
      bordes blancos sutiles, close button con accent lime #c8ff00 */
@@ -3624,7 +3682,19 @@
 <!-- ═══════════════════════════════════════════════════════ FOOTER -->
 <footer id="footer" role="contentinfo">
   <div class="footer-top">
-    <span class="footer-logo">NYX</span>
+    <a href="/" class="nav-logo footer-brand" aria-label="Nyx Agency — Inicio">
+      <span class="nav-logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="9.5" y1="7" x2="9.5" y2="25" stroke="#c8ff00" stroke-width="2.6"/>
+          <line x1="9.5" y1="7" x2="22.5" y2="25" stroke="#c8ff00" stroke-width="2.6"/>
+          <line x1="22.5" y1="7" x2="22.5" y2="25" stroke="#c8ff00" stroke-width="2.6"/>
+        </svg>
+      </span>
+      <span class="nav-logo-text">
+        <span class="nav-logo-word">NYX</span>
+        <span class="nav-logo-tag">AGENCY</span>
+      </span>
+    </a>
     <ul class="footer-nav" aria-label="Footer">
       <li><a href="#servicios" data-i18n="footerNav.services">Servicios</a></li>
       <li><a href="#proceso" data-i18n="footerNav.process">Proceso</a></li>

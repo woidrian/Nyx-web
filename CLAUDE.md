@@ -867,3 +867,33 @@ async def index_html() -> RedirectResponse:
 - **Nav**: visualmente más fuerte y con feedback claro en hover/click. La línea lima refuerza la identidad de marca.
 - **Aclaración sobre arquitectura de deploy**: el usuario tiene contradicción en su memoria — el CLAUDE.md original dice Easypanel + FastAPI, la memoria de auto-deploy dice Vercel. La realidad es que **el dominio lo sirve `server.py`** (lo evidencia el `{"detail":"Not Found"}` de FastAPI). Vercel puede estar como pipeline CI, pero las rutas las decide Python. Para futuras sesiones: si una ruta no existe en producción, **buscar primero en `server.py`** antes que en `vercel.json`.
 
+### 5. Footer rediseñado — logo NYX|N + subrayados lima + wordmark gigante visible
+**Cambios aplicados en index.html y nosotros.html:**
+
+#### Logo del footer = logo del nav
+- Antes: `<span class="footer-logo">NYX</span>` (texto plano blanco, sin marca, no clicable).
+- Ahora: misma estructura completa que el `nav-logo` — `<a class="nav-logo footer-brand" href="/">` con la marca cuadrada lima (3 trazos N en SVG), wordmark "NYX" en Space Grotesk 700 y tag "AGENCY" en JetBrains Mono lima debajo.
+- Reutilizamos las clases `.nav-logo*` ya estiladas (mark + text + word + tag). El selector `#nav.compact .nav-logo*` no afecta porque el logo del footer no está dentro de `#nav`.
+- Clase extra `footer-brand` solo añade `text-decoration: none` por si el reset cambia, sin sobrescribir nada del nav-logo.
+- **Hover heredado del nav-logo**: marca se tinta lima, opacidad baja a .85.
+- Borrada la regla CSS `.footer-logo { font-family ... }` (ya no se usa).
+
+#### Subrayado lima animado izq→der en footer-nav + footer-legal
+- Mismo patrón exacto que `.nav-links a` (cambio del bloque anterior):
+  - Color reposo: `#cbd5e1` (slate-300), font-weight 500, letter-spacing .005em, padding-bottom 4px.
+  - `::after` con `transform: scaleX(0)`, `transform-origin: left center`, lima `#c8ff00` 1.5px de alto, `box-shadow: 0 0 6px rgba(200,255,0,.5)`, border-radius 1px.
+  - Trigger triple: `:hover / :focus-visible / :active` → `transform: scaleX(1)` con `transition: transform .5s cubic-bezier(.22,.61,.36,1)` + color → `var(--text)`.
+- Aplicado a:
+  - **`.footer-nav a`** (links: Servicios / Proceso / Casos / Nosotros en index; Servicios / Casos / Inicio en nosotros).
+  - **`.footer-legal button`** (Política de Privacidad y Términos y Condiciones). Detalle extra: `font-family: inherit` para que los botones tengan la misma tipografía que el resto del footer.
+
+#### Wordmark gigante "NYX" del fondo — gris claro visible
+- Antes: `-webkit-text-stroke: 1px rgba(241,245,249,0.1)` → outline blanco al 10% de opacidad sobre el navy oscuro → casi invisible (el problema reportado: "no se diferencia, está en negro completo").
+- Ahora: `-webkit-text-stroke: 1.5px rgba(203,213,225,0.32)` → trazo más grueso (1px → 1.5px) en slate-300 al 32% de opacidad. Se ve claramente como un wordmark decorativo gris medio sobre el navy, pero sigue sin dominar la composición.
+- **Decisión de color**: usar slate-300 (`#cbd5e1`) en lugar de lima por petición explícita del usuario ("ponlo gris pero que se diferencia"). El lima ya está reservado para elementos interactivos/accent (FAB, frame hero, calendar nav, subrayados nav/footer, marca del logo).
+
+### Estado del proyecto post 2026-05-08 (tarde + footer)
+- **Coherencia visual del footer ↔ nav**: misma marca, misma tipografía, mismo subrayado lima, misma paleta. El usuario llega al final de la página y ve la misma identidad que en el header — refuerzo de marca.
+- **Wordmark gigante**: ahora cumple su función decorativa (era invisible antes).
+- **Sistema lima consistente**: marca cuadrada del logo, subrayado en hover de cualquier link/button, FAB, frame hero, calendar nav, dot del badge, blobs hero. Único accent funcional. El gris claro del wordmark gigante es un elemento decorativo neutro que NO compite con el lima.
+

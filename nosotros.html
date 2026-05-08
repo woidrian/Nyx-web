@@ -540,19 +540,21 @@
     display: inline-block;
     /* CRÍTICO: nunca dividir una palabra. Anula overflow-wrap heredado */
     white-space: nowrap;
-    opacity: 0;
+    /* DEFAULT VISIBLE: si JS no se ejecuta, el texto se sigue viendo. */
+    opacity: 1;
+    transform: translateX(0);
     will-change: transform, opacity;
     transition:
       transform 720ms cubic-bezier(.22,.61,.36,1),
       opacity 500ms cubic-bezier(.25,.1,.25,1);
   }
-  .hero-h1 .st-line[data-from="left"]  .st-char { transform: translateX(-110%); }
-  .hero-h1 .st-line[data-from="right"] .st-char { transform: translateX( 110%); }
-  .hero-h1 .st-char.is-in { transform: translateX(0); opacity: 1; }
+  /* Estado pre-anim aplicado por JS antes de disparar la animación */
+  .hero-h1 .st-line.is-prep[data-from="left"]  .st-char { opacity: 0; transform: translateX(-110%); }
+  .hero-h1 .st-line.is-prep[data-from="right"] .st-char { opacity: 0; transform: translateX( 110%); }
   @media (prefers-reduced-motion: reduce) {
     .hero-h1 .st-char {
-      transform: none;
-      opacity: 1;
+      transform: none !important;
+      opacity: 1 !important;
       transition: none;
     }
   }
@@ -2377,13 +2379,22 @@ document.fonts.ready.then(() => ScrollTrigger.refresh());
   }
 
   function play(rootEl) {
-    const chars = rootEl.querySelectorAll('.st-char');
-    // forzar reflow para reset si veníamos de un play anterior
-    chars.forEach(c => c.classList.remove('is-in'));
-    // double rAF para asegurar que el browser asienta el estado pre-anim
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      chars.forEach(c => c.classList.add('is-in'));
-    }));
+    const lines = rootEl.querySelectorAll('.st-line');
+    if (!lines.length) return;
+    // 1) Aplicar estado pre-anim a las líneas (chars quedan opacity:0 + translateX)
+    lines.forEach(l => l.classList.add('is-prep'));
+    // 2) Forzar reflow → el browser commit el estado pre-anim
+    void rootEl.offsetWidth;
+    // 3) Quitar is-prep en el siguiente tick → la transition lleva los chars
+    //    desde el estado oculto al default (opacity:1, transform:none).
+    setTimeout(() => {
+      lines.forEach(l => l.classList.remove('is-prep'));
+    }, 30);
+    // 4) Fallback de seguridad: si por cualquier motivo is-prep persistiera,
+    //    quitarlo después de 2.2s para garantizar visibilidad final.
+    setTimeout(() => {
+      lines.forEach(l => l.classList.remove('is-prep'));
+    }, 2200);
   }
 
   // Expuesta globalmente para que setLanguage pueda re-disparar la animación

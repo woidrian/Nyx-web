@@ -614,3 +614,130 @@ El orbital ocupa ~1/3 del viewport mobile, el panel de texto (número grande + t
 - **Nav compact** ahora más responsivo: pill aparece al primer scroll real (~40px), no después de la primera sección.
 - **Pendientes** (sin cambios desde 2026-05-07): modales Privacidad/T&C vacíos para RGPD; validar marcas Pulsefit/Lumea/Nordika; deploy a producción ya activo en Vercel + dominio nyx-agency.es funcionando.
 
+---
+
+## Changelog 2026-05-08 (cont.) — i18n masivo final, mobile rail, fluid menu fix, stagger-text en nosotros
+
+### 1. Auto deploy en main — workflow permanente
+- Confirmado por el usuario como regla: **después de cualquier edición sustantiva, hacer `git add` + `git commit` + `git push origin main` automáticamente** (sin pedir confirmación). Vercel está conectado a `github.com/woidrian/Nyx-web` y deploya solo a `https://nyx-agency.es` al detectar push a `main`.
+- El usuario testea siempre en la versión deployed, no en local. Si los cambios solo están en disco, los ve "como si no se hubieran aplicado".
+- Guardado como memoria persistente (`feedback_auto_deploy.md`).
+
+### 2. i18n completion — Casos, Diferenciación, Equipo morph
+**Antes**: 3 secciones quedaban hardcoded en español aunque cambiaras de idioma.
+
+**Ahora todo wired vía `data-i18n` walker** (que ya existía desde 2026-05-06):
+
+#### Sección Casos v2 (`index.html`)
+- 3 stats agregados: `+40% / Eficiencia operativa`, `−60% / Tareas repetitivas`, `3× / Capacidad de atención`.
+- 3 testimonios (Pulsefit / Lumea / Nordika): quote + author name + author role.
+- Hint pill: "Arrastra para ver más".
+- Eyebrow: "RESULTADOS REALES".
+- H2 con `<br>` y `<span class="accent">` ahora wired vía `data-i18n="casos.h2"` (innerHTML).
+- Total: ~15 strings × 12 idiomas = ~180 traducciones nuevas.
+
+#### Sección Diferenciación (`index.html`)
+- 6 celdas comparativas (Otros vs Nyx): label + heading + parágrafo cada una.
+- H2 + parágrafo intro.
+- Total: ~20 strings × 12 idiomas = ~240 traducciones nuevas.
+
+#### Equipo morph (`nosotros.html`)
+- Las 6 palabras rotativas en la pantalla del robot (`Construyo / Automatizo / Diseño / Optimizo / Resuelvo / Entrego`) ahora dependen del idioma.
+- Cada idioma tiene su array `equipo.morph: [...]` con sus propios verbos.
+- El módulo morph del IIFE expone `window.setMorphWords(words)`. `setLanguage` lo llama después de aplicar la traducción.
+- Total: 6 verbos × 12 idiomas = 72 traducciones nuevas.
+
+### 3. `setLanguage` defensivo — robustez ante elementos eliminados
+**Bug histórico**: `setLanguage` tenía accesos directos como `getElementById('XYZ').textContent = ...` sobre elementos que ya no existían (eliminados en limpiezas previas: nav-services, nav-cases, founder-role, etc.). El primer null reference abortaba TODA la función → secciones siguientes no se traducían (incluido el walker `data-i18n` al final).
+
+**Fix aplicado en ambas páginas**:
+- Helpers internos:
+  ```js
+  const setText = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = val; };
+  const setHTML = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.innerHTML = val; };
+  const safe = (fn) => { try { fn(); } catch (e) { /* silent */ } };
+  ```
+- **El walker `data-i18n` se ejecuta PRIMERO** (después de actualizar el `<html lang>` y dir). Así, aunque algo más abajo falle, las traducciones ya están aplicadas vía data-attr.
+- Cada sección hardcoded antigua envuelta en `safe(() => { ... })` para que un error en una no rompa las demás.
+
+### 4. Mobile rail "Cómo trabajariamos contigo" — fix Capacitación overlap
+**Problema**: en `index.html` el rail de servicios sticky-scroll tenía `grid-template-columns: 84px 1fr` en mobile. La palabra "Capacitación" del item activo se solapaba con el contenido del panel.
+
+**Iteraciones**:
+1. **V1** (`word-break: break-word`): partió la palabra dejando "n" suelta en línea aparte. Usuario: "queda fatal!".
+2. **V2 final**: aumentar la columna del rail progresivamente y reducir la fuente:
+   - ≤720px: rail-cols `108px 1fr`, font `.7rem`
+   - ≤480px: rail-cols `124px 1fr`, font `.66rem`
+   - ≤360px: rail-cols `124px 1fr`, font `.58rem`
+   - **Removido** todo `word-break` para mantener palabras enteras.
+   - `white-space: normal` (permite wrap natural si hace falta) + `line-height: 1.15` compacta.
+
+### 5. Fluid menu mobile — sub-overlay de idiomas se cortaba
+**Problema**: al hacer scroll, `#nav.compact` aplica `backdrop-filter: blur(18px)`. CSS spec: `backdrop-filter` crea un nuevo **containing block** para descendientes con `position: fixed`. El `.fm-lang-drop` (overlay con las 12 banderas) estaba dentro de `#nav` → se posicionaba relativo al nav, no al viewport, y se recortaba mostrando solo 8 de 12 idiomas.
+
+**Fix**: mover el `<div class="fm-lang-drop">` **fuera de `#nav`**, al body level (justo después del `<nav>` o al final del body). Así su `position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%)` se calcula relativo al viewport. Aplicado en index + nosotros.
+
+### 6. Stagger-text en H1 de nosotros — port vanilla 21st.dev
+
+**H1 nuevo** (12 idiomas, formato 2 líneas): `'Somos Nyx.<br>Automatizamos el trabajo repetitivo.'`
+
+**Diseño de la animación**:
+- Cada **palabra** entra como bloque sólido (no char-by-char). Usuario explícito: "que aparezca como en bloque".
+- **Direcciones asimétricas** por línea:
+  - Línea 1 ("Somos Nyx.") → entra desde la **izquierda**, empezando por "Somos" (`fromLeft`, orden natural 0,1,2).
+  - Línea 2 ("Automatizamos el trabajo repetitivo.") → entra desde la **derecha**, empezando por "repetitivo." (`fromRight`, orden inverso N-1,N-2,...0).
+
+**Implementación CSS**:
+```css
+.hero-h1 { overflow-wrap: normal; word-break: normal; hyphens: none; }
+.hero-h1 * { overflow-wrap: normal; word-break: normal; }
+.hero-h1 .st-line { display: block; }
+.hero-h1 .st-word {
+  display: inline-block;
+  overflow: hidden;          /* clip box que reserva el espacio del char */
+  vertical-align: top;
+  white-space: nowrap;       /* nunca partir la palabra (incluido el "." final) */
+  padding: .04em 0 .25em 0;  /* margen para descenders sin recortar */
+  margin: -.04em 0 -.25em 0;
+}
+.hero-h1 .st-char {
+  display: inline-block;
+  white-space: nowrap;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    transform 480ms cubic-bezier(.22,.61,.36,1),
+    opacity 320ms cubic-bezier(.25,.1,.25,1);
+}
+.hero-h1 .st-line.is-prep[data-from="left"]  .st-char { opacity: 0; transform: translateX(-110%); }
+.hero-h1 .st-line.is-prep[data-from="right"] .st-char { opacity: 0; transform: translateX( 110%); }
+```
+
+**Implementación JS**:
+- `wrapChars(rootEl, { stagger: 55, baseDelay: 60 })`:
+  - Splitea el contenido del H1 por `<br>` → array de líneas.
+  - Cada línea se tokeniza con regex `/(\s+)/` (preserva espacios).
+  - Para cada palabra: `<span class="st-word"><span class="st-char">word</span></span>`.
+  - **Reverse stagger en líneas impares** (idx=1, idx=3...): `orderIdx = fromRight ? (wordCount - 1 - wIdx) : wIdx`.
+  - `transition-delay = baseDelay + orderIdx * stagger` por palabra.
+- `play(rootEl)`:
+  - Añade `.is-prep` a todas las `.st-line` (estado pre-anim: chars fuera de pantalla).
+  - Force reflow `void rootEl.offsetWidth`.
+  - Quita `.is-prep` después de 30ms → arranca la transición.
+  - Fallback de seguridad: si algo falla, el H1 está visible por defecto (sin `.is-prep` no se aplica el desplazamiento).
+- `window.runHeroStagger()` exposto globalmente y llamado desde `setLanguage` después de `setHTML('hero-h1', t.hero.h1)`.
+
+**Bug fixes durante el port**:
+- **"repetitivo" partido a mitad**: el `overflow-wrap: break-word` global del body (anti-cortes del 2026-05-07) overrideaba mi CSS. Fix: `white-space: nowrap` en `.st-char` + `.st-word` + `overflow-wrap: normal` explícito en `.hero-h1` y `.hero-h1 *`.
+- **Letras solapándose**: cada `.st-char` con `translateX(±110%)` se desplazaba sobre su propio width pero el flow del DOM no reservaba el espacio. Fix: envolver cada char en `.st-word { overflow: hidden }` que actúa de clip box y SÍ reserva el espacio en línea.
+- **Título completamente invisible**: la primera versión asumía estado por defecto invisible y aplicaba `.is-vis` para mostrar. Si el JS fallaba, el título no aparecía nunca. Fix: invertir la lógica → estado por defecto **visible**; `.is-prep` aplica el estado pre-anim de forma efímera. JS quita `.is-prep` a los 30ms con un fallback de 2.2s.
+- **"." separado de "repetitivo"**: el punto final estaba siendo tratado como token aparte por el split del walker o quedaba en línea aparte por word-break global. Fix: el regex `/(\s+)/` solo splitea por whitespace → "repetitivo." queda como un único token. Sumado a `white-space: nowrap` en `.st-word` → nunca se rompe.
+- **Velocidad final**: `stagger: 90 → 55ms`, `baseDelay: 100 → 60ms`, `transform 720 → 480ms`, `opacity 500 → 320ms` (a petición del usuario).
+
+### 7. Estado del proyecto post 2026-05-08 (cont.)
+- **i18n: 100% wired** en index.html y nosotros.html. Las únicas strings que quedan hardcoded son del voice modal (UI states + textos del modal AdrIAn) — pendiente para una sesión dedicada.
+- **`setLanguage` robusto**: aunque añadan/quiten secciones, una falla local no rompe las demás. Las traducciones data-i18n se aplican siempre primero.
+- **Workflow auto-deploy confirmado**: cualquier edit → commit + push → Vercel deploya en ~30s. El usuario verifica en `https://nyx-agency.es`, no en local.
+- **Animación H1 nosotros**: stagger asimétrico funcional, palabras enteras (incluido punto final), velocidad ajustada.
+- **Pendientes (sin cambios)**: modales Privacy + T&C vacíos para RGPD, validar marcas Pulsefit/Lumea/Nordika, voice modal i18n.
+

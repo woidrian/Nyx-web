@@ -512,35 +512,36 @@
   .hero-h1 {
     font-family: var(--fh);
     font-size: clamp(2.25rem, 5.6vw, 4.25rem);
-    font-weight: 700; line-height: 1.05; letter-spacing: -.04em;
-    margin-bottom: 1.75rem; max-width: 22ch;
+    font-weight: 700; line-height: 1.08; letter-spacing: -.035em;
+    margin-bottom: 1.75rem;
+    /* Sin max-width: dejar que el ancho natural del contenedor decida.
+       Las palabras (st-char) tienen white-space:nowrap para que NUNCA
+       se partan; el wrap entre palabras ocurre normal. */
   }
   /* Stagger text — port vanilla del componente 21st.dev/community/components/s/text
-     Cada caracter sube desde abajo con un delay incremental. El wrapper .st-line
-     mantiene el clip vertical para ocultar el offset inicial (translateY 110%).
-     padding-bottom + margin-bottom negativo compensan el clip para que letras
-     con descendientes (g, p, q, y) NO queden recortadas, sin afectar el layout. */
+     adaptado: cada PALABRA entra como un BLOQUE deslizando lateralmente.
+     L1 entra desde la izquierda (Somos → Nyx).
+     L2 entra desde la derecha en orden inverso (repetitivo → trabajo → el → Automatizamos). */
   .hero-h1 .st-line {
-    display: inline-block;
+    display: block;
     overflow: hidden;
-    vertical-align: top;
-    line-height: inherit;
-    padding: .04em .02em .22em .02em;
-    margin: -.04em -.02em -.22em -.02em;
+    /* compensación de descendientes (g, p, q, y) sin afectar layout */
+    padding: .04em 0 .25em 0;
+    margin: -.04em 0 -.25em 0;
   }
   .hero-h1 .st-char {
     display: inline-block;
-    transform: translateY(110%);
+    /* CRÍTICO: nunca dividir una palabra. Anula overflow-wrap heredado */
+    white-space: nowrap;
     opacity: 0;
     will-change: transform, opacity;
     transition:
-      transform 620ms cubic-bezier(.22,.61,.36,1),
-      opacity 420ms cubic-bezier(.25,.1,.25,1);
+      transform 720ms cubic-bezier(.22,.61,.36,1),
+      opacity 500ms cubic-bezier(.25,.1,.25,1);
   }
-  .hero-h1 .st-char.is-in {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  .hero-h1 .st-line[data-from="left"]  .st-char { transform: translateX(-110%); }
+  .hero-h1 .st-line[data-from="right"] .st-char { transform: translateX( 110%); }
+  .hero-h1 .st-char.is-in { transform: translateX(0); opacity: 1; }
   @media (prefers-reduced-motion: reduce) {
     .hero-h1 .st-char {
       transform: none;
@@ -2310,56 +2311,60 @@ document.fonts.ready.then(() => ScrollTrigger.refresh());
   // Reglas: separadas por <br>; dentro de cada línea, cada char (excepto espacios)
   // queda envuelto en <span class="st-char"> con su delay propio.
   function wrapChars(rootEl, opts) {
-    // Stagger por PALABRAS (cada palabra entera sube como bloque), no por chars.
+    // Stagger por PALABRAS, con dirección por línea:
+    //   L1 (par)    → desde la izquierda, palabra 0 entra primero.
+    //   L2 (impar)  → desde la derecha, ÚLTIMA palabra entra primero (orden inverso).
     const stagger = opts?.stagger ?? 90;       // ms entre palabras
     const baseDelay = opts?.baseDelay ?? 100;  // ms inicial antes del primer bloque
 
     const html = rootEl.innerHTML;
     const lines = html.split(/<br\s*\/?>/i);
-    let wordIndex = 0;
     const out = [];
 
     const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     for (let l = 0; l < lines.length; l++) {
-      // Cada línea va dentro de un span.st-line con overflow:hidden, así
-      // el offset inicial del bloque (translateY 110%) queda ocultado limpio.
-      let lineHtml = '';
+      const fromRight = (l % 2 === 1);  // L0 desde left, L1 desde right, alternando
       const tmp = document.createElement('div');
       tmp.innerHTML = lines[l];
 
-      const walk = (node) => {
-        let res = '';
+      // 1ª pasada: recolectar tokens (palabras + espacios) preservando texto plano.
+      const tokens = [];
+      const collect = (node) => {
         node.childNodes.forEach(child => {
           if (child.nodeType === Node.TEXT_NODE) {
-            const txt = child.textContent;
-            // Split conservando los whitespaces como tokens propios para no perderlos
-            const tokens = txt.split(/(\s+)/);
-            for (const tok of tokens) {
-              if (!tok) continue;
-              if (/^\s+$/.test(tok)) {
-                res += tok;
-                continue;
-              }
-              const delay = baseDelay + wordIndex * stagger;
-              res += `<span class="st-char" style="transition-delay:${delay}ms,${delay + 60}ms">${escape(tok)}</span>`;
-              wordIndex++;
-            }
+            child.textContent.split(/(\s+)/).forEach(tok => {
+              if (!tok) return;
+              if (/^\s+$/.test(tok)) tokens.push({ type: 'space', val: tok });
+              else                    tokens.push({ type: 'word',  val: tok });
+            });
           } else if (child.nodeType === Node.ELEMENT_NODE) {
-            // Conservamos el tag con sus atributos, recurriendo en su contenido
-            const tag = child.tagName.toLowerCase();
-            const attrs = [...child.attributes].map(a => `${a.name}="${a.value}"`).join(' ');
-            res += `<${tag}${attrs ? ' ' + attrs : ''}>${walk(child)}</${tag}>`;
+            // Aplanar contenido de elementos hijos (ej. <span class="accent">)
+            collect(child);
           }
         });
-        return res;
       };
+      collect(tmp);
 
-      lineHtml = walk(tmp);
-      out.push(`<span class="st-line">${lineHtml}</span>`);
+      const wordCount = tokens.filter(t => t.type === 'word').length;
+
+      // 2ª pasada: emitir HTML asignando delay por palabra. Para fromRight,
+      // el orden es inverso: la ÚLTIMA palabra de la línea entra primero.
+      let lineHtml = '';
+      let wIdx = 0;
+      for (const tok of tokens) {
+        if (tok.type === 'space') { lineHtml += tok.val; continue; }
+        const orderIdx = fromRight ? (wordCount - 1 - wIdx) : wIdx;
+        const delay = baseDelay + orderIdx * stagger;
+        lineHtml += `<span class="st-char" style="transition-delay:${delay}ms,${delay + 60}ms">${escape(tok.val)}</span>`;
+        wIdx++;
+      }
+
+      out.push(`<span class="st-line" data-from="${fromRight ? 'right' : 'left'}">${lineHtml}</span>`);
     }
 
-    rootEl.innerHTML = out.join('<br>');
+    // Sin <br> entre líneas: cada .st-line es display:block y ocupa su línea.
+    rootEl.innerHTML = out.join('');
   }
 
   function play(rootEl) {

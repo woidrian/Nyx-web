@@ -25,7 +25,7 @@ import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from google import genai
 from pydantic import BaseModel
@@ -222,14 +222,19 @@ async def index() -> FileResponse:
 
 
 @app.get("/index.html")
-async def index_html() -> FileResponse:
-    return FileResponse(INDEX_FILE, media_type="text/html", headers=_HTML_HEADERS)
+async def index_html() -> RedirectResponse:
+    return RedirectResponse(url="/", status_code=308)
 
 
-@app.get("/nosotros.html")
+@app.get("/nosotros")
 async def nosotros() -> FileResponse:
     target = ROOT_DIR / "nosotros.html"
     return FileResponse(target, media_type="text/html", headers=_HTML_HEADERS)
+
+
+@app.get("/nosotros.html")
+async def nosotros_html() -> RedirectResponse:
+    return RedirectResponse(url="/nosotros", status_code=308)
 
 
 @app.get("/healthz")

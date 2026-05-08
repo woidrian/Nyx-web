@@ -1683,7 +1683,8 @@
     font-size: clamp(8rem, 22vw, 22rem);
     font-weight: 700; letter-spacing: -.06em; line-height: .82;
     color: transparent;
-    -webkit-text-stroke: 1.5px rgba(203,213,225,0.32);
+    -webkit-text-stroke: 1.2px rgba(203,213,225,0.18);
+    filter: blur(2.5px);
     user-select: none; pointer-events: none;
     padding: 0 var(--px);
     /* Ligero parallax gestionado por JS */
@@ -3682,24 +3683,11 @@
 <!-- ═══════════════════════════════════════════════════════ FOOTER -->
 <footer id="footer" role="contentinfo">
   <div class="footer-top">
-    <a href="/" class="nav-logo footer-brand" aria-label="Nyx Agency — Inicio">
-      <span class="nav-logo-mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="9.5" y1="7" x2="9.5" y2="25" stroke="#c8ff00" stroke-width="2.6"/>
-          <line x1="9.5" y1="7" x2="22.5" y2="25" stroke="#c8ff00" stroke-width="2.6"/>
-          <line x1="22.5" y1="7" x2="22.5" y2="25" stroke="#c8ff00" stroke-width="2.6"/>
-        </svg>
-      </span>
-      <span class="nav-logo-text">
-        <span class="nav-logo-word">NYX</span>
-        <span class="nav-logo-tag">AGENCY</span>
-      </span>
-    </a>
     <ul class="footer-nav" aria-label="Footer">
       <li><a href="#servicios" data-i18n="footerNav.services">Servicios</a></li>
       <li><a href="#proceso" data-i18n="footerNav.process">Proceso</a></li>
       <li><a href="#casos" data-i18n="footerNav.cases">Casos</a></li>
-      <li><a href="/nosotros" data-i18n="footerNav.about">Nosotros</a></li>
+      <li><a href="/nosotros" data-i18n="footerNav.about">Quiénes somos</a></li>
     </ul>
   </div>
 
@@ -3920,7 +3908,7 @@ const LANGS = {
     s5:{ ew:'Casos de éxito', h2:'Resultados<br>reales.', p:'Empresas que operaban manualmente. Ahora tienen sistemas que trabajan mientras ellos duermen.', cases:[{sec:'Fitness · Gimnasio',h:'Cualificación de leads 24/7 por WhatsApp',p:'Agente IA que responde en segundos, cualifica la intención del lead y agenda visitas al gimnasio automáticamente. Sin recepcionista. Sin mensajes sin contestar.'},{sec:'Salud · Clínica Estética',h:'Automatización de citas y seguimiento post-tratamiento',p:'Flujo n8n que gestiona recordatorios, confirmaciones y seguimiento de clientes de forma automática. La agenda se llena sola. El equipo solo atiende en consulta.'},{sec:'Comercio · E-commerce',h:'Soporte al cliente con agente IA multicanal',p:'Agente que resuelve dudas, gestiona devoluciones y hace upsell automático en WhatsApp, email y web. El equipo humano solo interviene cuando el caso lo requiere.'}] },
     s6:{ ew:'Precios', h2:'Sin letra pequeña.<br>Sin sorpresas.', p:'Elige el plan que encaja con tu momento. Puedes cambiar cuando quieras.', mo:'Mensual', an:'Anual', pop:'Más popular', plans:[{nM:'Facturado mensualmente',nA:'Facturado anualmente · ahorra €1.440/año',f:['1 agente IA configurado','2 flujos n8n activos','Integración WhatsApp básica','Onboarding incluido','Soporte por email','1 revisión mensual'],cta:'Empezar con Starter →'},{nM:'Facturado mensualmente',nA:'Facturado anualmente · ahorra €2.700/año',f:['Hasta 3 agentes IA','Flujos n8n ilimitados','WhatsApp Business + CRM','Voice agent básico','Dashboard de métricas','Soporte prioritario <24h','Revisiones semanales'],cta:'Empezar con Growth →'},{nM:'Facturado mensualmente',nA:'Facturado anualmente · ahorra €4.500/año',f:['Agentes IA ilimitados','Stack completo de automatización','Voice agents avanzados','Integraciones a medida','Account manager dedicado','Soporte 24/7 <4h SLA','Optimización continua'],cta:'Empezar con Scale →'}] },
     s8:{ ew:'Contacto', h2:'Tu empresa puede<br>trabajar sin ti.', p:'30 minutos para diagnosticar qué procesos te están costando tiempo y dinero. Sin compromiso. Sin jerga técnica. Solo resultados concretos.', cta:'Agenda tu cita' },
-    footerNav:{ services:'Servicios', process:'Proceso', cases:'Casos', pricing:'Precios', about:'Nosotros' },
+    footerNav:{ services:'Servicios', process:'Proceso', cases:'Casos', pricing:'Precios', about:'Quiénes somos' },
     footerLegal:{ privacy:'Política de Privacidad', terms:'Términos y Condiciones' },
     agentes:{ h2:'27 especialistas.<br>Una sola factura.', p:'Cada agente tiene un rol, un KPI y opera 24/7. Sin bajas, sin vacaciones, sin fricciones. Tu empresa completa gestionada por IA, coordinada en un solo sistema.', badge5:'5 agentes', badge4:'4 agentes', deps:[{n:'Ventas & Comercial',items:['Prospección automática de leads','Cold outreach y seguimiento 48h','Cualificación y scoring de prospectos','Generación de presupuestos','Cierre asistido por IA']},{n:'Marketing & Contenido',items:['Copy para emails y newsletters','Programación de redes sociales','Análisis SEO continuo','Ideas y briefs creativos','Monitorización de competidores']},{n:'Atención al Cliente',items:['Chat web 24/7 en tiempo real','Agente de voz natural (VAPI)','Gestión de tickets y reclamaciones','Resolución automática de FAQs']},{n:'Admin & Finanzas',items:['Gestión de agenda (Google Cal)','Procesamiento de facturas','Control de gastos y categorización','Informes financieros mensuales']},{n:'RRHH & Operaciones',items:['Onboarding automático de empleados','Archivo y gestión documental','Creación de manuales y SOPs','Control de estado de tareas']},{n:'Dirección & Legal',items:['Dashboards de KPIs en tiempo real','Briefing diario para el CEO','Investigación de mercado y tendencias','Revisión de contratos','Compliance GDPR continuo']}], stats:['agentes activos','sin interrupciones','coste vs plantilla tradicional','departamentos cubiertos'] },
     bnf:{ h2:'Lo que ganas<br>al automatizar con Nyx.', p:'Cinco ejes que cambian cómo opera tu empresa. Pulsa cualquier nodo para ver el detalle.', idle:'Selecciona un nodo para ver el detalle', nodes:['Eficiencia','Control','Escala','Claridad','Capacidad'] },

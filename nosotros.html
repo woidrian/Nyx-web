@@ -1008,7 +1008,7 @@
   .footer-top {
     max-width: var(--w); margin: 0 auto;
     padding: 3.5rem var(--px) 0;
-    display: flex; align-items: center; justify-content: space-between;
+    display: flex; align-items: center; justify-content: flex-end;
     gap: 2rem; flex-wrap: wrap;
   }
   .footer-brand { text-decoration: none; }
@@ -1092,7 +1092,7 @@
   .footer-legal button:focus-visible::after,
   .footer-legal button:active::after { transform: scaleX(1); }
   @media (max-width: 700px) {
-    .footer-top { flex-direction: column; align-items: flex-start; }
+    .footer-top { flex-direction: column; align-items: flex-end; }
     .footer-bottom { flex-direction: column; }
   }
 

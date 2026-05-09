@@ -1010,10 +1010,23 @@ La primera versión usaba expresiones genéricas ("tío", "mira", "oye", "venga"
 
 El `min(Xdvh, Ypx)` evita que en pantallas gigantes el transcript ocupe demasiado, y el `min-height` garantiza un suelo legible siempre.
 
+### 5. Footer-nav alineado a la derecha (todos los breakpoints)
+
+**Problema reportado**: el bloque `.footer-nav` (links Servicios / Proceso / Casos / Quiénes somos) flotaba a la izquierda del footer y se solapaba visualmente con el wordmark gigante "NYX" que está detrás (gris claro al 32%, blur 2.5px). Ilegible y feo.
+
+**Causa**: `.footer-top` con `display: flex; justify-content: space-between` pero solo tenía un único hijo (`.footer-nav`) → flex lo empujaba a la izquierda por defecto.
+
+**Fix aplicado en `index.html` y `nosotros.html`**:
+- Default: `.footer-top { justify-content: flex-end; }` (era `space-between`).
+- Mobile @media ≤700px: `.footer-top { flex-direction: column; align-items: flex-end; }` (era `align-items: flex-start`). Sin esto, en mobile el column-stack volvería a alinear los items a la izquierda.
+
+Resultado: el bloque de links queda siempre a la derecha (desktop, tablet, móvil), encima de la mitad limpia del wordmark, sin solaparse con la "N" inicial. Coherente con el patrón visual del nav (logo izquierda / links + CTA derecha).
+
 ### Estado del proyecto post 2026-05-09
 - **Lead pipeline 100% en server.py**: ya no depende de n8n. Cualquier fallo de Supabase o Resend se loggea pero no rompe el endpoint público (fail-soft). El cliente recibe `{"ok": true}` siempre que la request sea válida.
 - **AdrIAn cualifica activamente**: cada lead llega con `cualificado: true/false` y `notas` con el resumen de la conversación → Adri lee el email y sabe inmediatamente si vale la pena llamar.
 - **Cal.com webhook listo** para conectar desde el dashboard de Cal.com (URL: `https://nyx-agency.es/api/cal-webhook`). Pendiente de configurar el subscription en la cuenta de Cal.com.
 - **Voice modal usable**: transcript legible en cualquier dispositivo. El usuario puede leer la conversación mientras AdrIAn habla, no solo escucharla.
+- **Footer limpio**: links a la derecha, wordmark gigante decorativo a la izquierda sin solaparse.
 - **Pendientes (sin cambios desde sesiones previas)**: modales Privacy + T&C vacíos para RGPD, validar marcas Pulsefit/Lumea/Nordika, voice modal i18n.
 

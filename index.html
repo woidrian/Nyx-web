@@ -1640,7 +1640,7 @@
   .footer-top {
     max-width: var(--w); margin: 0 auto;
     padding: 3.5rem var(--px) 0;
-    display: flex; align-items: center; justify-content: space-between;
+    display: flex; align-items: center; justify-content: flex-end;
     gap: 2rem; flex-wrap: wrap;
   }
   /* Footer brand: reutiliza las clases .nav-logo* del nav (mark + word + tag) */
@@ -1944,7 +1944,7 @@
   }
 
   @media (max-width: 700px) {
-    .footer-top { flex-direction: column; align-items: flex-start; }
+    .footer-top { flex-direction: column; align-items: flex-end; }
     .footer-bottom { flex-direction: column; }
     .tcm-header { padding: 1.25rem 1.5rem 1rem; }
     .tcm-body { padding: 1.5rem; }

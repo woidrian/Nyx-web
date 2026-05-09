@@ -138,6 +138,8 @@ class LeadPayload(BaseModel):
     negocio: str | None = None
     interes: str | None = None
     fuente: str | None = None
+    cualificado: bool | None = None
+    notas: str | None = None
 
 
 async def _save_to_supabase(lead: dict[str, Any]) -> bool:
@@ -174,12 +176,18 @@ def _format_lead_email_html(lead: dict[str, Any]) -> str:
         ("Negocio", "negocio"),
         ("Interés", "interes"),
         ("Fuente", "fuente"),
+        ("Cualificado", "cualificado"),
+        ("Notas", "notas"),
     ):
-        val = lead.get(key) or "—"
+        raw = lead.get(key)
+        if isinstance(raw, bool):
+            val = "Sí ✅" if raw else "No ❌"
+        else:
+            val = raw if raw not in (None, "") else "—"
         rows.append(
             f"<tr>"
-            f"<td style='padding:8px 12px;font-weight:600;background:#f5f5f5;border:1px solid #ddd;width:140px'>{label}</td>"
-            f"<td style='padding:8px 12px;border:1px solid #ddd'>{val}</td>"
+            f"<td style='padding:8px 12px;font-weight:600;background:#f5f5f5;border:1px solid #ddd;width:140px;vertical-align:top'>{label}</td>"
+            f"<td style='padding:8px 12px;border:1px solid #ddd;white-space:pre-wrap'>{val}</td>"
             f"</tr>"
         )
     table = "\n".join(rows)

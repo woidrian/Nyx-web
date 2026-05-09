@@ -16,7 +16,7 @@ nyx-web/
 ├── server.py             # FastAPI: sirve la web + APIs del voice agent
 ├── Dockerfile            # Build para Easypanel
 ├── requirements.txt      # Deps Python
-├── .env.example          # GEMINI_API_KEY, N8N_WEBHOOK_URL, ALLOWED_ORIGINS
+├── .env.example          # GEMINI_API_KEY, SUPABASE_*, RESEND_*, ALLOWED_ORIGINS
 ├── .dockerignore
 ├── CLAUDE.md
 ├── images/               # Assets de imagen + Video1.mp4
@@ -31,7 +31,8 @@ nyx-web/
 ## Tech Stack
 - **Frontend**: HTML puro + CSS + JS vanilla. Three.js r128 (CDN), GSAP 3.12.2 (CDN). Sin build.
 - **Backend voice**: FastAPI + uvicorn. Cliente `google-genai` (Gemini Live, modelo `gemini-3.1-flash-live-preview`, voz Orus).
-- **Lead capture**: tool call `guardar_lead` → forward a webhook n8n.
+- **Lead capture**: tool call `guardar_lead` → `POST /api/lead` → persiste en **Supabase** (`nyx.leads`) + envía email con **Resend** a `growth@nyx-agency.es`. n8n retirado el 2026-05-09.
+- **Cal.com webhook**: `POST /api/cal-webhook` recibe bookings de Cal.com y los persiste con la misma plumbing (Supabase + Resend), con `fuente="cal_com"`.
 
 ## Páginas
 
@@ -68,7 +69,8 @@ Página Quiénes Somos. Mismo i18n + scroll-to-top + modal privacidad. **Sin** v
 
 ### Endpoints
 - `GET  /api/token`       → token efímero Gemini Live (system prompt + tool **lock dentro del token** por seguridad)
-- `POST /api/lead`        → reenvía lead al webhook n8n
+- `POST /api/lead`        → persiste lead en Supabase (`nyx.leads`) + envía email con Resend
+- `POST /api/cal-webhook` → recibe booking de Cal.com → mismo pipeline (Supabase + Resend) con `fuente="cal_com"`
 - `POST /twiml/asistente` → TwiML para integración telefónica Twilio (opcional)
 - `WS   /media-stream`    → bridge Twilio Media Stream ↔ Gemini Live (opcional)
 - `GET  /voice/*`         → assets estáticos del frontend de voz
@@ -87,7 +89,10 @@ Página Quiénes Somos. Mismo i18n + scroll-to-top + modal privacidad. **Sin** v
 2. Build con `Dockerfile` de la raíz. Easypanel detecta el `EXPOSE 8000`.
 3. Variables de entorno en Easypanel:
    - `GEMINI_API_KEY` (obligatoria)
-   - `N8N_WEBHOOK_URL` (opcional, hay default)
+   - `SUPABASE_URL` + `SUPABASE_ANON_KEY` (opcionales, sin ellas no se persiste el lead)
+   - `SUPABASE_SCHEMA` (opcional, default `nyx`) + `SUPABASE_TABLE` (opcional, default `leads`)
+   - `RESEND_API_KEY` (opcional, sin ella no se envía email)
+   - `LEAD_NOTIFY_EMAIL` (opcional, default `growth@nyx-agency.es`) + `LEAD_FROM_EMAIL` (opcional, default `growth@nyx-agency.es`)
    - `ALLOWED_ORIGINS=*` (opcional, default `*`)
 4. Dominio: `nyx-agency.es` apuntando al servicio. La web carga directamente `/api/token` y `/voice/agent.js` desde el mismo origen — no hace falta CORS ni configuración extra.
 
@@ -896,4 +901,119 @@ async def index_html() -> RedirectResponse:
 - **Coherencia visual del footer ↔ nav**: misma marca, misma tipografía, mismo subrayado lima, misma paleta. El usuario llega al final de la página y ve la misma identidad que en el header — refuerzo de marca.
 - **Wordmark gigante**: ahora cumple su función decorativa (era invisible antes).
 - **Sistema lima consistente**: marca cuadrada del logo, subrayado en hover de cualquier link/button, FAB, frame hero, calendar nav, dot del badge, blobs hero. Único accent funcional. El gris claro del wordmark gigante es un elemento decorativo neutro que NO compite con el lima.
+
+---
+
+## Changelog 2026-05-09 — Backend lead pipeline rework + AdrIAn 2.0 + voice modal UX
+
+### 1. Lead pipeline: n8n fuera, Supabase + Resend dentro
+**Antes**: `POST /api/lead` reenviaba el payload al webhook n8n (`ai-leedloop-n8n.t64mfz.easypanel.host/webhook/nyx-voice-lead`), que era el responsable de persistir y notificar. Si n8n caía o el webhook se rompía, los leads se perdían.
+
+**Ahora**: el server.py persiste y notifica directamente, sin intermediarios:
+
+#### `_save_to_supabase(lead)` — fail-soft
+- POST a `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}` con headers `Content-Profile`/`Accept-Profile` apuntando a `SUPABASE_SCHEMA` (default `nyx`).
+- Auth: `apikey` + `Authorization: Bearer ${SUPABASE_ANON_KEY}`.
+- `Prefer: return=minimal` para no devolver el row completo (más rápido).
+- Si SUPABASE_URL o SUPABASE_ANON_KEY no están configuradas, log y devuelve `False` sin lanzar excepción.
+- Si HTTP error: log + return `False`. Nunca rompe el endpoint público.
+
+#### `_send_resend_email(lead)` — fail-soft
+- POST a `https://api.resend.com/emails` con bearer token.
+- Plantilla HTML con tabla por filas (Nombre / Email / Teléfono / Negocio / Interés / Fuente / Cualificado / Notas) + timestamp en zona Europe/Madrid (`zoneinfo.ZoneInfo`).
+- Booleans renderizados como `Sí ✅` / `No ❌`. None/"" → `—`.
+- Notas con `white-space: pre-wrap` para conservar saltos de línea.
+- Subject dinámico: `🚀 Nuevo lead Nyx — {nombre} ({fuente})`.
+- Si RESEND_API_KEY no está configurada → log + skip.
+
+#### `_persist_lead(lead)` — orquestador
+- Llama a Supabase y Resend secuencialmente. Cada uno es independiente: si Supabase falla, el email igualmente se intenta. Devuelve `{"supabase": bool, "email": bool}`.
+
+#### Endpoint `POST /api/lead`
+- Sigue recibiendo `LeadPayload` validado por Pydantic.
+- Default `fuente="voice_agent"` si el cliente no la manda.
+- Llama a `_persist_lead` y devuelve `{"ok": True, "supabase": ..., "email": ...}`.
+
+#### Endpoint nuevo `POST /api/cal-webhook`
+- Recibe el JSON crudo del webhook de Cal.com, extrae `payload.attendees[0]` (name/email/phone) y `payload.title` como negocio.
+- Mapea a la misma forma de lead con `fuente="cal_com"` + `interes="Reserva de cita"`.
+- Reusa `_persist_lead` → mismo flujo de Supabase + email que `/api/lead`. Una sola plumbing para ambas fuentes.
+
+#### Cambios en config / env
+- **Eliminada**: `N8N_WEBHOOK_URL` (y su default hardcoded).
+- **Nuevas (todas opcionales con defaults sensatos)**: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SCHEMA` (`nyx`), `SUPABASE_TABLE` (`leads`), `RESEND_API_KEY`, `LEAD_NOTIFY_EMAIL` (`growth@nyx-agency.es`), `LEAD_FROM_EMAIL` (`growth@nyx-agency.es`).
+- `/healthz` ahora reporta `supabase_configured` y `resend_configured` para diagnóstico rápido.
+
+### 2. Tool `guardar_lead` extendido — cualificación dentro del payload
+
+**Antes**: el tool solo recogía datos de contacto + sector + interés. AdrIAn no transmitía juicio sobre si el lead merecía asesoría.
+
+**Ahora — dos campos nuevos**:
+- `cualificado` (boolean, **required**): true si el lead encaja con los criterios de Nyx (presupuesto, encaje, motivación), false si no.
+- `notas` (string, opcional): resumen breve de la conversación (contexto del negocio, dolor principal, urgencia, motivo de la decisión).
+
+**Propagación end-to-end** (porque añadir el campo solo al tool no sirve si el resto del pipeline lo descarta):
+1. `GUARDAR_LEAD_TOOL` declara los dos parámetros nuevos en `function_declarations[0].parameters.properties` y `cualificado` se añade a `required`.
+2. `LeadPayload` (Pydantic) acepta ambos: `cualificado: bool | None = None`, `notas: str | None = None`. Sin esto, FastAPI los descartaba silenciosamente (Pydantic ignora extras por default).
+3. `_format_lead_email_html` añade dos filas a la tabla del email — "Cualificado" (con render boolean → `Sí ✅` / `No ❌`) y "Notas" (con `white-space: pre-wrap`).
+4. La tabla `nyx.leads` ya tenía las columnas `cualificado bool` y `notas text` (confirmado por el usuario, no hizo falta migración).
+
+### 3. SYSTEM_PROMPT 2.0 — AdrIAn de barrio madrileño
+
+**Antes**: prompt corto y genérico ("Cercano y profesional, hablas de tú. Directo, no das rodeos."). Salida sonaba a call center.
+
+**Ahora — prompt con 5 secciones explícitas**:
+1. **PERSONALIDAD**: chaval de barrio, jerga natural, empático con autoridad. Lista de muletillas concretas que debe usar.
+2. **CONTEXTO**: representa Nyx, objetivo cualificar lead, decide si merece asesoría con Adri.
+3. **FLUJO DE CUALIFICACIÓN** (4 pasos): a qué se dedica + tamaño equipo → mayor dolor → qué han intentado antes → urgencia (implementar ya o explorar).
+4. **CRITERIOS** (internos, nunca mencionados al usuario):
+   - ✅ negocio activo con 2-3+ personas, procesos repetitivos claros, sector compatible (clínica/coaching/restaurante/inmobiliaria/academia/ecommerce/servicios), intención real de invertir.
+   - ❌ autónomo solo, sin presupuesto, sin procesos repetitivos, busca software a medida, estudiante/curioso.
+5. **CIERRE SEGÚN RESULTADO**:
+   - Si cualifica: dile que encaja, recoge nombre/email/teléfono, anuncia que Adri contacta en <24h, llama `guardar_lead` con `cualificado=true`.
+   - Si no: amable pero honesto, recoge igualmente datos para el futuro, llama `guardar_lead` con `cualificado=false`.
+
+**Reglas globales**: español siempre, máx 2-3 frases por turno (es voz, no email), nunca menciona criterios ni procesos internos, mantiene la coherencia del personaje incluso si le preguntan si es IA.
+
+#### Iteración de jerga
+La primera versión usaba expresiones genéricas ("tío", "mira", "oye", "venga", "está claro", "te entiendo"). Sonaba a sevillano. El usuario pidió **estilo Madrid específicamente**. Lista final:
+> tío, macho, ostia, venga va, qué fuerte, mola, en plan, o sea, de puta madre, no te flipes
+
+(Sí, el lenguaje fuerte es deliberado — es la voz que el usuario quiere para AdrIAn.)
+
+### 4. Voice modal — transcript legible (desktop, tablet, móvil)
+
+**Problema reportado**: usuario mandó screenshot del modal abierto. La conversación visible (burbujas user + agent) era ilegible — fuente pequeña y altura cortada. En tablet y móvil aún peor.
+
+**Causas**:
+- `#transcript max-width: 520px` (modal es 720px → bubbles encogidas).
+- `#transcript max-height: 24dvh` (en pantalla 900px = 216px, en breakpoint <700px alto = 18dvh = 126px → solo 1-2 burbujas visibles).
+- `.bubble font-size: .9rem` (~14.4px), padding `.55rem .8rem`, line-height 1.45 → texto apretado.
+- Sin breakpoints específicos para tablet/móvil del modal (los responsive del site no aplicaban dentro del modal porque el CSS está scopeado).
+
+**Cambios aplicados en `index.html` y `nosotros.html` (mismas reglas en ambos)**:
+
+| | Antes | Después |
+|---|---|---|
+| `#transcript max-width` | 520px | **640px** |
+| `#transcript max-height` | 24dvh | **min(38dvh, 340px)** |
+| `#transcript min-height` | — | **200px** (suelo garantizado) |
+| `#transcript gap` | .5rem | **.65rem** |
+| `.bubble font-size` | .9rem | **1rem** |
+| `.bubble line-height` | 1.45 | **1.55** |
+| `.bubble padding` | .55rem .8rem | **.75rem 1rem** |
+| `.bubble border-radius` | 12px | **14px** |
+| `.bubble max-width` | 85% | **88%** |
+| @media `max-height: 700px` | max-height 18dvh | **min(30dvh, 220px) + min 160px** |
+| @media `max-width: 720px` (NUEVO) | — | max-h **min(36dvh, 300px)** + min 180px, font .95rem, max-w 92% |
+| @media `max-width: 480px` (NUEVO) | — | max-h **min(34dvh, 260px)** + min 160px, font .92rem, line-h 1.5, max-w 94% |
+
+El `min(Xdvh, Ypx)` evita que en pantallas gigantes el transcript ocupe demasiado, y el `min-height` garantiza un suelo legible siempre.
+
+### Estado del proyecto post 2026-05-09
+- **Lead pipeline 100% en server.py**: ya no depende de n8n. Cualquier fallo de Supabase o Resend se loggea pero no rompe el endpoint público (fail-soft). El cliente recibe `{"ok": true}` siempre que la request sea válida.
+- **AdrIAn cualifica activamente**: cada lead llega con `cualificado: true/false` y `notas` con el resumen de la conversación → Adri lee el email y sabe inmediatamente si vale la pena llamar.
+- **Cal.com webhook listo** para conectar desde el dashboard de Cal.com (URL: `https://nyx-agency.es/api/cal-webhook`). Pendiente de configurar el subscription en la cuenta de Cal.com.
+- **Voice modal usable**: transcript legible en cualquier dispositivo. El usuario puede leer la conversación mientras AdrIAn habla, no solo escucharla.
+- **Pendientes (sin cambios desde sesiones previas)**: modales Privacy + T&C vacíos para RGPD, validar marcas Pulsefit/Lumea/Nordika, voice modal i18n.
 

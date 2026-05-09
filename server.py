@@ -98,13 +98,15 @@ GUARDAR_LEAD_TOOL = {
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "nombre":   {"type": "string", "description": "Nombre completo del lead"},
-                    "email":    {"type": "string", "description": "Email del lead"},
-                    "telefono": {"type": "string", "description": "Teléfono del lead"},
-                    "negocio":  {"type": "string", "description": "Tipo de negocio (clínica, restaurante, academia, etc.)"},
-                    "interes":  {"type": "string", "description": "Principal interés o problema que quiere resolver"},
+                    "nombre":     {"type": "string", "description": "Nombre completo del lead"},
+                    "email":      {"type": "string", "description": "Email del lead"},
+                    "telefono":   {"type": "string", "description": "Teléfono del lead"},
+                    "negocio":    {"type": "string", "description": "Tipo de negocio (clínica, restaurante, academia, etc.)"},
+                    "interes":    {"type": "string", "description": "Principal interés o problema que quiere resolver"},
+                    "cualificado": {"type": "boolean", "description": "true si el lead merece una asesoría con Adri (presupuesto, encaje y motivación claros). false si no cumple los criterios."},
+                    "notas":      {"type": "string", "description": "Resumen breve de la conversación: contexto del negocio, dolor principal, urgencia y por qué (no) cualifica."},
                 },
-                "required": ["nombre", "email", "telefono"],
+                "required": ["nombre", "email", "telefono", "cualificado"],
             },
         }
     ]

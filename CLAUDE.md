@@ -1022,11 +1022,32 @@ El `min(Xdvh, Ypx)` evita que en pantallas gigantes el transcript ocupe demasiad
 
 Resultado: el bloque de links queda siempre a la derecha (desktop, tablet, móvil), encima de la mitad limpia del wordmark, sin solaparse con la "N" inicial. Coherente con el patrón visual del nav (logo izquierda / links + CTA derecha).
 
+### 6. Hero subtitle — copy más punzante (12 idiomas)
+
+**Antes**: *"Diseñamos e implementamos sistemas de IA para empresas que quieren crecer sin crecer en plantilla."* — claro pero genérico, suena a deck de consultora.
+
+**Ahora (ES)**: *"Tu competencia ya está usando IA. Tú sigues respondiendo el mismo WhatsApp 40 veces al día. Vamos a arreglarlo."*
+
+**Por qué funciona mejor**:
+- Estructura **3-beats**: amenaza competitiva → pintura del dolor concreto → promesa de solución (en 1ª persona del plural, "vamos").
+- "Respondiendo el mismo WhatsApp 40 veces al día" es **específico, visual, dolorosamente real** para el target (PYME española / autónomo). No es un dato medio — es la imagen mental que el lead ve cuando lee la web.
+- "Tu competencia ya está usando IA" introduce **FOMO comercial** sin sonar agresivo.
+- "Vamos a arreglarlo" cierra con **acción colaborativa** — alinea con la voz de AdrIAn (chaval de barrio que resuelve, no agencia que vende).
+
+**Aplicado en 12 idiomas** (objeto `HERO2` en index.html, líneas ~3895–3906) más el HTML estático (`<p class="hero-sub" id="hs">`). Cada traducción mantiene la **estructura 3-beats** sin traducir literalmente:
+- EN: *"Your competition is already using AI. You're still answering the same WhatsApp 40 times a day. Let's fix that."*
+- PT-BR: *"Sua concorrência já está usando IA. Você ainda responde ao mesmo WhatsApp 40 vezes por dia. Vamos resolver isso."*
+- FR: *"Vos concurrents utilisent déjà l'IA. Vous répondez encore au même WhatsApp 40 fois par jour. On va régler ça."*
+- DE / IT / NL / RU / ZH / JA / KO / AR siguen el mismo patrón.
+
+**Decisión de copy**: el usuario eligió esta opción de un set de 8 propuestas agrupadas por tono (dolor-claro, concreto, aspiracional, crudo). Esta es del bucket "crudo / de barrio" — alineada deliberadamente con el SYSTEM_PROMPT de AdrIAn. Coherencia entre la voz del agente y la voz de la web.
+
 ### Estado del proyecto post 2026-05-09
 - **Lead pipeline 100% en server.py**: ya no depende de n8n. Cualquier fallo de Supabase o Resend se loggea pero no rompe el endpoint público (fail-soft). El cliente recibe `{"ok": true}` siempre que la request sea válida.
 - **AdrIAn cualifica activamente**: cada lead llega con `cualificado: true/false` y `notas` con el resumen de la conversación → Adri lee el email y sabe inmediatamente si vale la pena llamar.
 - **Cal.com webhook listo** para conectar desde el dashboard de Cal.com (URL: `https://nyx-agency.es/api/cal-webhook`). Pendiente de configurar el subscription en la cuenta de Cal.com.
 - **Voice modal usable**: transcript legible en cualquier dispositivo. El usuario puede leer la conversación mientras AdrIAn habla, no solo escucharla.
 - **Footer limpio**: links a la derecha, wordmark gigante decorativo a la izquierda sin solaparse.
+- **Hero copy alineado con la voz**: subtítulo del hero ahora habla el mismo idioma que AdrIAn — directo, concreto, sin floritura corporativa.
 - **Pendientes (sin cambios desde sesiones previas)**: modales Privacy + T&C vacíos para RGPD, validar marcas Pulsefit/Lumea/Nordika, voice modal i18n.
 
